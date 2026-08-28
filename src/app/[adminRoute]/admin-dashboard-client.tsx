@@ -23,7 +23,8 @@ export function AdminDashboardClient() {
   const playersCount = current?.players ?? 0
   const totalQuestions = current?.totalRounds ?? 5
   const avgScore = current?.averageScore ?? 0
-  const avgAccuracy = current?.averageAccuracy ?? 0
+  const rawAccuracy = current?.averageAccuracy ?? 0
+  const avgAccuracy = Math.round(rawAccuracy <= 1 ? rawAccuracy * 100 : rawAccuracy)
   const status = current?.status ?? 'WAITING'
 
   return (
