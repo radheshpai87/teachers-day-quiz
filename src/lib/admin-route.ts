@@ -26,7 +26,6 @@ export function adminPath(...segments: string[]): string {
 
 export const ADMIN_NAV = [
   { href: '', label: 'Dashboard' },
-  { href: 'quiz', label: 'Quiz' },
   { href: 'questions', label: 'Questions' },
   { href: 'live', label: 'Live Quiz' },
   { href: 'results', label: 'Results' },
