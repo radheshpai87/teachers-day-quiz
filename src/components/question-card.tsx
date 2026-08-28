@@ -120,8 +120,8 @@ export function QuestionCard({
       <div className="w-full flex items-center justify-between text-xs font-black text-ink-soft px-1 pt-1">
         <div className="flex items-center gap-1.5">
           <Target className="w-4 h-4 text-[#388e3c]" />
-          <span>
-            {isLocked ? 'Answer submitted! Waiting for round to end...' : 'Tap an answer to submit'}
+          <span className={isLocked ? 'text-[#388e3c] font-black' : ''}>
+            {isLocked ? 'Answer locked in! Evaluating result...' : 'Tap an answer to submit'}
           </span>
         </div>
         {self && (

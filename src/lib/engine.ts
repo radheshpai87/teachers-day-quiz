@@ -658,7 +658,7 @@ class QuizEngine {
   // -------------------------------------------------------------------------
 
   submitAnswer(participantId: string, roundIndex: number, choice: unknown): SubmitResult {
-    if (this.phase !== 'QUESTION') return { ok: false, reason: 'CLOSED' }
+    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL') return { ok: false, reason: 'CLOSED' }
     if (roundIndex !== this.roundIndex) return { ok: false, reason: 'STALE' }
 
     const p = this.participants.get(participantId)
