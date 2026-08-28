@@ -21,7 +21,7 @@ export function Timer({
   const totalMs = Math.max(1, totalSeconds * 1000)
   const fraction = Math.min(1, Math.max(0, msLeft / totalMs))
 
-  const isWarning = secondsLeft <= 5 && secondsLeft > 0
+  const isWarning = secondsLeft <= 2 && secondsLeft > 0
 
   if (variant === 'bar') {
     return (

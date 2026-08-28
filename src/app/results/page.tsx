@@ -23,12 +23,21 @@ export default function ResultsPage() {
       }
       setSession(s)
 
-      apiGet<FinalSummary>(`/api/results/me?pid=${encodeURIComponent(s.participantId)}`)
-        .then((res) => setResults(res))
-        .catch(() => {
-          /* fail gracefully */
-        })
-        .finally(() => setLoading(false))
+      const fetchResults = (attempts = 0) => {
+        apiGet<FinalSummary>(`/api/results/me?pid=${encodeURIComponent(s.participantId)}`)
+          .then((res) => {
+            setResults(res)
+            setLoading(false)
+          })
+          .catch(() => {
+            if (attempts < 5) {
+              setTimeout(() => fetchResults(attempts + 1), 1000)
+            } else {
+              setLoading(false)
+            }
+          })
+      }
+      fetchResults()
     })
   }, [router])
 
