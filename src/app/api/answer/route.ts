@@ -10,8 +10,9 @@ export const runtime = 'nodejs'
  * server decides when it arrived, whether it counts, and what it is worth.
  */
 export async function POST(req: NextRequest) {
+  // Global campus Wi-Fi NAT safety limit (up to 50,000 requests/min across shared gateway IP)
   const ip = clientIp(req)
-  if (ip !== 'unknown' && !rateLimit(`answer:${ip}`, 10000, 60_000)) {
+  if (ip !== 'unknown' && !rateLimit(`answer:ip:${ip}`, 50000, 60_000)) {
     return fail('Too many requests.', 429)
   }
 
@@ -24,6 +25,11 @@ export async function POST(req: NextRequest) {
   const participantId = typeof body?.participantId === 'string' ? body.participantId : ''
   const roundIndex = typeof body?.roundIndex === 'number' ? body.roundIndex : -1
   if (!participantId) return fail('Missing participant id.')
+
+  // Per-participant rate limit (max 5 answer taps per 5 seconds per participant ID)
+  if (!rateLimit(`answer:pid:${participantId}`, 5, 5_000)) {
+    return fail('Too many requests. Please tap once.', 429)
+  }
 
   const result = getEngine().submitAnswer(participantId, roundIndex, body?.choice)
 

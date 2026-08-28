@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} suppressHydrationWarning className="space-y-4">
           <div className="space-y-1.5 text-left">
             <label className="block text-xs font-black uppercase text-ink-soft">
               Username
@@ -58,6 +58,7 @@ export default function AdminLoginPage() {
             <div className="relative">
               <User className="w-4 h-4 text-ink-soft absolute left-3.5 top-3.5" />
               <input
+                suppressHydrationWarning
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -74,6 +75,7 @@ export default function AdminLoginPage() {
             <div className="relative">
               <Lock className="w-4 h-4 text-ink-soft absolute left-3.5 top-3.5" />
               <input
+                suppressHydrationWarning
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -90,6 +92,7 @@ export default function AdminLoginPage() {
           )}
 
           <button
+            suppressHydrationWarning
             type="submit"
             disabled={loading}
             className="w-full py-3.5 px-4 rounded-xl bg-[#7b1fa2] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { HostFrame } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
 import { ANSWER_SHAPES, Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
-import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw } from 'lucide-react'
+import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw, Search, Trophy, Check } from 'lucide-react'
 import { QrModal } from '@/components/qr-modal'
+import { ParticipantAvatar } from '@/components/participant-avatar'
 
 interface HostControlsProps {
   snapshot: HostFrame
@@ -26,6 +27,17 @@ const ANSWER_COLORS = [
 export function HostControls({ snapshot, liveTally }: HostControlsProps) {
   const [showQr, setShowQr] = useState(false)
   const [loadingAction, setLoadingAction] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const allMembers = useMemo(() => {
+    return snapshot.allParticipants ?? snapshot.top ?? []
+  }, [snapshot.allParticipants, snapshot.top])
+
+  const filteredMembers = useMemo(() => {
+    if (!searchQuery.trim()) return allMembers
+    const q = searchQuery.toLowerCase().trim()
+    return allMembers.filter((m) => m.name.toLowerCase().includes(q))
+  }, [allMembers, searchQuery])
 
   const { status, phase, players, roundIndex, totalRounds, quiz } = snapshot
 
@@ -237,6 +249,106 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
           </div>
         </div>
       )}
+
+      {/* Participating Members Roster Card */}
+      <div className="notebook-card p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-[#7b1fa2]" />
+            <h2 className="font-black text-ink text-base">
+              Participating Members Roster
+            </h2>
+            <span className="text-xs font-extrabold sticky-note-yellow text-ink px-2.5 py-0.5 rounded-full border border-ink shadow-xs">
+              {allMembers.length} Members
+            </span>
+          </div>
+
+          {/* Search Box */}
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 text-ink-soft absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search member by name..."
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-[#7b1fa2]"
+            />
+          </div>
+        </div>
+
+        {filteredMembers.length === 0 ? (
+          <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
+            {searchQuery.trim() ? 'No matching members found.' : 'No participants joined yet. Display the QR code to let members join!'}
+          </div>
+        ) : (
+          <div className="max-h-96 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+            {filteredMembers.map((member) => {
+              const isTop3 = member.rank <= 3
+              const rankColor =
+                member.rank === 1
+                  ? 'sticky-note-yellow text-ink font-black'
+                  : member.rank === 2
+                  ? 'sticky-note-mint text-ink font-black'
+                  : member.rank === 3
+                  ? 'sticky-note-rose text-ink font-black'
+                  : 'bg-paper-cream text-ink font-extrabold'
+
+              return (
+                <div
+                  key={member.id}
+                  className="p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-3 shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Rank Badge */}
+                    <div
+                      className={`shrink-0 w-8 h-8 rounded-xl border-2 border-ink flex items-center justify-center text-xs tnum ${rankColor}`}
+                    >
+                      {member.rank === 1 ? (
+                        <Trophy className="w-4 h-4 text-[#d32f2f]" />
+                      ) : (
+                        `#${member.rank}`
+                      )}
+                    </div>
+
+                    {/* Avatar */}
+                    <ParticipantAvatar seed={member.avatarSeed} size="sm" className="shrink-0 border border-ink shadow-xs" />
+
+                    {/* Member Name */}
+                    <div className="min-w-0">
+                      <div className="font-extrabold text-ink text-sm truncate flex items-center gap-1.5">
+                        <span>{member.name}</span>
+                        {isTop3 && (
+                          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded-full sticky-note-yellow border border-ink">
+                            Top {member.rank}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] font-bold text-ink-soft flex items-center gap-2">
+                        {typeof member.correct === 'number' && (
+                          <span className="flex items-center gap-0.5 text-[#388e3c]">
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            {member.correct} correct
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Member Score / Points */}
+                  <div className="shrink-0 text-right">
+                    <span className="tnum font-black text-base text-[#7b1fa2]">
+                      {member.score.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] font-extrabold uppercase text-ink-soft block">
+                      pts
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       {/* QR Code Modal */}
       <QrModal isOpen={showQr} onClose={() => setShowQr(false)} />

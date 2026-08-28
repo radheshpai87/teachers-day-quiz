@@ -17,7 +17,6 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "better-sqlite3": "^11.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.0",
@@ -31,7 +30,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.0",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.0",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.1.0",

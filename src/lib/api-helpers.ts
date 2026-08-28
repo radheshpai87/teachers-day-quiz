@@ -34,7 +34,7 @@ let lastPrune = 0
 export function rateLimit(key: string, limit: number, windowMs: number): boolean {
   const now = Date.now()
 
-  if (now - lastPrune > 60_000) {
+  if (now - lastPrune > 10_000 || buckets.size > 5000) {
     lastPrune = now
     for (const [k, b] of buckets) if (b.resetAt < now) buckets.delete(k)
   }

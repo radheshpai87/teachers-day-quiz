@@ -11,10 +11,20 @@ export const runtime = 'nodejs'
  * the person sent back to /join instead of staring at a blank screen.
  */
 export async function GET(req: NextRequest) {
-  const participantId = new URL(req.url).searchParams.get('pid')
-  if (!participantId) return fail('Missing participant id.')
+  const url = new URL(req.url)
+  const participantId = url.searchParams.get('pid')
+  const isDisplay = url.searchParams.get('role') === 'display'
 
   const engine = getEngine()
+
+  if (isDisplay) {
+    return ok({
+      state: engine.stateForDisplay(),
+    })
+  }
+
+  if (!participantId) return fail('Missing participant id.')
+
   if (!engine.hasParticipant(participantId)) {
     return fail('Unknown participant.', 404)
   }

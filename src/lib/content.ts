@@ -76,7 +76,7 @@ export function getQuiz(): Quiz {
   const db = getDb()
   const row = db
     .prepare('SELECT * FROM quizzes ORDER BY created_at ASC LIMIT 1')
-    .get() as QuizRow | undefined
+    .get() as unknown as QuizRow | undefined
 
   if (row) return mapQuiz(row)
 
@@ -86,7 +86,7 @@ export function getQuiz(): Quiz {
     `INSERT INTO quizzes
        (id, name, description, default_timer, reveal_seconds,
         leaderboard_seconds, ready_seconds, created_at, updated_at)
-     VALUES (?, ?, ?, 20, 5, 5, 3, ?, ?)`,
+     VALUES (?, ?, ?, 5, 3, 3, 3, ?, ?)`,
   ).run(
     id,
     "Teachers' Day Quiz",
@@ -149,14 +149,14 @@ export function listQuestions(quizId: string): Question[] {
     .prepare(
       'SELECT * FROM questions WHERE quiz_id = ? ORDER BY position ASC, id ASC',
     )
-    .all(quizId) as QuestionRow[]
+    .all(quizId) as unknown as QuestionRow[]
   return rows.map(mapQuestion)
 }
 
 export function getQuestion(id: string): Question | null {
   const row = getDb()
     .prepare('SELECT * FROM questions WHERE id = ?')
-    .get(id) as QuestionRow | undefined
+    .get(id) as unknown as QuestionRow | undefined
   return row ? mapQuestion(row) : null
 }
 
@@ -179,7 +179,7 @@ export function createQuestion(quizId: string, input: QuestionInput): Question {
     .prepare(
       'SELECT COALESCE(MAX(position), -1) AS pos FROM questions WHERE quiz_id = ?',
     )
-    .get(quizId) as { pos: number }
+    .get(quizId) as unknown as { pos: number }
   const id = newId('q')
   db.prepare(
     `INSERT INTO questions
@@ -255,10 +255,14 @@ export function reorderQuestions(quizId: string, orderedIds: string[]) {
   const stmt = db.prepare(
     'UPDATE questions SET position = ? WHERE id = ? AND quiz_id = ?',
   )
-  const run = db.transaction((ids: string[]) => {
-    ids.forEach((id, index) => stmt.run(index, id, quizId))
-  })
-  run(orderedIds)
+  db.exec('BEGIN IMMEDIATE;')
+  try {
+    orderedIds.forEach((id, index) => stmt.run(index, id, quizId))
+    db.exec('COMMIT;')
+  } catch (err) {
+    db.exec('ROLLBACK;')
+    throw err
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -276,7 +280,7 @@ export function saveImage(mime: string, bytes: Buffer): string {
 export function getImage(id: string): { mime: string; bytes: Buffer } | null {
   const row = getDb()
     .prepare('SELECT mime, bytes FROM images WHERE id = ?')
-    .get(id) as { mime: string; bytes: Buffer } | undefined
+    .get(id) as unknown as { mime: string; bytes: Buffer } | undefined
   return row ?? null
 }
 
@@ -291,7 +295,7 @@ function seedQuestions(quizId: string) {
       prompt: "When is Teachers' Day celebrated in India?",
       options: ['August 15', 'September 5', 'October 2', 'November 14'],
       correctIndex: 1,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation:
         "🎓 Fun Fact: September 5 marks the birthday of Dr. Sarvepalli Radhakrishnan. When his students wanted to celebrate his birthday, he said: 'Instead of celebrating my birthday, it would be my proud privilege if September 5 is observed as Teachers' Day!'",
       imageId: null,
@@ -302,7 +306,7 @@ function seedQuestions(quizId: string) {
         "Teachers' Day in India is celebrated on the birthday of Dr. Sarvepalli Radhakrishnan.",
       options: ['True', 'False'],
       correctIndex: 0,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation:
         '🌟 Fun Fact: Dr. Radhakrishnan was a world-renowned scholar and professor at Oxford, Calcutta, and Mysore Universities. He was nominated for the Nobel Prize 27 times during his life!',
       imageId: null,
@@ -312,7 +316,7 @@ function seedQuestions(quizId: string) {
       prompt: 'Which of these qualities makes an inspiring teacher?',
       options: ['Patience', 'Curiosity', 'Empathy', 'All of the above'],
       correctIndex: 3,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation:
         "💡 Fun Fact: Patience, Curiosity, and Empathy are known as the Golden Triangle of inspiring teaching. Swami Vivekananda said, 'Education is the manifestation of the perfection already in man.'",
       imageId: null,
@@ -322,7 +326,7 @@ function seedQuestions(quizId: string) {
       prompt: 'What object is commonly associated with a traditional classroom?',
       options: ['Blackboard', 'Football', 'Helmet', 'Guitar'],
       correctIndex: 0,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation:
         '✏️ Fun Fact: The blackboard was invented in Scotland in 1801 by James Pillans, who joined small individual slates together so an entire classroom could learn simultaneously!',
       imageId: null,
@@ -337,7 +341,7 @@ function seedQuestions(quizId: string) {
         'First Chief Justice',
       ],
       correctIndex: 2,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation:
         '🏆 Fun Fact: Dr. Radhakrishnan was India’s 1st Vice President (1952–1962) and 2nd President (1962–1967). In 1954, he received the Bharat Ratna, India’s highest civilian award.',
       imageId: null,

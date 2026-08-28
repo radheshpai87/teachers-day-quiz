@@ -77,11 +77,14 @@ export default function ResultsPage() {
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-yellow text-ink font-black text-xs uppercase tracking-wider -rotate-1 shadow-[2px_2px_0px_#2a2440]">
             <PaperClip className="w-4 h-4 text-ink" />
             <Trophy className="w-4 h-4 text-[#d32f2f]" />
-            <span>Quiz Complete!</span>
+            <span>All Questions Completed! 🎉</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-ink">
-            Congratulations, {session.name}!
+            Great Job, {session.name}!
           </h1>
+          <p className="text-xs sm:text-sm font-extrabold text-ink-soft">
+            All quiz questions are done! Here are your final event results.
+          </p>
         </div>
 
         {/* Profile & Main Stats Card */}

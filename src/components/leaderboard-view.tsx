@@ -18,10 +18,9 @@ export function LeaderboardView({
   currentParticipantId,
   displayMode = false,
 }: LeaderboardViewProps) {
-  // Always display up to Top 10 leaders
-  const topTen = top.slice(0, 10)
-  const topThree = topTen.slice(0, 3)
-  const rest = topTen.slice(3)
+  // Top 3 for podium, rest for full list of all joined participants
+  const topThree = top.slice(0, 3)
+  const rest = top.slice(3)
 
   const podiumOrder = [
     topThree[1] || null, // 2nd
@@ -40,7 +39,7 @@ export function LeaderboardView({
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-ink -rotate-1">
           <PaperClip className="w-4 h-4 text-ink" />
           <Trophy className="w-4 h-4 text-[#d32f2f]" />
-          <span>Top 10 Live Rankings</span>
+          <span>Live Rankings</span>
         </div>
         <h2 className={`font-black text-ink ${displayMode ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-3xl'}`}>
           Leaderboard
@@ -57,7 +56,7 @@ export function LeaderboardView({
         <div className="w-full grid grid-cols-3 gap-2 sm:gap-4 items-end pt-3 pb-2 px-1">
           {podiumOrder.map((entry, idx) => {
             if (!entry) return <div key={idx} />
-            const place = entry.rank as 1 | 2 | 3
+            const place = (idx === 1 ? 1 : idx === 0 ? 2 : 3) as 1 | 2 | 3
             const isFirst = place === 1
             const isSelf = currentParticipantId && entry.id === currentParticipantId
 
@@ -118,9 +117,9 @@ export function LeaderboardView({
         </div>
       )}
 
-      {/* Ranks 4 to 10 list */}
+      {/* Ranks 4+ list for all joined participants */}
       {rest.length > 0 && (
-        <div className="w-full space-y-2">
+        <div className="w-full space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-1">
           <AnimatePresence mode="popLayout">
             {rest.map((entry) => {
               const isSelf = currentParticipantId && entry.id === currentParticipantId

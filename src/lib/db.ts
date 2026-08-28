@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import Database from 'better-sqlite3'
+import { DatabaseSync } from 'node:sqlite'
 
 /**
  * SQLite is the source of truth for content (quiz, questions, images) and for
@@ -13,7 +13,7 @@ import Database from 'better-sqlite3'
 
 declare global {
   // eslint-disable-next-line no-var
-  var __quizDb: Database.Database | undefined
+  var __quizDb: DatabaseSync | undefined
 }
 
 const SCHEMA = `
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS quizzes (
   id                  TEXT PRIMARY KEY,
   name                TEXT NOT NULL,
   description         TEXT NOT NULL DEFAULT '',
-  default_timer       INTEGER NOT NULL DEFAULT 20,
+  default_timer       INTEGER NOT NULL DEFAULT 5,
   reveal_seconds      INTEGER NOT NULL DEFAULT 5,
   leaderboard_seconds INTEGER NOT NULL DEFAULT 5,
   ready_seconds       INTEGER NOT NULL DEFAULT 3,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS questions (
   prompt        TEXT NOT NULL,
   options       TEXT NOT NULL,           -- JSON array of strings
   correct_index INTEGER NOT NULL,
-  timer_seconds INTEGER NOT NULL DEFAULT 20,
+  timer_seconds INTEGER NOT NULL DEFAULT 5,
   explanation   TEXT,
   image_id      TEXT REFERENCES images(id) ON DELETE SET NULL,
   position      INTEGER NOT NULL
@@ -99,21 +99,21 @@ function resolveDbPath() {
     : path.join(process.cwd(), configured)
 }
 
-function open(): Database.Database {
+function open(): DatabaseSync {
   const file = resolveDbPath()
   fs.mkdirSync(path.dirname(file), { recursive: true })
 
-  const db = new Database(file)
+  const db = new DatabaseSync(file)
   // WAL lets the many concurrent readers proceed while answers are being
   // flushed, and `synchronous = NORMAL` keeps those flushes cheap.
-  db.pragma('journal_mode = WAL')
-  db.pragma('synchronous = NORMAL')
-  db.pragma('foreign_keys = ON')
+  db.exec('PRAGMA journal_mode = WAL;')
+  db.exec('PRAGMA synchronous = NORMAL;')
+  db.exec('PRAGMA foreign_keys = ON;')
   db.exec(SCHEMA)
   return db
 }
 
-export function getDb(): Database.Database {
+export function getDb(): DatabaseSync {
   if (!globalThis.__quizDb) {
     globalThis.__quizDb = open()
   }

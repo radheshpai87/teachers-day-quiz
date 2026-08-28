@@ -13,7 +13,7 @@ export function AdminDashboardClient() {
   const [initialData, setInitialData] = useState<HostFrame | null>(null)
 
   useEffect(() => {
-    apiGet<HostFrame>('/api/admin/stream')
+    apiGet<HostFrame>('/api/admin/snapshot')
       .then((res) => setInitialData(res))
       .catch(() => {})
   }, [])

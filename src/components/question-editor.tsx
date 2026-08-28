@@ -151,7 +151,7 @@ export function QuestionEditor({
       prompt: '',
       options: ['', '', '', ''],
       correctIndex: 0,
-      timerSeconds: 20,
+      timerSeconds: 5,
       explanation: '',
       imageId: null,
     })

@@ -60,7 +60,7 @@ export function validateQuestion(
     return { ok: false, error: 'Pick which answer is correct.' }
   }
 
-  const timerSeconds = Number(draft.timerSeconds) || 20
+  const timerSeconds = Number(draft.timerSeconds) || 5
   if (Number.isNaN(timerSeconds) || timerSeconds < 1 || timerSeconds > 300) {
     return { ok: false, error: 'Timer must be between 1 and 300 seconds.' }
   }

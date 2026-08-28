@@ -41,7 +41,7 @@ import type {
  *   what keeps a single global clock valid despite randomised order.
  */
 
-const LEADERBOARD_SIZE = 10
+const LEADERBOARD_SIZE = 100
 const TALLY_INTERVAL_MS = 1000
 const PLAYER_COUNT_THROTTLE_MS = 750
 const ANSWER_FLUSH_MS = 1000
@@ -277,6 +277,7 @@ class QuizEngine {
         order: this.orderFor(row.id),
       })
     }
+    this.recomputeRanks()
   }
 
   private loadAnswers() {
@@ -313,6 +314,7 @@ class QuizEngine {
       if (answer.correct) p.correct += 1
       this.bumpDistribution(row.question_id, row.choice)
     }
+    this.recomputeRanks()
   }
 
   private recomputeRoundTallies() {
@@ -457,7 +459,7 @@ class QuizEngine {
       )
       .run(id, this.runId, name, id, now, now)
 
-    this.rankMap.set(id, this.participants.size)
+    this.recomputeRanks()
     this.schedulePlayerCountBroadcast()
     return { id, avatarSeed: id }
   }
@@ -588,7 +590,7 @@ class QuizEngine {
 
   /** The global authored question timer for the quiz: the shared round window. */
   private maxLimitMs() {
-    return (this.quiz.defaultTimer || 20) * 1000
+    return (this.quiz.defaultTimer || 5) * 1000
   }
 
   private beginQuestion(round: number) {
@@ -678,7 +680,7 @@ class QuizEngine {
     }
 
     const now = Date.now()
-    const limitMs = (this.quiz.defaultTimer || 20) * 1000
+    const limitMs = (this.quiz.defaultTimer || 5) * 1000
     const elapsedRaw = Math.max(0, now - this.phaseStartedAt)
 
     // Grace period for network latency when validating a submission
@@ -689,7 +691,7 @@ class QuizEngine {
     const points = scoreAnswer({
       correct,
       elapsedMs,
-      limitSeconds: this.quiz.defaultTimer || 20,
+      limitSeconds: this.quiz.defaultTimer || 5,
     })
 
     const answer: StoredAnswer = {
@@ -759,7 +761,8 @@ class QuizEngine {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     const now = Date.now()
-    const write = db.transaction(() => {
+    try {
+      db.exec('BEGIN IMMEDIATE;')
       for (const item of batch) {
         stmt.run(
           this.runId,
@@ -773,10 +776,9 @@ class QuizEngine {
           now,
         )
       }
-    })
-    try {
-      write()
+      db.exec('COMMIT;')
     } catch (err) {
+      db.exec('ROLLBACK;')
       console.error('[engine] failed to flush answers', err)
     }
   }
@@ -807,11 +809,13 @@ class QuizEngine {
       score: p.score,
       rank,
       delta: before === undefined ? null : before - rank,
+      correct: p.correct,
+      answered: p.answered,
     }
   }
 
   private topEntries(limit = LEADERBOARD_SIZE): LeaderboardEntry[] {
-    if (this.ranked.length === 0) this.recomputeRanks()
+    if (this.ranked.length !== this.participants.size) this.recomputeRanks()
     return this.ranked.slice(0, limit).map((p, i) => this.entry(p, i + 1))
   }
 
@@ -838,7 +842,7 @@ class QuizEngine {
       prompt: q.prompt,
       options: q.options,
       imageUrl: q.imageId ? `/api/image/${q.imageId}` : null,
-      timerSeconds: this.quiz.defaultTimer || 20,
+      timerSeconds: this.quiz.defaultTimer || 5,
     }
   }
 
@@ -889,7 +893,7 @@ class QuizEngine {
         state.question = {
           question: payload,
           answersOpenAt: this.answersOpenAt,
-          answersCloseAt: this.answersOpenAt + (this.quiz.defaultTimer || 20) * 1000,
+          answersCloseAt: this.answersOpenAt + (this.quiz.defaultTimer || 5) * 1000,
           yourChoice: p.answers.get(q.id)?.choice ?? null,
         }
       }
@@ -965,7 +969,7 @@ class QuizEngine {
   // -------------------------------------------------------------------------
 
   hostSnapshot(): HostSnapshot {
-    if (this.ranked.length === 0) this.recomputeRanks()
+    this.recomputeRanks()
 
     let scoreTotal = 0
     let accuracyTotal = 0
@@ -998,6 +1002,15 @@ class QuizEngine {
         answered: this.roundPerQuestion.get(id) ?? 0,
       })),
       top: this.topEntries(),
+      allParticipants: this.ranked.map((p, i) => ({
+        id: p.id,
+        name: p.name,
+        avatarSeed: p.avatarSeed,
+        score: p.score,
+        rank: i + 1,
+        correct: p.correct,
+        answered: p.answered,
+      })),
       averageScore: Math.round(scoreTotal / n),
       averageAccuracy: accuracyTotal / n,
     }
@@ -1130,8 +1143,7 @@ class QuizEngine {
   }
 
   private emitPlayerCount() {
-    const chunk = frame({ t: 'players', players: this.participants.size })
-    getHub().broadcast(() => chunk)
+    this.broadcastState()
   }
 
   /** While a question runs, host screens get live tallies once a second. */

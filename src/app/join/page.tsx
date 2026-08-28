@@ -100,13 +100,14 @@ export default function JoinPage() {
             </span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} suppressHydrationWarning className="space-y-4">
             <div className="space-y-1.5 text-left">
               <label htmlFor="participant-name" className="block text-xs font-black uppercase text-ink-soft">
                 What's your name?
               </label>
               <input
                 id="participant-name"
+                suppressHydrationWarning
                 type="text"
                 value={name}
                 onChange={(e) => {
@@ -127,6 +128,7 @@ export default function JoinPage() {
             )}
 
             <button
+              suppressHydrationWarning
               type="submit"
               disabled={loading || !name.trim()}
               className="w-full py-4 px-6 rounded-2xl bg-[#7b1fa2] text-white font-black text-lg border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
