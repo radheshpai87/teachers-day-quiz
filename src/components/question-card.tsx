@@ -48,12 +48,12 @@ export function QuestionCard({
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col space-y-4 px-3 py-2 sm:px-4 select-none">
       {/* Header bar: Round badge, Timer, Score pill */}
-      <div className="w-full flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black text-xs sm:text-sm shadow-[2px_2px_0px_#2a2440]">
-          <PaperClip className="w-4 h-4 text-ink" />
-          <span>Question</span>
-          <span className="tnum font-black text-[#7b1fa2]">
-            {roundIndex + 1} / {totalRounds}
+      <div className="w-full flex items-center justify-between gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black text-xs sm:text-sm shadow-[2px_2px_0px_#2a2440] shrink-0 whitespace-nowrap">
+          <PaperClip className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink shrink-0" />
+          <span className="whitespace-nowrap">Question</span>
+          <span className="tnum font-black text-[#7b1fa2] whitespace-nowrap ml-0.5">
+            {roundIndex + 1}/{totalRounds}
           </span>
         </div>
 
@@ -68,8 +68,8 @@ export function QuestionCard({
 
         {/* Score pill */}
         {self && (
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm shadow-[2px_2px_0px_#2a2440]">
-            <Trophy className="w-4 h-4 text-[#7b1fa2]" />
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm shadow-[2px_2px_0px_#2a2440] shrink-0 whitespace-nowrap">
+            <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#7b1fa2] shrink-0" />
             <span className="tnum font-black">{self.score.toLocaleString()}</span>
           </div>
         )}
