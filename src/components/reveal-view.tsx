@@ -100,26 +100,29 @@ export function RevealView({ reveal, self }: RevealViewProps) {
 
             return (
               <div key={idx} className="space-y-1">
-                <div className="flex items-center justify-between text-xs font-black text-ink">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-5 h-5 rounded-md ${ANSWER_COLORS[idx]} text-white flex items-center justify-center text-[10px] border border-ink`}>
+                <div className="flex items-center justify-between gap-2 text-xs font-black text-ink">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className={`w-5 h-5 shrink-0 rounded-md ${ANSWER_COLORS[idx]} text-white flex items-center justify-center text-[10px] border border-ink`}>
                       <Shape className="w-3.5 h-3.5 fill-current" />
                     </span>
-                    <span className="line-clamp-1">{optText}</span>
+                    <span className="truncate min-w-0">{optText}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {isCorrect && (
-                      <span className="px-1.5 py-0.5 rounded bg-[#388e3c] text-white text-[10px] font-black border border-ink">
+                      <span className="px-1.5 py-0.5 rounded bg-[#388e3c] text-white text-[10px] font-black border border-ink shrink-0">
                         CORRECT
                       </span>
                     )}
                     {isYourChoice && (
-                      <span className="px-1.5 py-0.5 rounded sticky-note-yellow text-ink text-[10px] font-black border border-ink">
+                      <span className="px-1.5 py-0.5 rounded sticky-note-yellow text-ink text-[10px] font-black border border-ink shrink-0 shadow-xs">
                         YOU
                       </span>
                     )}
+                    <span className="tnum font-black shrink-0 whitespace-nowrap ml-0.5">
+                      {count} ({percentage}%)
+                    </span>
                   </div>
-                  <span className="tnum font-black">
-                    {count} ({percentage}%)
-                  </span>
                 </div>
 
                 <div className="h-4 w-full bg-paper-cream rounded-full overflow-hidden p-0.5 border border-ink">
