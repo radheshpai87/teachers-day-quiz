@@ -16,6 +16,7 @@ export function useQuizStream({ participantId, display }: Options) {
   const [status, setStatus] = useState<StreamStatus>('connecting')
   const [showReconnecting, setShowReconnecting] = useState(false)
   const [players, setPlayers] = useState(0)
+  const [lastReaction, setLastReaction] = useState<{ id: string; emoji: import('@/lib/types').ReactionEmoji; senderName?: string } | null>(null)
 
   // Positive when the server clock is ahead of this device.
   const clockOffset = useRef(0)
@@ -83,7 +84,7 @@ export function useQuizStream({ participantId, display }: Options) {
 
     source.onmessage = (event) => {
       if (cancelled) return
-      let frame: ClientState | { t: 'players'; players: number } | { t: 'invalid' }
+      let frame: ClientState | { t: 'players'; players: number } | { t: 'invalid' } | { t: 'reaction'; id: string; emoji: import('@/lib/types').ReactionEmoji; senderName?: string }
       try {
         frame = JSON.parse(event.data)
       } catch {
@@ -98,6 +99,11 @@ export function useQuizStream({ participantId, display }: Options) {
 
       if (frame.t === 'players') {
         setPlayers(frame.players)
+        return
+      }
+
+      if (frame.t === 'reaction') {
+        setLastReaction({ id: frame.id, emoji: frame.emoji, senderName: frame.senderName })
         return
       }
 
@@ -142,7 +148,7 @@ export function useQuizStream({ participantId, display }: Options) {
     }
   }, [participantId, display])
 
-  return { state, status, showReconnecting, players, clockOffset }
+  return { state, status, showReconnecting, players, clockOffset, lastReaction }
 }
 
 /** The same subscription for the authenticated host screen. */

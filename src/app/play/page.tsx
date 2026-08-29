@@ -11,6 +11,7 @@ import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
 import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
+import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function PlayPage() {
@@ -45,7 +46,7 @@ export default function PlayPage() {
     }
   }, [router])
 
-  const { state, status, showReconnecting, players, clockOffset } = useQuizStream({
+  const { state, status, showReconnecting, players, clockOffset, lastReaction } = useQuizStream({
     participantId: session?.participantId,
   })
 
@@ -190,6 +191,12 @@ export default function PlayPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Live Celebratory Reactions Overlay & Interactive Bar */}
+      <ReactionOverlayAndBar
+        participantId={session.participantId}
+        lastReaction={lastReaction}
+      />
     </main>
   )
 }

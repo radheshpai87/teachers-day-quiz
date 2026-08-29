@@ -1101,6 +1101,19 @@ class QuizEngine {
     }
   }
 
+  sendReaction(participantId: string, emoji: import('./types').ReactionEmoji): boolean {
+    const p = this.participants.get(participantId)
+    if (!p) return false
+    const reactionFrame = frame({
+      t: 'reaction',
+      id: newId('react'),
+      emoji,
+      senderName: p.name,
+    })
+    getHub().broadcast(() => reactionFrame)
+    return true
+  }
+
   // -------------------------------------------------------------------------
   // Broadcasting
   // -------------------------------------------------------------------------
