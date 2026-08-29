@@ -7,6 +7,7 @@ import { apiGet } from '@/lib/client/api'
 import type { FinalSummary } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Trophy, Target, Bolt, GraduationCap, Check, ArrowUp, PaperClip, Star } from '@/components/icons'
+import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 
 export default function ResultsPage() {
@@ -28,6 +29,7 @@ export default function ResultsPage() {
           .then((res) => {
             setResults(res)
             setLoading(false)
+            sound.celebrate()
           })
           .catch(() => {
             if (attempts < 5) {

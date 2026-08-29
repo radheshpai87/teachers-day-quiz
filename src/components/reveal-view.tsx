@@ -1,8 +1,10 @@
 'use client'
 
+import { useEffect } from 'react'
 import type { RevealPhasePayload, SelfState } from '@/lib/types'
 import { ANSWER_SHAPES } from '@/components/icons'
 import { Check, Cross, Bolt } from '@/components/icons'
+import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 
 interface RevealViewProps {
@@ -28,6 +30,14 @@ export function RevealView({ reveal, self }: RevealViewProps) {
     yourCorrect,
     yourPoints,
   } = reveal
+
+  useEffect(() => {
+    if (yourCorrect) {
+      sound.correct()
+    } else if (yourChoice !== null) {
+      sound.wrong()
+    }
+  }, [yourCorrect, yourChoice])
 
   const maxAnswers = Math.max(1, ...distribution)
 
