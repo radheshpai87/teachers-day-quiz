@@ -49,7 +49,20 @@ export function useQuizStream({ participantId, display }: Options) {
           if (data?.state) {
             clockOffset.current = data.state.serverNow - Date.now()
             setPlayers(data.state.players || 0)
-            setState(data.state)
+            setState((prev) => {
+              if (
+                prev &&
+                prev.phase === data.state.phase &&
+                prev.roundIndex === data.state.roundIndex &&
+                prev.players === data.state.players &&
+                prev.question?.question.id === data.state.question?.question.id &&
+                prev.question?.yourChoice === data.state.question?.yourChoice &&
+                prev.reveal?.yourChoice === data.state.reveal?.yourChoice
+              ) {
+                return prev
+              }
+              return data.state
+            })
           }
         }
       } catch {
@@ -91,7 +104,20 @@ export function useQuizStream({ participantId, display }: Options) {
       if (frame.t === 'state') {
         clockOffset.current = frame.serverNow - Date.now()
         setPlayers(frame.players)
-        setState(frame)
+        setState((prev) => {
+          if (
+            prev &&
+            prev.phase === frame.phase &&
+            prev.roundIndex === frame.roundIndex &&
+            prev.players === frame.players &&
+            prev.question?.question.id === frame.question?.question.id &&
+            prev.question?.yourChoice === frame.question?.yourChoice &&
+            prev.reveal?.yourChoice === frame.reveal?.yourChoice
+          ) {
+            return prev
+          }
+          return frame
+        })
       }
     }
 
