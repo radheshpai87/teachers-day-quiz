@@ -470,6 +470,25 @@ class QuizEngine {
       .run(Date.now(), participantId)
   }
 
+  kickParticipant(participantId: string): boolean {
+    if (!this.participants.has(participantId)) return false
+    this.participants.delete(participantId)
+    this.ranked = this.ranked.filter((p) => p.id !== participantId)
+    this.rankMap.delete(participantId)
+    this.previousRanks.delete(participantId)
+
+    getDb().prepare('DELETE FROM participants WHERE id = ?').run(participantId)
+    getDb().prepare('DELETE FROM answers WHERE participant_id = ?').run(participantId)
+
+    this.recomputeRanks()
+    this.recomputeRoundTallies()
+
+    const hub = getHub()
+    hub.sendTo(participantId, frame({ t: 'invalid', message: 'You have been removed from the session by the host.' }))
+    this.broadcastState()
+    return true
+  }
+
   // -------------------------------------------------------------------------
   // Host controls
   // -------------------------------------------------------------------------
