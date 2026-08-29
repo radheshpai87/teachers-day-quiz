@@ -70,6 +70,9 @@ function SortableQuestionRow({
             <span className="px-2 py-0.5 rounded-md sticky-note-lavender border border-ink text-ink text-[10px] font-black uppercase">
               {question.type}
             </span>
+            <span className="px-2 py-0.5 rounded-md sticky-note-yellow border border-ink text-ink text-[10px] font-black">
+              {question.timerSeconds || 5}s
+            </span>
           </div>
           <p className="font-extrabold text-ink text-sm sm:text-base line-clamp-1">
             {question.prompt}
@@ -380,6 +383,29 @@ export function QuestionEditor({
                     />
                   </div>
                 ))}
+              </div>
+
+              {/* Timer Duration */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-black uppercase text-ink tracking-wider">
+                  Question Timer Duration
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {TIMER_CHOICES.map((sec) => (
+                    <button
+                      key={sec}
+                      type="button"
+                      onClick={() => setEditingQuestion((prev) => ({ ...prev, timerSeconds: sec }))}
+                      className={`py-1.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#2a2440] ${
+                        (editingQuestion.timerSeconds || 5) === sec
+                          ? 'bg-[#7b1fa2] text-white'
+                          : 'bg-paper-cream text-ink hover:bg-note-yellow/40'
+                      }`}
+                    >
+                      {sec}s
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Image Upload - Only for IMAGE question type */}

@@ -30,8 +30,13 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const denied = await requireAdminApi()
   if (denied) return denied
 
+  const engine = getEngine()
+  if (engine.phase !== 'WAITING' && engine.phase !== 'COMPLETED') {
+    return fail('Cannot delete questions while a quiz event is live or paused.', 400)
+  }
+
   const { id } = await params
   deleteQuestion(id)
-  getEngine().refreshQuestions()
+  engine.refreshQuestions()
   return ok({ ok: true })
 }
