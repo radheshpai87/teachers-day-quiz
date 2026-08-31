@@ -1,12 +1,14 @@
 'use client'
 
+import Image from 'next/image'
 import { useQuizStream } from '@/lib/client/use-stream'
 import { LeaderboardView } from '@/components/leaderboard-view'
-import { GraduationCap, QrFrame, PaperClip } from '@/components/icons'
+import { QrFrame, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { useState } from 'react'
 import { QrModal } from '@/components/qr-modal'
+import { YentechFooterCredit } from '@/components/yentech-branding'
 
 export default function LeaderboardPage() {
   const { state, players, lastReaction } = useQuizStream({ display: true })
@@ -22,11 +24,16 @@ export default function LeaderboardPage() {
 
       {/* Top Header */}
       <header className="w-full max-w-6xl mx-auto flex items-center justify-between gap-4 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl sticky-note-yellow flex items-center justify-center border-2 border-ink -rotate-3 shadow-[2px_2px_0px_#2a2440]">
-            <GraduationCap className="w-6 h-6 text-ink" />
-          </div>
-          <div>
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Image
+            src="/yenepoya-university-logo.svg"
+            alt="Yenepoya University Logo"
+            width={300}
+            height={100}
+            priority
+            className="h-14 sm:h-20 w-auto object-contain drop-shadow-sm"
+          />
+          <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">
               Teachers' Day Quiz
             </h1>
@@ -41,9 +48,9 @@ export default function LeaderboardPage() {
         <button
           type="button"
           onClick={() => setShowQr(true)}
-          className="px-4 py-2 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5"
+          className="px-4 py-2 rounded-xl sticky-note-lavender border-2 border-ink text-[#231f20] font-black text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_#231f20] hover:-translate-y-0.5"
         >
-          <QrFrame className="w-4 h-4" />
+          <QrFrame className="w-4 h-4 text-[#231f20]" />
           <span>Join QR Code</span>
         </button>
       </header>
@@ -58,13 +65,9 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Footer Banner */}
-      <footer className="w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink font-black border-t-2 border-ink pt-4 z-10">
-        <div className="flex items-center gap-2">
-          <span>Happy Teachers' Day 🎓</span>
-          <span className="text-ink-soft">•</span>
-          <span className="text-ink-soft text-xs font-extrabold">Presented by <strong className="text-ink font-black">YENTECH</strong> (YSET)</span>
-        </div>
-        <span className="tnum font-black text-[#7b1fa2]">
+      <footer className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-ink font-black border-t-2 border-ink pt-2.5 z-10">
+        <YentechFooterCredit className="py-0" />
+        <span className="tnum font-black text-[#231f20] bg-[#93d500] px-3.5 py-1 rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] shrink-0">
           {totalPlayers} Participants Online
         </span>
       </footer>
