@@ -67,6 +67,8 @@ interface EngineParticipant {
   answers: Map<string, StoredAnswer>
   /** Derived question order for this participant; cached on first use. */
   order: string[]
+  phone?: string
+  college?: string
 }
 
 export type SubmitResult =
@@ -428,7 +430,7 @@ class QuizEngine {
   // Joining
   // -------------------------------------------------------------------------
 
-  join(name: string): { id: string; avatarSeed: string } | { error: string } {
+  join(name: string, phone?: string, college?: string): { id: string; avatarSeed: string } | { error: string } {
     if (this.phase === 'COMPLETED') {
       return { error: 'This quiz has already finished.' }
     }
@@ -449,6 +451,8 @@ class QuizEngine {
       totalElapsedMs: 0,
       answers: new Map(),
       order: this.orderFor(id),
+      phone,
+      college,
     }
     this.participants.set(id, participant)
 
@@ -504,7 +508,7 @@ class QuizEngine {
     // Freeze the pool for the whole run and rebuild orders against it, so
     // editing questions mid-quiz cannot shift anybody's sequence.
     for (const p of this.participants.values()) p.order = this.orderFor(p.id)
-    this.beginQuestion(0)
+    this.beginExam()
     return { ok: true }
   }
 
@@ -598,13 +602,30 @@ class QuizEngine {
       case 'REVEAL':
         this.beginLeaderboard()
         break
+      case 'EXAM_LIVE':
+        this.beginLeaderboard()
+        break
       case 'LEADERBOARD':
-        if (this.roundIndex + 1 < this.totalRounds) this.beginQuestion(this.roundIndex + 1)
-        else this.complete()
+        this.complete()
         break
       default:
         break
     }
+  }
+
+  private beginExam() {
+    this.flushAnswers()
+    const now = Date.now()
+    const durationMs = 10 * 60 * 1000 // 10 Minutes Total Event Window
+    this.phase = 'EXAM_LIVE'
+    this.phaseStartedAt = now
+    this.answersOpenAt = now
+    this.phaseEndsAt = now + durationMs
+    this.roundIndex = 0
+
+    this.persistRun('LIVE')
+    this.broadcastState()
+    this.scheduleAdvance(durationMs)
   }
 
   /** The global authored question timer for the quiz or the round question's specific timer. */
@@ -686,13 +707,15 @@ class QuizEngine {
   // -------------------------------------------------------------------------
 
   submitAnswer(participantId: string, roundIndex: number, choice: unknown): SubmitResult {
-    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL') return { ok: false, reason: 'CLOSED' }
-    if (roundIndex !== this.roundIndex) return { ok: false, reason: 'STALE' }
+    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL' && this.phase !== 'EXAM_LIVE') {
+      return { ok: false, reason: 'CLOSED' }
+    }
+    if (roundIndex < 0 || roundIndex >= this.totalRounds) return { ok: false, reason: 'STALE' }
 
     const p = this.participants.get(participantId)
     if (!p) return { ok: false, reason: 'UNKNOWN' }
 
-    const question = this.questionForRound(p, this.roundIndex)
+    const question = this.questionForRound(p, roundIndex)
     if (!question) return { ok: false, reason: 'CLOSED' }
 
     const existing = p.answers.get(question.id)
@@ -708,29 +731,30 @@ class QuizEngine {
     }
 
     const now = Date.now()
+    const elapsedMs = Math.max(0, now - this.phaseStartedAt)
+
+    // Check overall 10-minute exam window
+    if (this.phase === 'EXAM_LIVE' && now > this.phaseEndsAt) {
+      return { ok: false, reason: 'EXPIRED' }
+    }
+
     const limitSeconds = question.timerSeconds && question.timerSeconds > 0 ? question.timerSeconds : (this.quiz.defaultTimer || 5)
-    const limitMs = limitSeconds * 1000
-    const elapsedRaw = Math.max(0, now - this.phaseStartedAt)
-
-    // Grace period for network latency when validating a submission
-    if (elapsedRaw > limitMs + SUBMIT_GRACE_MS) return { ok: false, reason: 'EXPIRED' }
-
-    const elapsedMs = Math.min(Math.max(now - this.answersOpenAt, 0), limitMs)
-    const correct = choice === question.correctIndex
+    const correct = Number(choice) === Number(question.correctIndex)
     const points = scoreAnswer({
       correct,
-      elapsedMs,
+      elapsedMs: Math.min(elapsedMs, limitSeconds * 1000),
       limitSeconds,
     })
 
     const answer: StoredAnswer = {
       questionId: question.id,
-      roundIndex: this.roundIndex,
+      roundIndex,
       choice,
       elapsedMs,
       correct,
       points,
     }
+
     p.answers.set(question.id, answer)
     p.answered += 1
     p.score += points
@@ -738,16 +762,7 @@ class QuizEngine {
     if (correct) p.correct += 1
 
     this.bumpDistribution(question.id, choice)
-    this.roundAnswered += 1
-    if (choice < this.roundSpread.length) this.roundSpread[choice] += 1
-    this.roundPerQuestion.set(
-      question.id,
-      (this.roundPerQuestion.get(question.id) ?? 0) + 1,
-    )
-
     this.queueWrite(participantId, answer)
-    // Deliberately does not tell the client whether they were right -- that is
-    // revealed to everyone at once when the timer ends.
     return { ok: true }
   }
 
@@ -840,6 +855,8 @@ class QuizEngine {
       delta: before === undefined ? null : before - rank,
       correct: p.correct,
       answered: p.answered,
+      phone: p.phone,
+      college: p.college,
     }
   }
 
@@ -857,6 +874,8 @@ class QuizEngine {
       rank: this.rankMap.get(p.id) ?? this.participants.size,
       correct: p.correct,
       answered: p.answered,
+      phone: p.phone,
+      college: p.college,
     }
   }
 
@@ -910,6 +929,29 @@ class QuizEngine {
 
     const state = this.baseState()
     state.you = this.selfState(p)
+
+    if (this.phase === 'EXAM_LIVE') {
+      const publicQuestions: PublicQuestion[] = []
+      const userChoices: Record<number, number> = {}
+
+      for (let r = 0; r < p.order.length; r++) {
+        const q = this.questionForRound(p, r)
+        if (q) {
+          publicQuestions.push(this.publicQuestion(q))
+          const existing = p.answers.get(q.id)
+          if (existing !== undefined) {
+            userChoices[r] = existing.choice
+          }
+        }
+      }
+
+      state.exam = {
+        questions: publicQuestions,
+        answersOpenAt: this.answersOpenAt,
+        examEndsAt: this.phaseEndsAt,
+        userChoices,
+      }
+    }
 
     if (this.phase === 'QUESTION' || this.phase === 'PAUSED') {
       const q = this.questionForRound(p, this.roundIndex)
@@ -1040,6 +1082,8 @@ class QuizEngine {
         rank: i + 1,
         correct: p.correct,
         answered: p.answered,
+        phone: p.phone,
+        college: p.college,
       })),
       averageScore: Math.round(scoreTotal / n),
       averageAccuracy: Math.round((accuracyTotal / n) * 100),
@@ -1063,6 +1107,8 @@ class QuizEngine {
       accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
       averageResponseSeconds: p.answered > 0 ? p.totalElapsedMs / p.answered / 1000 : 0,
       rank: i + 1,
+      phone: p.phone,
+      college: p.college,
     }))
 
     const participants = rows.length

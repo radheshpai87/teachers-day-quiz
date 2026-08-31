@@ -9,12 +9,13 @@ import { WaitingRoom } from '@/components/waiting-room'
 import { QuestionCard } from '@/components/question-card'
 import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
+import { ExamCard } from '@/components/exam-card'
 import Image from 'next/image'
 import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { sound } from '@/lib/client/sound'
-import { Volume2, VolumeX } from 'lucide-react'
+import { Volume2, VolumeX, Pause } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function PlayPage() {
@@ -81,6 +82,26 @@ export default function PlayPage() {
     } catch {
       /* answer handling is server-authoritative */
     }
+  }
+
+  const handleSelectExamAnswer = async (roundIndex: number, choiceIndex: number) => {
+    if (!session?.participantId || !state?.exam) return
+    const q = state.exam.questions[roundIndex]
+    if (!q) return
+    try {
+      await apiPost<{ accepted: boolean; reason?: string }>('/api/answer', {
+        participantId: session.participantId,
+        questionId: q.id,
+        roundIndex,
+        choice: choiceIndex,
+      })
+    } catch {
+      /* answer handling is server-authoritative */
+    }
+  }
+
+  const handleFinishExam = () => {
+    router.push('/results')
   }
 
   if (loadingSession || !session) {
@@ -151,6 +172,45 @@ export default function PlayPage() {
                 playersCount={players}
                 quizName={state?.quizName || session.quizName}
               />
+            </motion.div>
+          )}
+
+          {phase === 'EXAM_LIVE' && state?.exam && (
+            <motion.div
+              key="exam-live"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="w-full"
+            >
+              <ExamCard
+                questions={state.exam.questions}
+                answersOpenAt={state.exam.answersOpenAt}
+                examEndsAt={state.exam.examEndsAt}
+                clockOffsetMs={clockOffset.current}
+                userChoices={state.exam.userChoices}
+                self={state.you}
+                onSelectAnswer={handleSelectExamAnswer}
+                onFinishExam={handleFinishExam}
+              />
+            </motion.div>
+          )}
+
+          {phase === 'PAUSED' && (
+            <motion.div
+              key="paused"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full sticky-note-yellow p-8 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#2a2440] flex flex-col items-center justify-center gap-4 text-center"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-ink flex items-center justify-center shadow-[3px_3px_0px_#2a2440]">
+                <Pause className="w-8 h-8 text-ink fill-current animate-pulse" />
+              </div>
+              <h2 className="text-2xl font-black text-ink">Quiz Paused by Host ⏸️</h2>
+              <p className="text-sm font-bold text-ink-soft max-w-md">
+                The event host has temporarily paused the quiz session. Take a quick breather — your progress is saved and answering will resume shortly!
+              </p>
             </motion.div>
           )}
 

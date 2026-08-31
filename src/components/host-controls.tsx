@@ -353,17 +353,22 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
                     {/* Avatar */}
                     <ParticipantAvatar seed={member.avatarSeed} size="sm" className="shrink-0 border border-ink shadow-xs" />
 
-                    {/* Member Name */}
-                    <div className="min-w-0">
-                      <div className="font-extrabold text-ink text-sm truncate flex items-center gap-1.5">
+                    {/* Member Name, Phone & College */}
+                    <div className="min-w-0 flex-1">
+                      <div className="font-extrabold text-ink text-sm truncate flex items-center gap-1.5 flex-wrap">
                         <span>{member.name}</span>
-                        {isTop3 && (
-                          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded-full sticky-note-yellow border border-ink">
-                            Top {member.rank}
+                        {member.college && (
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md sticky-note-mint border border-ink shadow-[1px_1px_0px_#231f20]">
+                            {member.college}
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] font-bold text-ink-soft flex items-center gap-2">
+                      <div className="text-[11px] font-bold text-ink-soft flex items-center gap-3 flex-wrap mt-0.5">
+                        {member.phone && (
+                          <span className="text-ink-soft">
+                            📞 {member.phone}
+                          </span>
+                        )}
                         {typeof member.correct === 'number' && (
                           <span className="flex items-center gap-0.5 text-[#388e3c]">
                             <Check className="w-3 h-3 stroke-[3]" />

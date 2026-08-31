@@ -68,6 +68,7 @@ export type Phase =
   | 'LEADERBOARD'
   | 'PAUSED'
   | 'COMPLETED'
+  | 'EXAM_LIVE'
 
 /** Coarse status, matching the vocabulary used on the host dashboard. */
 export type RunStatus = 'WAITING' | 'LIVE' | 'PAUSED' | 'COMPLETED'
@@ -82,6 +83,8 @@ export interface LeaderboardEntry {
   delta: number | null
   correct?: number
   answered?: number
+  phone?: string
+  college?: string
 }
 
 export interface SelfState {
@@ -94,6 +97,8 @@ export interface SelfState {
   correct: number
   /** Number of questions answered at all (correct or not). */
   answered: number
+  phone?: string
+  college?: string
 }
 
 export interface QuestionPhasePayload {
@@ -136,6 +141,14 @@ export interface FinalSummary {
   averageResponseSeconds: number
 }
 
+export interface ExamPayload {
+  questions: PublicQuestion[]
+  answersOpenAt: number
+  examEndsAt: number
+  /** Map of roundIndex -> choice submitted by participant */
+  userChoices: Record<number, number>
+}
+
 /**
  * The single message shape pushed over SSE to participants and display
  * screens. Only the fields relevant to the current phase are populated, which
@@ -164,6 +177,7 @@ export interface ClientState {
   leaderboard?: LeaderboardPhasePayload
   you?: SelfState
   final?: FinalSummary
+  exam?: ExamPayload
 }
 
 /** Lightweight frame used for live participant-count updates in the lobby. */
@@ -208,6 +222,8 @@ export interface ResultRow {
   accuracy: number
   averageResponseSeconds: number
   rank: number
+  phone?: string
+  college?: string
 }
 
 export interface ResultsSummary {
@@ -235,6 +251,8 @@ export interface HostParticipantEntry {
   rank: number
   correct: number
   answered: number
+  phone?: string
+  college?: string
 }
 
 export interface HostSnapshot {

@@ -21,6 +21,8 @@ export async function GET() {
   const header = [
     'Rank',
     'Name',
+    'Phone Number',
+    'College / Institution',
     'Score',
     'Correct',
     'Answered',
@@ -35,6 +37,8 @@ export async function GET() {
       [
         row.rank,
         row.name,
+        row.phone || '',
+        row.college || '',
         row.score,
         row.correct,
         row.answered,

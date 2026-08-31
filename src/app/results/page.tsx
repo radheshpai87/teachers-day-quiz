@@ -112,14 +112,7 @@ export default function ResultsPage() {
         {/* Profile & Main Stats Card */}
         <div className="w-full notebook-card p-6 sm:p-8 space-y-6">
           <div className="flex flex-col items-center">
-            <div className="relative">
-              <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-ink shadow-[4px_4px_0px_#231f20]" />
-              {results && results.rank <= 3 && (
-                <div className="absolute -bottom-2 -right-1 bg-[#93d500] border-2 border-ink text-[#231f20] font-black text-xs px-2.5 py-0.5 rounded-full shadow-xs">
-                  Top 3 🏆
-                </div>
-              )}
-            </div>
+            <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-ink shadow-[4px_4px_0px_#231f20]" />
             <h2 className="text-xl font-black text-ink mt-3">{session.name}</h2>
           </div>
 

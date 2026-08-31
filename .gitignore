@@ -14,6 +14,9 @@ next-env.d.ts
 
 # runtime data (the SQLite database lives here)
 /data
+*.db
+*.db-wal
+*.db-shm
 
 # misc
 .DS_Store
@@ -34,3 +37,4 @@ yarn-error.log*
 
 # vercel
 .vercel
+
