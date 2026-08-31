@@ -15,7 +15,7 @@ import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { sound } from '@/lib/client/sound'
-import { Volume2, VolumeX } from 'lucide-react'
+import { Volume2, VolumeX, Pause } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function PlayPage() {
@@ -193,6 +193,24 @@ export default function PlayPage() {
                 onSelectAnswer={handleSelectExamAnswer}
                 onFinishExam={handleFinishExam}
               />
+            </motion.div>
+          )}
+
+          {phase === 'PAUSED' && (
+            <motion.div
+              key="paused"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full sticky-note-yellow p-8 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#2a2440] flex flex-col items-center justify-center gap-4 text-center"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-ink flex items-center justify-center shadow-[3px_3px_0px_#2a2440]">
+                <Pause className="w-8 h-8 text-ink fill-current animate-pulse" />
+              </div>
+              <h2 className="text-2xl font-black text-ink">Quiz Paused by Host ⏸️</h2>
+              <p className="text-sm font-bold text-ink-soft max-w-md">
+                The event host has temporarily paused the quiz session. Take a quick breather — your progress is saved and answering will resume shortly!
+              </p>
             </motion.div>
           )}
 
