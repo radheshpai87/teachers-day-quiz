@@ -12,26 +12,34 @@
   --color-paper-warm: #fffdf8;
   --color-paper-cream: #faf7f0;
 
-  --color-ink: #2a2440;
-  --color-ink-soft: #544d69;
-  --color-ink-faint: #8e87a3;
+  --color-ink: #231f20;
+  --color-ink-soft: #4a4849;
+  --color-ink-faint: #787677;
 
   --color-notebook-rule: #a4c2f4;
   --color-notebook-margin: #e53935;
 
-  /* Solid Pen & Chalk Accent Colors */
-  --color-pen-red: #d32f2f;
-  --color-pen-blue: #1976d2;
-  --color-pen-yellow: #fbc02d;
-  --color-pen-green: #388e3c;
-  --color-pen-purple: #7b1fa2;
+  /* Yenepoya Emblem Accent Colors */
+  --color-yenepoya-cyan: #6bc4e8;
+  --color-yenepoya-blue: #0284c7;
+  --color-yenepoya-lime: #93d500;
+  --color-yenepoya-green: #7ea900;
+  --color-yenepoya-ink: #231f20;
 
-  /* Solid Sticky Note Family */
-  --color-note-yellow: #fff59d;
-  --color-note-mint: #c8e6c9;
-  --color-note-lavender: #d1c4e9;
-  --color-note-peach: #ffe0b2;
-  --color-note-rose: #f8bbd0;
+  /* Solid Pen & Chalk Accent Colors aligned with Yenepoya Emblem */
+  --color-pen-red: #e53935;
+  --color-pen-blue: #0284c7;
+  --color-pen-cyan: #6bc4e8;
+  --color-pen-yellow: #93d500;
+  --color-pen-green: #93d500;
+  --color-pen-purple: #0284c7;
+
+  /* Solid Sticky Note Family aligned with Yenepoya Emblem */
+  --color-note-yellow: #f4fce3;    /* Light Emblem Lime Note */
+  --color-note-mint: #d9f99d;      /* Emblem Lime Tint */
+  --color-note-lavender: #e0f7fe;  /* Light Emblem Cyan Note */
+  --color-note-peach: #bae6fd;     /* Sky Cyan Tint */
+  --color-note-rose: #fed7aa;      /* Warm Accent Note */
 
   --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -39,9 +47,9 @@
   --radius-card: 1.25rem;
   --radius-pill: 999px;
 
-  --shadow-paper: 4px 4px 0px #2a2440;
-  --shadow-paper-lg: 6px 6px 0px #2a2440;
-  --shadow-paper-sm: 2px 2px 0px #2a2440;
+  --shadow-paper: 4px 4px 0px #231f20;
+  --shadow-paper-lg: 6px 6px 0px #231f20;
+  --shadow-paper-sm: 2px 2px 0px #231f20;
 
   --animate-float-slow: float-slow 10s ease-in-out infinite;
   --animate-float-mid: float-mid 7s ease-in-out infinite;
@@ -72,7 +80,7 @@
 
 @layer base {
   * {
-    border-color: #2a2440;
+    border-color: #231f20;
   }
 
   html {
@@ -110,15 +118,13 @@
 }
 
 @layer utilities {
-  /* Lined Notebook Paper Background with Left Red Margin and Mobile Safe Area Support */
+  /* Lined Notebook Paper Background with Left Red Margin */
   .notebook-paper {
     background-color: var(--color-paper-cream);
     background-image: 
       linear-gradient(90deg, transparent 22px, rgba(229, 57, 53, 0.35) 22px, rgba(229, 57, 53, 0.35) 24px, transparent 24px),
       linear-gradient(to bottom, transparent 31px, rgba(63, 116, 192, 0.15) 31px, rgba(63, 116, 192, 0.15) 32px);
     background-size: 100% 100%, 100% 32px;
-    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
-    padding-top: max(1rem, env(safe-area-inset-top));
   }
 
   @media (min-width: 640px) {
@@ -168,27 +174,38 @@
     box-shadow: var(--shadow-paper-sm);
   }
 
-  /* Sticky Note Styling */
+  /* Sticky Note Styling - Rich Yenepoya Emblem Cyan Blue & Lime Green */
   .sticky-note-yellow {
-    background-color: var(--color-note-yellow);
+    background-color: #93d500;
+    color: #231f20;
     border: 2px solid var(--color-ink);
     box-shadow: var(--shadow-paper);
   }
 
   .sticky-note-mint {
-    background-color: var(--color-note-mint);
+    background-color: #d9f99d;
+    color: #231f20;
     border: 2px solid var(--color-ink);
     box-shadow: var(--shadow-paper);
   }
 
   .sticky-note-lavender {
-    background-color: var(--color-note-lavender);
+    background-color: #6bc4e8;
+    color: #231f20;
+    border: 2px solid var(--color-ink);
+    box-shadow: var(--shadow-paper);
+  }
+
+  .sticky-note-peach {
+    background-color: #e0f7fe;
+    color: #231f20;
     border: 2px solid var(--color-ink);
     box-shadow: var(--shadow-paper);
   }
 
   .sticky-note-rose {
-    background-color: var(--color-note-rose);
+    background-color: #bae6fd;
+    color: #231f20;
     border: 2px solid var(--color-ink);
     box-shadow: var(--shadow-paper);
   }
