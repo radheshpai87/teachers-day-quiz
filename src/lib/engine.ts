@@ -64,6 +64,7 @@ interface EngineParticipant {
   correct: number
   answered: number
   totalElapsedMs: number
+  lastAnsweredAt?: number
   answers: Map<string, StoredAnswer>
   /** Derived question order for this participant; cached on first use. */
   order: string[]
@@ -623,6 +624,10 @@ class QuizEngine {
     this.phaseEndsAt = now + durationMs
     this.roundIndex = 0
 
+    for (const p of this.participants.values()) {
+      p.lastAnsweredAt = now
+    }
+
     this.persistRun('LIVE')
     this.broadcastState()
     this.scheduleAdvance(durationMs)
@@ -731,7 +736,15 @@ class QuizEngine {
     }
 
     const now = Date.now()
-    const elapsedMs = Math.max(0, now - this.phaseStartedAt)
+    let elapsedMs = 0
+    if (this.phase === 'EXAM_LIVE') {
+      const startTime = p.lastAnsweredAt || this.phaseStartedAt || now
+      elapsedMs = Math.max(0, now - startTime)
+      p.lastAnsweredAt = now
+    } else {
+      const startTime = this.answersOpenAt || this.phaseStartedAt || now
+      elapsedMs = Math.max(0, now - startTime)
+    }
 
     // Check overall 10-minute exam window
     if (this.phase === 'EXAM_LIVE' && now > this.phaseEndsAt) {
@@ -739,10 +752,12 @@ class QuizEngine {
     }
 
     const limitSeconds = question.timerSeconds && question.timerSeconds > 0 ? question.timerSeconds : (this.quiz.defaultTimer || 5)
+    elapsedMs = Math.min(elapsedMs, limitSeconds * 1000)
+
     const correct = Number(choice) === Number(question.correctIndex)
     const points = scoreAnswer({
       correct,
-      elapsedMs: Math.min(elapsedMs, limitSeconds * 1000),
+      elapsedMs,
       limitSeconds,
     })
 
@@ -1031,8 +1046,8 @@ class QuizEngine {
       score: p.score,
       correct: p.correct,
       totalQuestions: total,
-      accuracy: total > 0 ? p.correct / total : 0,
-      averageResponseSeconds: p.answered > 0 ? p.totalElapsedMs / p.answered / 1000 : 0,
+      accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
+      averageResponseSeconds: p.answered > 0 ? Number((p.totalElapsedMs / p.answered / 1000).toFixed(1)) : 0,
     }
   }
 
@@ -1047,7 +1062,7 @@ class QuizEngine {
     let accuracyTotal = 0
     for (const p of this.participants.values()) {
       scoreTotal += p.score
-      accuracyTotal += this.totalRounds > 0 ? p.correct / this.totalRounds : 0
+      accuracyTotal += this.totalRounds > 0 ? Math.round((p.correct / this.totalRounds) * 100) : 0
     }
     const n = this.participants.size || 1
 
@@ -1086,7 +1101,7 @@ class QuizEngine {
         college: p.college,
       })),
       averageScore: Math.round(scoreTotal / n),
-      averageAccuracy: Math.round((accuracyTotal / n) * 100),
+      averageAccuracy: Math.round(accuracyTotal / n),
     }
   }
 
@@ -1105,7 +1120,7 @@ class QuizEngine {
       correct: p.correct,
       answered: p.answered,
       accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
-      averageResponseSeconds: p.answered > 0 ? p.totalElapsedMs / p.answered / 1000 : 0,
+      averageResponseSeconds: p.answered > 0 ? Number((p.totalElapsedMs / p.answered / 1000).toFixed(1)) : 0,
       rank: i + 1,
       phone: p.phone,
       college: p.college,

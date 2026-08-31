@@ -96,7 +96,7 @@ export function AdminResultsClient() {
             <span>Avg. Accuracy</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
-            {Math.round(results.averageAccuracy <= 1 ? results.averageAccuracy * 100 : results.averageAccuracy)}%
+            {Math.round(results.averageAccuracy)}%
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ export function AdminResultsClient() {
                   {row.correct} / {results.totalQuestions}
                 </td>
                 <td className="py-3 px-3 text-right font-black tnum text-[#388e3c]">
-                  {Math.round(row.accuracy <= 1 ? row.accuracy * 100 : row.accuracy)}%
+                  {Math.round(row.accuracy)}%
                 </td>
                 <td className="py-3 px-3 text-right font-bold tnum text-ink-soft">
                   {row.averageResponseSeconds.toFixed(1)}s

@@ -43,7 +43,7 @@ export async function GET() {
         row.correct,
         row.answered,
         results.totalQuestions,
-        Math.round(row.accuracy * 100),
+        Math.round(row.accuracy),
         row.averageResponseSeconds.toFixed(1),
       ]
         .map(csvCell)
