@@ -5,7 +5,7 @@ import type { PublicQuestion, SelfState } from '@/lib/types'
 import { ANSWER_SHAPES } from '@/components/icons'
 import { sound } from '@/lib/client/sound'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, CheckCircle2, ArrowLeft, ArrowRight, Flag, Check } from 'lucide-react'
+import { Clock, CheckCircle2, Check, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 
 interface ExamCardProps {
@@ -23,25 +23,25 @@ const OPTION_THEMES = [
   {
     bg: 'bg-[#e53935] text-white hover:bg-[#d32f2f] active:bg-[#c62828]',
     border: 'border-[#b71c1c]',
-    selectedBg: 'bg-[#b71c1c] text-white ring-4 ring-white shadow-xl scale-[1.02]',
+    selectedBg: 'bg-[#b71c1c] text-white ring-4 ring-white shadow-2xl scale-[1.03]',
     label: 'A',
   },
   {
     bg: 'bg-[#1e88e5] text-white hover:bg-[#1976d2] active:bg-[#1565c0]',
     border: 'border-[#0d47a1]',
-    selectedBg: 'bg-[#0d47a1] text-white ring-4 ring-white shadow-xl scale-[1.02]',
+    selectedBg: 'bg-[#0d47a1] text-white ring-4 ring-white shadow-2xl scale-[1.03]',
     label: 'B',
   },
   {
     bg: 'bg-[#fb8c00] text-white hover:bg-[#f57c00] active:bg-[#ef6c00]',
     border: 'border-[#e65100]',
-    selectedBg: 'bg-[#e65100] text-white ring-4 ring-white shadow-xl scale-[1.02]',
+    selectedBg: 'bg-[#e65100] text-white ring-4 ring-white shadow-2xl scale-[1.03]',
     label: 'C',
   },
   {
     bg: 'bg-[#43a047] text-white hover:bg-[#388e3c] active:bg-[#2e7d32]',
     border: 'border-[#1b5e20]',
-    selectedBg: 'bg-[#1b5e20] text-white ring-4 ring-white shadow-xl scale-[1.02]',
+    selectedBg: 'bg-[#1b5e20] text-white ring-4 ring-white shadow-2xl scale-[1.03]',
     label: 'D',
   },
 ]
@@ -57,6 +57,7 @@ export function ExamCard({
 }: ExamCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [timeLeftMs, setTimeLeftMs] = useState(0)
+  const [justSelectedOpt, setJustSelectedOpt] = useState<number | null>(null)
 
   // Live 10-minute countdown timer calculation
   useEffect(() => {
@@ -84,7 +85,19 @@ export function ExamCard({
 
   const handleSelectChoice = (optIdx: number) => {
     sound.tap()
+    setJustSelectedOpt(optIdx)
     onSelectAnswer(currentIndex, optIdx)
+
+    // Smooth confirmation animation delay (350ms) then auto-advance
+    setTimeout(() => {
+      setJustSelectedOpt(null)
+      if (currentIndex < totalQ - 1) {
+        setCurrentIndex((prev) => prev + 1)
+      } else {
+        // Last question answered -> Finish exam
+        onFinishExam()
+      }
+    }, 350)
   }
 
   return (
@@ -138,10 +151,10 @@ export function ExamCard({
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 25 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.15 }}
+          exit={{ opacity: 0, x: -25 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
           className="w-full sticky-note-blue p-5 sm:p-6 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#2a2440] flex flex-col gap-5"
         >
           {/* Question Counter Header */}
@@ -173,85 +186,55 @@ export function ExamCard({
             </div>
           )}
 
-          {/* Vibrant Kahoot Option Color Grid */}
-          <div className="grid grid-cols-1 gap-3 mt-1">
+          {/* Vibrant Kahoot Option Color Grid with Tactile Selection Feedback */}
+          <div className="grid grid-cols-1 gap-3.5 mt-1">
             {currentQ.options.map((opt, optIdx) => {
-              const isSelected = selectedChoice === optIdx
+              const isSelected = selectedChoice === optIdx || justSelectedOpt === optIdx
               const theme = OPTION_THEMES[optIdx % OPTION_THEMES.length]
               const Shape = ANSWER_SHAPES[optIdx % ANSWER_SHAPES.length]
 
               return (
-                <button
+                <motion.button
                   key={optIdx}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.95 }}
+                  animate={isSelected ? { scale: [1, 1.04, 1.02] } : { scale: 1 }}
+                  transition={{ duration: 0.15 }}
                   type="button"
                   onClick={() => handleSelectChoice(optIdx)}
-                  className={`w-full min-h-[4.25rem] p-4 rounded-2xl border-b-4 ${theme.border} font-bold text-base sm:text-lg text-left transition-all duration-150 flex items-center justify-between cursor-pointer ${
+                  className={`w-full min-h-[4.5rem] p-4 rounded-2xl border-b-4 ${theme.border} font-bold text-base sm:text-lg text-left transition-all duration-150 flex items-center justify-between cursor-pointer select-none ${
                     isSelected ? theme.selectedBg : `${theme.bg} shadow-md`
                   }`}
                 >
                   <div className="flex items-center gap-3.5 pr-2 min-w-0">
-                    <div className="shrink-0 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
-                      <Shape className="w-5 h-5 fill-current" />
+                    <div className="shrink-0 w-9.5 h-9.5 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
+                      <Shape className="w-5.5 h-5.5 fill-current" />
                     </div>
                     <span className="leading-snug">{opt}</span>
                   </div>
 
                   <div className="shrink-0 ml-2">
-                    {isSelected && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-ink font-black text-xs shadow-md animate-pulse">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                        Selected
+                    {isSelected ? (
+                      <motion.span
+                        initial={{ scale: 0, rotate: -15 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-ink font-black text-xs shadow-lg"
+                      >
+                        <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
+                        Locked In!
+                      </motion.span>
+                    ) : (
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Sparkles className="w-4 h-4 text-white/60" />
                       </span>
                     )}
                   </div>
-                </button>
+                </motion.button>
               )
             })}
           </div>
         </motion.div>
       </AnimatePresence>
-
-      {/* Bottom Action Controls */}
-      <div className="w-full flex items-center justify-between pt-2">
-        <button
-          type="button"
-          disabled={currentIndex === 0}
-          onClick={() => {
-            sound.tap()
-            setCurrentIndex((prev) => Math.max(0, prev - 1))
-          }}
-          className="px-4 py-2.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black text-sm shadow-[2px_2px_0px_#2a2440] disabled:opacity-40 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </button>
-
-        {currentIndex < totalQ - 1 ? (
-          <button
-            type="button"
-            onClick={() => {
-              sound.tap()
-              setCurrentIndex((prev) => Math.min(totalQ - 1, prev + 1))
-            }}
-            className="px-5 py-2.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black text-sm shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            Next
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              sound.tap()
-              onFinishExam()
-            }}
-            className="px-6 py-2.5 rounded-xl sticky-note-rose border-3 border-ink text-ink font-black text-sm shadow-[3px_3px_0px_#2a2440] hover:scale-105 transition-all flex items-center gap-2 cursor-pointer animate-bounce"
-          >
-            <Flag className="w-4 h-4" />
-            Submit Quiz 🏁
-          </button>
-        )}
-      </div>
     </div>
   )
 }
