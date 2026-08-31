@@ -14,14 +14,17 @@ export async function POST(req: NextRequest) {
     return fail('Too many attempts. Please wait a moment and try again.', 429)
   }
 
-  const body = await readJson<{ name?: unknown }>(req)
+  const body = await readJson<{ name?: unknown; phone?: unknown; college?: unknown }>(req)
   const name = sanitizeName(body?.name)
   if (name.length < 2) {
     return fail('Please enter a name with at least 2 characters.')
   }
 
+  const phone = typeof body?.phone === 'string' ? body.phone.trim() : ''
+  const college = typeof body?.college === 'string' ? body.college.trim() : ''
+
   const engine = getEngine()
-  const result = engine.join(name)
+  const result = engine.join(name, phone, college)
   if ('error' in result) return fail(result.error, 409)
 
   return ok({

@@ -428,7 +428,7 @@ class QuizEngine {
   // Joining
   // -------------------------------------------------------------------------
 
-  join(name: string): { id: string; avatarSeed: string } | { error: string } {
+  join(name: string, phone?: string, college?: string): { id: string; avatarSeed: string } | { error: string } {
     if (this.phase === 'COMPLETED') {
       return { error: 'This quiz has already finished.' }
     }
@@ -735,7 +735,7 @@ class QuizEngine {
     }
 
     const limitSeconds = question.timerSeconds && question.timerSeconds > 0 ? question.timerSeconds : (this.quiz.defaultTimer || 5)
-    const correct = choice === question.correctIndex
+    const correct = Number(choice) === Number(question.correctIndex)
     const points = scoreAnswer({
       correct,
       elapsedMs: Math.min(elapsedMs, limitSeconds * 1000),
