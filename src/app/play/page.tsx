@@ -11,12 +11,16 @@ import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
 import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
+import { ReactionOverlayAndBar } from '@/components/reaction-bar'
+import { sound } from '@/lib/client/sound'
+import { Volume2, VolumeX } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function PlayPage() {
   const router = useRouter()
   const [session, setSession] = useState<StoredSession | null>(null)
   const [loadingSession, setLoadingSession] = useState(true)
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   useEffect(() => {
     let active = true
@@ -45,7 +49,7 @@ export default function PlayPage() {
     }
   }, [router])
 
-  const { state, status, showReconnecting, players, clockOffset } = useQuizStream({
+  const { state, status, showReconnecting, players, clockOffset, lastReaction } = useQuizStream({
     participantId: session?.participantId,
   })
 
@@ -109,13 +113,22 @@ export default function PlayPage() {
           </div>
         </div>
 
-        {/* Status Indicator */}
+        {/* Status Indicator & Sound Toggle */}
         <div className="flex items-center gap-2">
           {showReconnecting && status === 'reconnecting' && (
             <span className="px-3 py-1 rounded-full sticky-note-rose text-ink font-black text-xs border border-ink shadow-[2px_2px_0px_#2a2440] animate-pulse">
               Reconnecting...
             </span>
           )}
+
+          <button
+            type="button"
+            title={soundEnabled ? 'Mute sound effects' : 'Unmute sound effects'}
+            onClick={() => setSoundEnabled(sound.toggle())}
+            className="p-2 rounded-xl sticky-note-lavender border-2 border-ink text-ink shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer"
+          >
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-ink-soft" />}
+          </button>
         </div>
       </header>
 
@@ -190,6 +203,12 @@ export default function PlayPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Live Celebratory Reactions Overlay & Interactive Bar */}
+      <ReactionOverlayAndBar
+        participantId={session.participantId}
+        lastReaction={lastReaction}
+      />
     </main>
   )
 }

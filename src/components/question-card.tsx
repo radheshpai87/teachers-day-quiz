@@ -6,6 +6,7 @@ import { Timer } from '@/components/timer'
 import { AnswerButton } from '@/components/answer-button'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Trophy, Target, PaperClip } from '@/components/icons'
+import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 
 interface QuestionCardProps {
@@ -39,6 +40,7 @@ export function QuestionCard({
 
   const handleChoice = (index: number) => {
     if (isLocked) return
+    sound.tap()
     setSelectedChoice(index)
     onSelectAnswer(index)
   }

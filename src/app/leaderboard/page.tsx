@@ -4,11 +4,12 @@ import { useQuizStream } from '@/lib/client/use-stream'
 import { LeaderboardView } from '@/components/leaderboard-view'
 import { GraduationCap, QrFrame, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
+import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { useState } from 'react'
 import { QrModal } from '@/components/qr-modal'
 
 export default function LeaderboardPage() {
-  const { state, players } = useQuizStream({ display: true })
+  const { state, players, lastReaction } = useQuizStream({ display: true })
   const [showQr, setShowQr] = useState(false)
 
   const top = state?.leaderboard?.top || []
@@ -70,6 +71,9 @@ export default function LeaderboardPage() {
 
       {/* QR Modal */}
       <QrModal isOpen={showQr} onClose={() => setShowQr(false)} />
+
+      {/* Live Reactions on Projector Display */}
+      <ReactionOverlayAndBar lastReaction={lastReaction} />
     </main>
   )
 }

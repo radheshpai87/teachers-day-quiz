@@ -470,6 +470,25 @@ class QuizEngine {
       .run(Date.now(), participantId)
   }
 
+  kickParticipant(participantId: string): boolean {
+    if (!this.participants.has(participantId)) return false
+    this.participants.delete(participantId)
+    this.ranked = this.ranked.filter((p) => p.id !== participantId)
+    this.rankMap.delete(participantId)
+    this.previousRanks.delete(participantId)
+
+    getDb().prepare('DELETE FROM participants WHERE id = ?').run(participantId)
+    getDb().prepare('DELETE FROM answers WHERE participant_id = ?').run(participantId)
+
+    this.recomputeRanks()
+    this.recomputeRoundTallies()
+
+    const hub = getHub()
+    hub.sendTo(participantId, frame({ t: 'invalid', message: 'You have been removed from the session by the host.' }))
+    this.broadcastState()
+    return true
+  }
+
   // -------------------------------------------------------------------------
   // Host controls
   // -------------------------------------------------------------------------
@@ -588,8 +607,17 @@ class QuizEngine {
     }
   }
 
-  /** The global authored question timer for the quiz: the shared round window. */
-  private maxLimitMs() {
+  /** The global authored question timer for the quiz or the round question's specific timer. */
+  private maxLimitMs(round?: number) {
+    if (typeof round === 'number' && round >= 0) {
+      // Find the max timer across any question assigned in this round (or global default)
+      const timers: number[] = []
+      for (const p of this.participants.values()) {
+        const q = this.questionForRound(p, round)
+        if (q?.timerSeconds && q.timerSeconds > 0) timers.push(q.timerSeconds)
+      }
+      if (timers.length > 0) return Math.max(...timers) * 1000
+    }
     return (this.quiz.defaultTimer || 5) * 1000
   }
 
@@ -601,7 +629,7 @@ class QuizEngine {
     this.roundIndex = round
     this.phaseStartedAt = now
     this.answersOpenAt = now
-    this.phaseEndsAt = this.answersOpenAt + this.maxLimitMs()
+    this.phaseEndsAt = this.answersOpenAt + this.maxLimitMs(round)
 
     this.roundAnswered = 0
     this.roundSpread = [0, 0, 0, 0]
@@ -680,7 +708,8 @@ class QuizEngine {
     }
 
     const now = Date.now()
-    const limitMs = (this.quiz.defaultTimer || 5) * 1000
+    const limitSeconds = question.timerSeconds && question.timerSeconds > 0 ? question.timerSeconds : (this.quiz.defaultTimer || 5)
+    const limitMs = limitSeconds * 1000
     const elapsedRaw = Math.max(0, now - this.phaseStartedAt)
 
     // Grace period for network latency when validating a submission
@@ -691,7 +720,7 @@ class QuizEngine {
     const points = scoreAnswer({
       correct,
       elapsedMs,
-      limitSeconds: this.quiz.defaultTimer || 5,
+      limitSeconds,
     })
 
     const answer: StoredAnswer = {
@@ -842,7 +871,7 @@ class QuizEngine {
       prompt: q.prompt,
       options: q.options,
       imageUrl: q.imageId ? `/api/image/${q.imageId}` : null,
-      timerSeconds: this.quiz.defaultTimer || 5,
+      timerSeconds: q.timerSeconds && q.timerSeconds > 0 ? q.timerSeconds : (this.quiz.defaultTimer || 5),
     }
   }
 
@@ -890,10 +919,11 @@ class QuizEngine {
           payload = this.publicQuestion(q)
           memo?.questions.set(q.id, payload)
         }
+        const limitSeconds = q.timerSeconds && q.timerSeconds > 0 ? q.timerSeconds : (this.quiz.defaultTimer || 5)
         state.question = {
           question: payload,
           answersOpenAt: this.answersOpenAt,
-          answersCloseAt: this.answersOpenAt + (this.quiz.defaultTimer || 5) * 1000,
+          answersCloseAt: this.answersOpenAt + limitSeconds * 1000,
           yourChoice: p.answers.get(q.id)?.choice ?? null,
         }
       }
@@ -1069,6 +1099,19 @@ class QuizEngine {
       status: this.status,
       ...this.summaryFor(p),
     }
+  }
+
+  sendReaction(participantId: string, emoji: import('./types').ReactionEmoji): boolean {
+    const p = this.participants.get(participantId)
+    if (!p) return false
+    const reactionFrame = frame({
+      t: 'reaction',
+      id: newId('react'),
+      emoji,
+      senderName: p.name,
+    })
+    getHub().broadcast(() => reactionFrame)
+    return true
   }
 
   // -------------------------------------------------------------------------

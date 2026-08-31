@@ -172,6 +172,15 @@ export interface PlayersFrame {
   players: number
 }
 
+export type ReactionEmoji = '❤️' | '👏' | '🔥' | '🎓' | '🌟'
+
+export interface ReactionFrame {
+  t: 'reaction'
+  id: string
+  emoji: ReactionEmoji
+  senderName?: string
+}
+
 /** Host-only live tallies, pushed roughly once a second while a question runs. */
 export interface TallyFrame {
   t: 'tally'
@@ -183,7 +192,7 @@ export interface TallyFrame {
   perQuestion: { questionId: string; answered: number }[]
 }
 
-export type ServerFrame = ClientState | PlayersFrame | TallyFrame | HostFrame
+export type ServerFrame = ClientState | PlayersFrame | ReactionFrame | TallyFrame | HostFrame
 
 // ---------------------------------------------------------------------------
 // Results

@@ -23,6 +23,10 @@ The Teachers' Day Live Quiz is a high-concurrency real-time event web applicatio
 > - **Zero-PIN Instant Join**: Participants scan the live QR code to open the join page directly without typing 6-digit game PINs.
 > - **Pen & Notebook Aesthetic**: Tactile off-white ruled paper design, dark ink borders, paper drop-shadows, and yellow/mint/lavender cards.
 > - **Automatic Game Engine**: Host starts the quiz once; questions, timers, reveals, fun facts, and leaderboards progress automatically.
+> - **Custom Question Timers**: Set individualized time limits per question (5s, 10s, 15s, 20s, 30s, etc.) with automatic scoring curve scaling.
+> - **Live Floating Reactions**: Real-time interactive emoji bursts (❤️, 👏, 🔥, 🎓, 🌟) broadcast across participant and projector displays.
+> - **Web Audio SFX Engine**: Zero-asset synthesizer providing instant tap feedback, countdown ticks, correct/wrong chimes, and results fanfare with volume toggle.
+> - **Host Console Hotkeys & Kick Moderation**: Keyboard shortcuts (<kbd>Space</kbd>, <kbd>S</kbd>, <kbd>Q</kbd>) for stage operators and instant one-click removal of disruptive participants.
 > - **Projector-Ready Leaderboard**: Real-time Top 10 rankings display with podium visualization and rank shift movement badges.
 
 ---

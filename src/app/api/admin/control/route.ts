@@ -6,7 +6,7 @@ import { getEngine } from '@/lib/engine'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-const ACTIONS = ['start', 'pause', 'resume', 'skip', 'end', 'reset'] as const
+const ACTIONS = ['start', 'pause', 'resume', 'skip', 'end', 'reset', 'kick'] as const
 type Action = (typeof ACTIONS)[number]
 
 /**
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const denied = await requireAdminApi()
   if (denied) return denied
 
-  const body = await readJson<{ action?: unknown }>(req)
+  const body = await readJson<{ action?: unknown; participantId?: unknown }>(req)
   const action = body?.action
   if (typeof action !== 'string' || !ACTIONS.includes(action as Action)) {
     return fail(`Unknown action. Expected one of ${ACTIONS.join(', ')}.`)
@@ -47,6 +47,12 @@ export async function POST(req: NextRequest) {
     case 'reset':
       engine.reset()
       break
+    case 'kick': {
+      const pid = typeof body?.participantId === 'string' ? body.participantId : ''
+      if (!pid) return fail('Participant id is required to kick.')
+      if (!engine.kickParticipant(pid)) return fail('Participant not found or already removed.', 404)
+      break
+    }
   }
 
   return ok({ snapshot: engine.hostSnapshot() })

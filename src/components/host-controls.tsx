@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { HostFrame } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
 import { ANSWER_SHAPES, Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
-import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw, Search, Trophy, Check } from 'lucide-react'
+import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw, Search, Trophy, Check, UserX, Keyboard } from 'lucide-react'
 import { QrModal } from '@/components/qr-modal'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 
@@ -28,6 +28,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
   const [showQr, setShowQr] = useState(false)
   const [loadingAction, setLoadingAction] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [kickingId, setKickingId] = useState<string | null>(null)
 
   const allMembers = useMemo(() => {
     return snapshot.allParticipants ?? snapshot.top ?? []
@@ -60,6 +61,41 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
     }
   }
 
+  const handleKickParticipant = async (participantId: string, participantName: string) => {
+    if (!confirm(`Are you sure you want to remove "${participantName}" from the quiz session?`)) return
+    try {
+      setKickingId(participantId)
+      await apiPost('/api/admin/control', { action: 'kick', participantId })
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Failed to kick participant')
+    } finally {
+      setKickingId(null)
+    }
+  }
+
+  // Keyboard Shortcuts (Space to Pause/Resume, S to Skip, Q for QR Code)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in search or input field
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+
+      if (e.code === 'Space') {
+        e.preventDefault()
+        if (isWaiting) handleAction('start')
+        else if (isLive) handleAction('pause')
+        else if (isPaused) handleAction('resume')
+      } else if (e.key === 's' || e.key === 'S') {
+        if (isLive || isPaused) handleAction('skip')
+      } else if (e.key === 'q' || e.key === 'Q') {
+        setShowQr((prev) => !prev)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isWaiting, isLive, isPaused])
+
   return (
     <div className="w-full space-y-6 select-none">
       {/* Top Banner: Quiz Name, Status, QR Button & Reset Button */}
@@ -74,6 +110,10 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
             <h1 className="text-2xl sm:text-3xl font-black text-ink">
               Host Console
             </h1>
+            <div className="flex items-center gap-2 text-[11px] font-extrabold text-ink-soft pt-0.5">
+              <Keyboard className="w-3.5 h-3.5 text-[#7b1fa2]" />
+              <span>Hotkeys: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Space</kbd> Start/Pause • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">S</kbd> Skip • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Q</kbd> QR Code</span>
+            </div>
           </div>
 
           {/* Action Trigger Buttons */}
@@ -334,14 +374,26 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
                     </div>
                   </div>
 
-                  {/* Member Score / Points */}
-                  <div className="shrink-0 text-right">
-                    <span className="tnum font-black text-base text-[#7b1fa2]">
-                      {member.score.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] font-extrabold uppercase text-ink-soft block">
-                      pts
-                    </span>
+                  {/* Member Score / Points & Kick Action */}
+                  <div className="shrink-0 flex items-center gap-3">
+                    <div className="text-right">
+                      <span className="tnum font-black text-base text-[#7b1fa2]">
+                        {member.score.toLocaleString()}
+                      </span>
+                      <span className="text-[10px] font-extrabold uppercase text-ink-soft block">
+                        pts
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      title="Remove participant"
+                      onClick={() => handleKickParticipant(member.id, member.name)}
+                      disabled={kickingId === member.id}
+                      className="p-1.5 rounded-lg border border-ink sticky-note-rose text-ink hover:bg-rose-tint cursor-pointer transition-all disabled:opacity-50"
+                    >
+                      <UserX className="w-4 h-4 text-[#d32f2f]" />
+                    </button>
                   </div>
                 </div>
               )
