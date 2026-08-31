@@ -9,6 +9,7 @@ import { WaitingRoom } from '@/components/waiting-room'
 import { QuestionCard } from '@/components/question-card'
 import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
+import Image from 'next/image'
 import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
@@ -87,7 +88,7 @@ export default function PlayPage() {
       <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
-          <GraduationCap className="w-10 h-10 text-[#7b1fa2] animate-bounce" />
+          <GraduationCap className="w-10 h-10 text-[#0284c7] animate-bounce" />
           <span className="text-sm font-black">Loading your session...</span>
         </div>
       </main>
@@ -103,14 +104,15 @@ export default function PlayPage() {
 
       {/* Top Navbar Header */}
       <header className="w-full max-w-2xl flex items-center justify-between py-2 px-3 mb-2 z-10">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl sticky-note-yellow flex items-center justify-center border-2 border-ink -rotate-3 shadow-[2px_2px_0px_#2a2440]">
-            <GraduationCap className="w-5 h-5 text-ink" />
-          </div>
-          <div className="flex items-center gap-1.5 font-black text-ink text-sm sm:text-base">
-            <PaperClip className="w-4 h-4" />
-            <span>{state?.quizName || session.quizName || "Teachers' Day Quiz"}</span>
-          </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Image
+            src="/yenepoya-university-logo.svg"
+            alt="Yenepoya University Logo"
+            width={220}
+            height={75}
+            priority
+            className="h-9 sm:h-14 max-w-[55vw] w-auto object-contain drop-shadow-sm"
+          />
         </div>
 
         {/* Status Indicator & Sound Toggle */}

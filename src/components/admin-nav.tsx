@@ -1,9 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { ADMIN_NAV, adminPath } from '@/lib/admin-route'
-import { GraduationCap, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { apiPost } from '@/lib/client/api'
 import { useState } from 'react'
 
@@ -24,15 +25,20 @@ export function AdminNav() {
   }
 
   return (
-    <header className="w-full bg-paper-warm border-b-3 border-ink sticky top-0 z-40 shadow-[0_4px_0px_#2a2440]">
+    <header className="w-full bg-paper-warm border-b-3 border-ink sticky top-0 z-40 shadow-[0_4px_0px_#231f20]">
       <div className="max-w-7xl 2xl:max-w-[95rem] mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <Link href={adminPath()} className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-9 h-9 rounded-xl bg-note-yellow text-ink flex items-center justify-center border-2 border-ink group-hover:-rotate-3 transition-transform">
-            <GraduationCap className="w-5 h-5" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-ink text-sm sm:text-base leading-none">
+          <Image
+            src="/yenepoya-university-logo.svg"
+            alt="Yenepoya University Logo"
+            width={200}
+            height={70}
+            priority
+            className="h-10 sm:h-12 w-auto object-contain drop-shadow-sm"
+          />
+          <div className="hidden sm:flex flex-col border-l-2 border-ink/20 pl-2.5">
+            <span className="font-extrabold text-ink text-xs sm:text-sm leading-none">
               Host Console
             </span>
             <span className="text-[10px] text-ink-soft uppercase font-black tracking-wider mt-0.5">
@@ -56,8 +62,8 @@ export function AdminNav() {
                 href={fullPath}
                 className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all shrink-0 border-2 border-ink ${
                   isActive
-                    ? 'bg-[#2a2440] text-white shadow-[2px_2px_0px_#2a2440]'
-                    : 'bg-paper-warm text-ink hover:bg-note-yellow'
+                    ? 'bg-[#6bc4e8] text-[#231f20] shadow-[2px_2px_0px_#231f20]'
+                    : 'bg-paper-warm text-ink hover:bg-[#93d500]'
                 }`}
               >
                 {tab.label}

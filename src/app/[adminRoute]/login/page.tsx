@@ -1,10 +1,11 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { apiPost } from '@/lib/client/api'
 import { adminPath } from '@/lib/admin-route'
-import { GraduationCap, Lock, User, ArrowRight } from 'lucide-react'
+import { Lock, User, ArrowRight } from 'lucide-react'
 import { PaperClip } from '@/components/icons'
 
 export default function AdminLoginPage() {
@@ -37,7 +38,15 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 select-none">
       <div className="w-full max-w-md notebook-card p-8 space-y-6">
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-3 flex flex-col items-center">
+          <Image
+            src="/yenepoya-university-logo.svg"
+            alt="Yenepoya University Logo"
+            width={320}
+            height={110}
+            priority
+            className="h-16 sm:h-20 w-auto object-contain drop-shadow-sm"
+          />
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full sticky-note-lavender text-ink font-black text-xs -rotate-1">
             <PaperClip className="w-4 h-4" />
             <span>Host Authentication</span>
@@ -63,7 +72,7 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#7b1fa2]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
               />
             </div>
           </div>
@@ -80,7 +89,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#7b1fa2]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
               />
             </div>
           </div>
@@ -95,7 +104,7 @@ export default function AdminLoginPage() {
             suppressHydrationWarning
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-[#7b1fa2] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 rounded-xl bg-[#0284c7] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Authenticating...' : 'Login to Console'}</span>
             {!loading && <ArrowRight className="w-4 h-4" />}
