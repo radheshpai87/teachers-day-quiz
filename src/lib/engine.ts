@@ -703,13 +703,15 @@ class QuizEngine {
   // -------------------------------------------------------------------------
 
   submitAnswer(participantId: string, roundIndex: number, choice: unknown): SubmitResult {
-    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL') return { ok: false, reason: 'CLOSED' }
+    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL' && this.phase !== 'EXAM_LIVE') {
+      return { ok: false, reason: 'CLOSED' }
+    }
     if (roundIndex < 0 || roundIndex >= this.totalRounds) return { ok: false, reason: 'STALE' }
 
     const p = this.participants.get(participantId)
     if (!p) return { ok: false, reason: 'UNKNOWN' }
 
-    const question = this.questionForRound(p, this.roundIndex)
+    const question = this.questionForRound(p, roundIndex)
     if (!question) return { ok: false, reason: 'CLOSED' }
 
     const existing = p.answers.get(question.id)
@@ -725,29 +727,30 @@ class QuizEngine {
     }
 
     const now = Date.now()
+    const elapsedMs = Math.max(0, now - this.phaseStartedAt)
+
+    // Check overall 10-minute exam window
+    if (this.phase === 'EXAM_LIVE' && now > this.phaseEndsAt) {
+      return { ok: false, reason: 'EXPIRED' }
+    }
+
     const limitSeconds = question.timerSeconds && question.timerSeconds > 0 ? question.timerSeconds : (this.quiz.defaultTimer || 5)
-    const limitMs = limitSeconds * 1000
-    const elapsedRaw = Math.max(0, now - this.phaseStartedAt)
-
-    // Grace period for network latency when validating a submission
-    if (elapsedRaw > limitMs + SUBMIT_GRACE_MS) return { ok: false, reason: 'EXPIRED' }
-
-    const elapsedMs = Math.min(Math.max(now - this.answersOpenAt, 0), limitMs)
     const correct = choice === question.correctIndex
     const points = scoreAnswer({
       correct,
-      elapsedMs,
+      elapsedMs: Math.min(elapsedMs, limitSeconds * 1000),
       limitSeconds,
     })
 
     const answer: StoredAnswer = {
       questionId: question.id,
-      roundIndex: this.roundIndex,
+      roundIndex,
       choice,
       elapsedMs,
       correct,
       points,
     }
+
     p.answers.set(question.id, answer)
     p.answered += 1
     p.score += points
@@ -755,16 +758,7 @@ class QuizEngine {
     if (correct) p.correct += 1
 
     this.bumpDistribution(question.id, choice)
-    this.roundAnswered += 1
-    if (choice < this.roundSpread.length) this.roundSpread[choice] += 1
-    this.roundPerQuestion.set(
-      question.id,
-      (this.roundPerQuestion.get(question.id) ?? 0) + 1,
-    )
-
     this.queueWrite(participantId, answer)
-    // Deliberately does not tell the client whether they were right -- that is
-    // revealed to everyone at once when the timer ends.
     return { ok: true }
   }
 
