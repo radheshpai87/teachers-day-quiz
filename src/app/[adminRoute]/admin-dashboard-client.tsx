@@ -47,7 +47,7 @@ export function AdminDashboardClient() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={adminPath('live')}
-              className="px-6 py-3 rounded-xl bg-[#7b1fa2] text-white font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-[#0284c7] text-white font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Open Live Control</span>
@@ -83,7 +83,7 @@ export function AdminDashboardClient() {
         {/* Participants */}
         <div className="sticky-note-lavender p-5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Users className="w-4 h-4 text-[#7b1fa2]" />
+            <Users className="w-4 h-4 text-[#0284c7]" />
             <span>Participants</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
@@ -131,7 +131,7 @@ export function AdminDashboardClient() {
           href={adminPath('live')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#7b1fa2] text-white flex items-center justify-center font-bold border-2 border-ink">
+          <div className="w-10 h-10 rounded-xl bg-[#0284c7] text-white flex items-center justify-center font-bold border-2 border-ink">
             <Play className="w-5 h-5 fill-current" />
           </div>
           <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ export function AdminDashboardClient() {
             <ArrowRight className="w-4 h-4 text-ink-soft group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-ink-soft font-medium">
-            Status: <span className="font-black text-[#7b1fa2] uppercase">{status}</span>. Single-click start & monitor.
+            Status: <span className="font-black text-[#0284c7] uppercase">{status}</span>. Single-click start & monitor.
           </p>
         </Link>
 

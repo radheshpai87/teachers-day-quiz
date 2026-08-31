@@ -58,7 +58,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teache
         {/* Live Players Pill */}
         <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black text-sm shadow-[2px_2px_0px_#2a2440]">
           <Users className="w-4 h-4 text-ink animate-bounce" />
-          <span className="tnum font-black text-[#7b1fa2]">{playersCount}</span>
+          <span className="tnum font-black text-[#0284c7]">{playersCount}</span>
           <span>{playersCount === 1 ? 'player joined' : 'players joined'}</span>
         </div>
       </motion.div>

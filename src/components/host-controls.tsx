@@ -111,7 +111,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
               Host Console
             </h1>
             <div className="flex items-center gap-2 text-[11px] font-extrabold text-ink-soft pt-0.5">
-              <Keyboard className="w-3.5 h-3.5 text-[#7b1fa2]" />
+              <Keyboard className="w-3.5 h-3.5 text-[#0284c7]" />
               <span>Hotkeys: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Space</kbd> Start/Pause • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">S</kbd> Skip • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Q</kbd> QR Code</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
               onClick={() => setShowQr(true)}
               className="px-5 py-3 rounded-2xl sticky-note-lavender border-2 border-ink text-ink font-black text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[3px_3px_0px_#2a2440] flex items-center gap-2"
             >
-              <QrFrame className="w-5 h-5 text-[#7b1fa2]" />
+              <QrFrame className="w-5 h-5 text-[#0284c7]" />
               <span>Display QR Code</span>
             </button>
 
@@ -162,7 +162,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
                     ? 'bg-amber-500'
                     : isCompleted
                     ? 'bg-gray-400'
-                    : 'bg-[#7b1fa2]'
+                    : 'bg-[#0284c7]'
                 }`}
               />
               <span className="text-ink font-black">{status}</span>
@@ -256,12 +256,12 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
         <div className="notebook-card p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BarChart2 className="w-5 h-5 text-[#7b1fa2]" />
+              <BarChart2 className="w-5 h-5 text-[#0284c7]" />
               <h2 className="font-black text-ink text-base">Live Question Tallies</h2>
             </div>
 
             <div className="text-xs font-black text-ink tnum">
-              Answered: <span className="text-[#7b1fa2] font-black">{currentAnswered}</span> / {players}
+              Answered: <span className="text-[#0284c7] font-black">{currentAnswered}</span> / {players}
             </div>
           </div>
 
@@ -294,7 +294,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
       <div className="notebook-card p-6 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#7b1fa2]" />
+            <Users className="w-5 h-5 text-[#0284c7]" />
             <h2 className="font-black text-ink text-base">
               Participating Members Roster
             </h2>
@@ -311,7 +311,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search member by name..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-[#7b1fa2]"
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
             />
           </div>
         </div>
@@ -377,7 +377,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
                   {/* Member Score / Points & Kick Action */}
                   <div className="shrink-0 flex items-center gap-3">
                     <div className="text-right">
-                      <span className="tnum font-black text-base text-[#7b1fa2]">
+                      <span className="tnum font-black text-base text-[#0284c7]">
                         {member.score.toLocaleString()}
                       </span>
                       <span className="text-[10px] font-extrabold uppercase text-ink-soft block">

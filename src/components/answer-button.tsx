@@ -63,7 +63,7 @@ export function AnswerButton({
       variantStyles = 'bg-gray-200 text-gray-400 opacity-40 border-gray-300'
     }
   } else if (selected) {
-    variantStyles = `${theme.bg} ring-4 ring-[#7b1fa2] scale-[1.02] shadow-xl`
+    variantStyles = `${theme.bg} ring-4 ring-[#0284c7] scale-[1.02] shadow-xl`
   }
 
   return (

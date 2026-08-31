@@ -88,7 +88,7 @@ export function RevealView({ reveal, self }: RevealViewProps) {
 
         {self && (
           <div className="text-xs font-black text-ink pt-1">
-            Total Score: <span className="tnum font-black text-[#7b1fa2]">{self.score.toLocaleString()}</span>
+            Total Score: <span className="tnum font-black text-[#0284c7]">{self.score.toLocaleString()}</span>
           </div>
         )}
       </motion.div>

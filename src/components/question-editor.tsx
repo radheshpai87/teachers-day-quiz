@@ -256,7 +256,7 @@ export function QuestionEditor({
         <button
           type="button"
           onClick={handleCreateNew}
-          className="px-4 py-2.5 rounded-2xl bg-[#7b1fa2] text-white font-black text-xs sm:text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
+          className="px-4 py-2.5 rounded-2xl bg-[#0284c7] text-white font-black text-xs sm:text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Question</span>
@@ -346,7 +346,7 @@ export function QuestionEditor({
                     setEditingQuestion((prev) => ({ ...prev, prompt: e.target.value }))
                   }
                   placeholder="Enter the question prompt..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#2a2440] focus:outline-hidden focus:ring-3 focus:ring-[#7b1fa2]"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#2a2440] focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
                 />
               </div>
 
@@ -398,7 +398,7 @@ export function QuestionEditor({
                       onClick={() => setEditingQuestion((prev) => ({ ...prev, timerSeconds: sec }))}
                       className={`py-1.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#2a2440] ${
                         (editingQuestion.timerSeconds || 5) === sec
-                          ? 'bg-[#7b1fa2] text-white'
+                          ? 'bg-[#0284c7] text-white'
                           : 'bg-paper-cream text-ink hover:bg-note-yellow/40'
                       }`}
                     >
@@ -496,7 +496,7 @@ export function QuestionEditor({
                 type="button"
                 onClick={handleSaveModal}
                 disabled={isSaving}
-                className="px-6 py-2.5 rounded-xl bg-[#7b1fa2] text-white text-xs font-black border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-[#0284c7] text-white text-xs font-black border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save Question'}
               </button>

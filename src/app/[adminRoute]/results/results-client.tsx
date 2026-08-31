@@ -51,7 +51,7 @@ export function AdminResultsClient() {
         <button
           type="button"
           onClick={handleExportCsv}
-          className="px-5 py-2.5 rounded-xl bg-[#7b1fa2] text-white font-black text-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 rounded-xl bg-[#0284c7] text-white font-black text-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
         >
           <Download className="w-4 h-4" />
           <span>Export CSV</span>
@@ -62,7 +62,7 @@ export function AdminResultsClient() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="sticky-note-lavender p-5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Users className="w-4 h-4 text-[#7b1fa2]" />
+            <Users className="w-4 h-4 text-[#0284c7]" />
             <span>Participants</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
@@ -128,7 +128,7 @@ export function AdminResultsClient() {
                     <span>{row.name}</span>
                   </div>
                 </td>
-                <td className="py-3 px-3 text-right font-black tnum text-[#7b1fa2]">
+                <td className="py-3 px-3 text-right font-black tnum text-[#0284c7]">
                   {row.score.toLocaleString()}
                 </td>
                 <td className="py-3 px-3 text-right font-bold tnum text-ink-soft">

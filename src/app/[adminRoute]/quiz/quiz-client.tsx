@@ -92,7 +92,7 @@ export function AdminQuizClient() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-2 focus:ring-[#7b1fa2]"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
           />
         </div>
 
@@ -122,7 +122,7 @@ export function AdminQuizClient() {
                 onClick={() => setDefaultTimer(sec)}
                 className={`px-4 py-2 rounded-xl border-2 border-ink text-xs font-extrabold transition-all cursor-pointer ${
                   defaultTimer === sec
-                    ? 'bg-[#7b1fa2] text-white shadow-[2px_2px_0px_#2a2440]'
+                    ? 'bg-[#0284c7] text-white shadow-[2px_2px_0px_#2a2440]'
                     : 'bg-paper-cream text-ink hover:bg-note-yellow'
                 }`}
               >
@@ -182,7 +182,7 @@ export function AdminQuizClient() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3.5 rounded-xl bg-[#7b1fa2] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl bg-[#0284c7] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           <span>{saving ? 'Saving Settings...' : 'Save Configuration'}</span>

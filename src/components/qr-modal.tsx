@@ -69,7 +69,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
             <img src={qrDataUrl} alt="Scan to Join Quiz" className="w-full h-full object-contain" />
           ) : (
             <div className="flex flex-col items-center gap-3 text-ink">
-              <QrFrame className="w-16 h-16 animate-bounce text-[#7b1fa2]" />
+              <QrFrame className="w-16 h-16 animate-bounce text-[#0284c7]" />
               <span className="text-sm font-black">Generating QR Code...</span>
             </div>
           )}

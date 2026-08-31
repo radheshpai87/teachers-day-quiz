@@ -69,17 +69,17 @@ export function LeaderboardView({
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex flex-col items-center text-center p-2.5 sm:p-4 rounded-2xl border-2 border-ink transition-all ${
                   isFirst
-                    ? 'sticky-note-yellow shadow-[4px_4px_0px_#2a2440] -translate-y-2'
+                    ? 'sticky-note-yellow shadow-[4px_4px_0px_#231f20] -translate-y-2'
                     : place === 2
-                    ? 'sticky-note-lavender shadow-[3px_3px_0px_#2a2440]'
-                    : 'sticky-note-rose shadow-[3px_3px_0px_#2a2440]'
-                } ${isSelf ? 'ring-4 ring-[#7b1fa2]' : ''}`}
+                    ? 'sticky-note-lavender shadow-[3px_3px_0px_#231f20]'
+                    : 'sticky-note-rose shadow-[3px_3px_0px_#231f20]'
+                } ${isSelf ? 'ring-4 ring-[#0284c7]' : ''}`}
               >
                 <div className="relative mb-1">
                   <ParticipantAvatar
                     seed={entry.avatarSeed}
                     size={displayMode ? (isFirst ? 'xl' : 'lg') : isFirst ? 'lg' : 'md'}
-                    className="border-2 border-ink shadow-[2px_2px_0px_#2a2440]"
+                    className="border-2 border-ink shadow-[2px_2px_0px_#231f20]"
                   />
                   <div className="absolute -bottom-2 -right-1">
                     <Medal place={place} className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-xs" />
@@ -90,7 +90,7 @@ export function LeaderboardView({
                   {entry.name}
                 </span>
 
-                <span className="tnum font-black text-[#7b1fa2] text-[11px] sm:text-sm">
+                <span className="tnum font-black text-[#0284c7] text-[11px] sm:text-sm">
                   {entry.score.toLocaleString()} pts
                 </span>
 
@@ -132,9 +132,9 @@ export function LeaderboardView({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className={`w-full p-3 rounded-xl border-2 border-ink flex items-center justify-between gap-3 overflow-hidden transition-all shadow-[2px_2px_0px_#2a2440] ${
+                  className={`w-full p-3 rounded-xl border-2 border-ink flex items-center justify-between gap-3 overflow-hidden transition-all shadow-[2px_2px_0px_#231f20] ${
                     isSelf
-                      ? 'sticky-note-yellow ring-2 ring-[#7b1fa2]'
+                      ? 'sticky-note-yellow ring-2 ring-[#0284c7]'
                       : 'bg-paper-light hover:bg-note-mint/30'
                   }`}
                 >
@@ -166,7 +166,7 @@ export function LeaderboardView({
                       </motion.span>
                     )}
 
-                    <span className="tnum font-black text-[#7b1fa2] text-xs sm:text-base">
+                    <span className="tnum font-black text-[#0284c7] text-xs sm:text-base">
                       {entry.score.toLocaleString()}
                     </span>
                   </div>
