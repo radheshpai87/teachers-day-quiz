@@ -658,7 +658,7 @@ class QuizEngine {
   // -------------------------------------------------------------------------
 
   submitAnswer(participantId: string, roundIndex: number, choice: unknown): SubmitResult {
-    if (this.phase !== 'QUESTION') return { ok: false, reason: 'CLOSED' }
+    if (this.phase !== 'QUESTION' && this.phase !== 'REVEAL') return { ok: false, reason: 'CLOSED' }
     if (roundIndex !== this.roundIndex) return { ok: false, reason: 'STALE' }
 
     const p = this.participants.get(participantId)
@@ -1012,7 +1012,7 @@ class QuizEngine {
         answered: p.answered,
       })),
       averageScore: Math.round(scoreTotal / n),
-      averageAccuracy: accuracyTotal / n,
+      averageAccuracy: Math.round((accuracyTotal / n) * 100),
     }
   }
 
@@ -1030,7 +1030,7 @@ class QuizEngine {
       score: p.score,
       correct: p.correct,
       answered: p.answered,
-      accuracy: total > 0 ? p.correct / total : 0,
+      accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
       averageResponseSeconds: p.answered > 0 ? p.totalElapsedMs / p.answered / 1000 : 0,
       rank: i + 1,
     }))
@@ -1042,7 +1042,7 @@ class QuizEngine {
         ? Math.round(rows.reduce((sum, r) => sum + r.score, 0) / participants)
         : 0
     const averageAccuracy =
-      participants > 0 ? rows.reduce((sum, r) => sum + r.accuracy, 0) / participants : 0
+      participants > 0 ? Math.round(rows.reduce((sum, r) => sum + r.accuracy, 0) / participants) : 0
 
     return {
       quizName: this.quiz.name,

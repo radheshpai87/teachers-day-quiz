@@ -11,10 +11,18 @@ async function parse<T>(res: Response): Promise<T> {
     body = null
   }
   if (!res.ok) {
-    const message =
-      body && typeof body === 'object' && 'error' in body
-        ? String((body as { error: unknown }).error)
-        : 'Something went wrong. Please try again.'
+    let message = ''
+    if (body && typeof body === 'object' && 'error' in body && typeof (body as { error: unknown }).error === 'string') {
+      message = (body as { error: string }).error
+    } else if (res.status === 429) {
+      message = 'Rate limit exceeded (Status 429). Please wait a few seconds and try again.'
+    } else if (res.status === 401) {
+      message = 'Host session unauthenticated or expired (Status 401). Please log in again.'
+    } else if (res.status === 409) {
+      message = 'Conflict action (Status 409). The quiz phase or state action is not valid.'
+    } else {
+      message = `Request failed with HTTP Status ${res.status}.`
+    }
     throw new Error(message)
   }
   return body as T
