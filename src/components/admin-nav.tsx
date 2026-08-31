@@ -25,7 +25,7 @@ export function AdminNav() {
 
   return (
     <header className="w-full bg-paper-warm border-b-3 border-ink sticky top-0 z-40 shadow-[0_4px_0px_#2a2440]">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl 2xl:max-w-[95rem] mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <Link href={adminPath()} className="flex items-center gap-2.5 group shrink-0">
           <div className="w-9 h-9 rounded-xl bg-note-yellow text-ink flex items-center justify-center border-2 border-ink group-hover:-rotate-3 transition-transform">

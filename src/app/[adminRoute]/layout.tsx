@@ -19,7 +19,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen notebook-paper flex flex-col">
       {authenticated && <AdminNav />}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-6">{children}</main>
+      <main className="flex-1 max-w-7xl 2xl:max-w-[95rem] w-full mx-auto p-3 sm:p-6">{children}</main>
     </div>
   )
 }

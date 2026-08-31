@@ -32,6 +32,11 @@ const buckets = new Map<string, Bucket>()
 let lastPrune = 0
 
 export function rateLimit(key: string, limit: number, windowMs: number): boolean {
+  // Bypass IP rate limiting for local machine testing (loopback / local dev)
+  if (key.includes('127.0.0.1') || key.includes('::1') || key.includes('localhost')) {
+    return true
+  }
+
   const now = Date.now()
 
   if (now - lastPrune > 10_000 || buckets.size > 5000) {
@@ -44,7 +49,12 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
     buckets.set(key, { count: 1, resetAt: now + windowMs })
     return true
   }
-  if (bucket.count >= limit) return false
+  if (bucket.count >= limit) {
+    console.warn(
+      `[429_RATE_LIMIT_TRIGGERED] 🛑 Rate limit exceeded for key="${key}" (count=${bucket.count}, limit=${limit}, window=${windowMs}ms)`
+    )
+    return false
+  }
   bucket.count += 1
   return true
 }

@@ -29,7 +29,6 @@ export default function ResultsPage() {
           .then((res) => {
             setResults(res)
             setLoading(false)
-            sound.celebrate()
           })
           .catch(() => {
             if (attempts < 5) {

@@ -132,23 +132,23 @@ export function LeaderboardView({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className={`w-full p-3 rounded-xl border-2 border-ink flex items-center justify-between transition-all shadow-[2px_2px_0px_#2a2440] ${
+                  className={`w-full p-3 rounded-xl border-2 border-ink flex items-center justify-between gap-3 overflow-hidden transition-all shadow-[2px_2px_0px_#2a2440] ${
                     isSelf
                       ? 'sticky-note-yellow ring-2 ring-[#7b1fa2]'
                       : 'bg-paper-light hover:bg-note-mint/30'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
                     <span className="tnum font-black text-ink text-xs sm:text-base w-6 text-center shrink-0">
                       #{entry.rank}
                     </span>
                     <ParticipantAvatar seed={entry.avatarSeed} size="sm" className="border border-ink shrink-0" />
-                    <span className="font-extrabold text-ink text-xs sm:text-base truncate">
+                    <span className="font-extrabold text-ink text-xs sm:text-base truncate min-w-0 flex-1">
                       {entry.name}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2.5 shrink-0">
+                  <div className="flex items-center gap-2.5 shrink-0 ml-auto">
                     {entry.delta !== null && entry.delta !== 0 && (
                       <motion.span
                         initial={{ scale: 0.8 }}
