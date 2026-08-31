@@ -9,6 +9,7 @@ import { WaitingRoom } from '@/components/waiting-room'
 import { QuestionCard } from '@/components/question-card'
 import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
+import { ExamCard } from '@/components/exam-card'
 import Image from 'next/image'
 import { GraduationCap, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
@@ -83,6 +84,26 @@ export default function PlayPage() {
     }
   }
 
+  const handleSelectExamAnswer = async (roundIndex: number, choiceIndex: number) => {
+    if (!session?.participantId || !state?.exam) return
+    const q = state.exam.questions[roundIndex]
+    if (!q) return
+    try {
+      await apiPost<{ accepted: boolean; reason?: string }>('/api/answer', {
+        participantId: session.participantId,
+        questionId: q.id,
+        roundIndex,
+        choice: choiceIndex,
+      })
+    } catch {
+      /* answer handling is server-authoritative */
+    }
+  }
+
+  const handleFinishExam = () => {
+    router.push('/results')
+  }
+
   if (loadingSession || !session) {
     return (
       <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
@@ -150,6 +171,27 @@ export default function PlayPage() {
                 avatarSeed={session.avatarSeed}
                 playersCount={players}
                 quizName={state?.quizName || session.quizName}
+              />
+            </motion.div>
+          )}
+
+          {phase === 'EXAM_LIVE' && state?.exam && (
+            <motion.div
+              key="exam-live"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="w-full"
+            >
+              <ExamCard
+                questions={state.exam.questions}
+                answersOpenAt={state.exam.answersOpenAt}
+                examEndsAt={state.exam.examEndsAt}
+                clockOffsetMs={clockOffset.current}
+                userChoices={state.exam.userChoices}
+                self={state.you}
+                onSelectAnswer={handleSelectExamAnswer}
+                onFinishExam={handleFinishExam}
               />
             </motion.div>
           )}

@@ -504,7 +504,7 @@ class QuizEngine {
     // Freeze the pool for the whole run and rebuild orders against it, so
     // editing questions mid-quiz cannot shift anybody's sequence.
     for (const p of this.participants.values()) p.order = this.orderFor(p.id)
-    this.beginQuestion(0)
+    this.beginExam()
     return { ok: true }
   }
 
@@ -598,13 +598,30 @@ class QuizEngine {
       case 'REVEAL':
         this.beginLeaderboard()
         break
+      case 'EXAM_LIVE':
+        this.beginLeaderboard()
+        break
       case 'LEADERBOARD':
-        if (this.roundIndex + 1 < this.totalRounds) this.beginQuestion(this.roundIndex + 1)
-        else this.complete()
+        this.complete()
         break
       default:
         break
     }
+  }
+
+  private beginExam() {
+    this.flushAnswers()
+    const now = Date.now()
+    const durationMs = 10 * 60 * 1000 // 10 Minutes Total Event Window
+    this.phase = 'EXAM_LIVE'
+    this.phaseStartedAt = now
+    this.answersOpenAt = now
+    this.phaseEndsAt = now + durationMs
+    this.roundIndex = 0
+
+    this.persistRun('LIVE')
+    this.broadcastState()
+    this.scheduleAdvance(durationMs)
   }
 
   /** The global authored question timer for the quiz or the round question's specific timer. */
@@ -910,6 +927,29 @@ class QuizEngine {
 
     const state = this.baseState()
     state.you = this.selfState(p)
+
+    if (this.phase === 'EXAM_LIVE') {
+      const publicQuestions: PublicQuestion[] = []
+      const userChoices: Record<number, number> = {}
+
+      for (let r = 0; r < p.order.length; r++) {
+        const q = this.questionForRound(p, r)
+        if (q) {
+          publicQuestions.push(this.publicQuestion(q))
+          const existing = p.answers.get(q.id)
+          if (existing !== undefined) {
+            userChoices[r] = existing.choice
+          }
+        }
+      }
+
+      state.exam = {
+        questions: publicQuestions,
+        answersOpenAt: this.answersOpenAt,
+        examEndsAt: this.phaseEndsAt,
+        userChoices,
+      }
+    }
 
     if (this.phase === 'QUESTION' || this.phase === 'PAUSED') {
       const q = this.questionForRound(p, this.roundIndex)
