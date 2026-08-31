@@ -83,6 +83,8 @@ export interface LeaderboardEntry {
   delta: number | null
   correct?: number
   answered?: number
+  phone?: string
+  college?: string
 }
 
 export interface SelfState {
@@ -95,6 +97,8 @@ export interface SelfState {
   correct: number
   /** Number of questions answered at all (correct or not). */
   answered: number
+  phone?: string
+  college?: string
 }
 
 export interface QuestionPhasePayload {
@@ -218,6 +222,8 @@ export interface ResultRow {
   accuracy: number
   averageResponseSeconds: number
   rank: number
+  phone?: string
+  college?: string
 }
 
 export interface ResultsSummary {
@@ -245,6 +251,8 @@ export interface HostParticipantEntry {
   rank: number
   correct: number
   answered: number
+  phone?: string
+  college?: string
 }
 
 export interface HostSnapshot {

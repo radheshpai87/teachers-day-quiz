@@ -21,7 +21,7 @@ const COLLEGE_LIST = [
   'Yenepoya School of Allied Health Sciences',
   'Yenepoya Homoeopathic Medical College & Hospital',
   'Yenepoya Ayurveda Medical College & Hospital',
-  'Yenepoya Technology Zone / Engineering & Technology',
+  'Yenepoya School of  Engineering & Technology',
   'Yenepoya Research Centre (YRC)',
   'Other External Institution',
 ]
@@ -145,6 +145,7 @@ export default function JoinPage() {
                 id="participant-name"
                 suppressHydrationWarning
                 type="text"
+                required
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value)
@@ -166,6 +167,8 @@ export default function JoinPage() {
                 id="participant-phone"
                 suppressHydrationWarning
                 type="tel"
+                required
+                pattern="[0-9]{10}"
                 value={phone}
                 onChange={(e) => {
                   setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))
@@ -184,6 +187,7 @@ export default function JoinPage() {
               <select
                 id="participant-college"
                 suppressHydrationWarning
+                required
                 value={college}
                 onChange={(e) => {
                   setCollege(e.target.value)

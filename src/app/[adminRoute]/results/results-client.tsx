@@ -110,6 +110,8 @@ export function AdminResultsClient() {
             <tr className="border-b-2 border-ink text-ink-soft uppercase text-[10px] font-black tracking-wider">
               <th className="py-3 px-2 text-center w-12">Rank</th>
               <th className="py-3 px-3">Participant</th>
+              <th className="py-3 px-3">Phone Number</th>
+              <th className="py-3 px-3">College / Institution</th>
               <th className="py-3 px-3 text-right">Score</th>
               <th className="py-3 px-3 text-right">Correct</th>
               <th className="py-3 px-3 text-right">Accuracy</th>
@@ -127,6 +129,14 @@ export function AdminResultsClient() {
                     <ParticipantAvatar seed={row.avatarSeed} size="sm" />
                     <span>{row.name}</span>
                   </div>
+                </td>
+                <td className="py-3 px-3 font-bold text-ink-soft tnum">
+                  {row.phone || 'N/A'}
+                </td>
+                <td className="py-3 px-3 font-black text-ink">
+                  <span className="px-2 py-0.5 rounded-md sticky-note-mint text-xs border border-ink shadow-[1px_1px_0px_#231f20]">
+                    {row.college || 'Yenepoya University'}
+                  </span>
                 </td>
                 <td className="py-3 px-3 text-right font-black tnum text-[#0284c7]">
                   {row.score.toLocaleString()}

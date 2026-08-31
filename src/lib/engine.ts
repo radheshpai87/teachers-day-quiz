@@ -67,6 +67,8 @@ interface EngineParticipant {
   answers: Map<string, StoredAnswer>
   /** Derived question order for this participant; cached on first use. */
   order: string[]
+  phone?: string
+  college?: string
 }
 
 export type SubmitResult =
@@ -449,6 +451,8 @@ class QuizEngine {
       totalElapsedMs: 0,
       answers: new Map(),
       order: this.orderFor(id),
+      phone,
+      college,
     }
     this.participants.set(id, participant)
 
@@ -851,6 +855,8 @@ class QuizEngine {
       delta: before === undefined ? null : before - rank,
       correct: p.correct,
       answered: p.answered,
+      phone: p.phone,
+      college: p.college,
     }
   }
 
@@ -868,6 +874,8 @@ class QuizEngine {
       rank: this.rankMap.get(p.id) ?? this.participants.size,
       correct: p.correct,
       answered: p.answered,
+      phone: p.phone,
+      college: p.college,
     }
   }
 
@@ -1074,6 +1082,8 @@ class QuizEngine {
         rank: i + 1,
         correct: p.correct,
         answered: p.answered,
+        phone: p.phone,
+        college: p.college,
       })),
       averageScore: Math.round(scoreTotal / n),
       averageAccuracy: Math.round((accuracyTotal / n) * 100),
@@ -1097,6 +1107,8 @@ class QuizEngine {
       accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
       averageResponseSeconds: p.answered > 0 ? p.totalElapsedMs / p.answered / 1000 : 0,
       rank: i + 1,
+      phone: p.phone,
+      college: p.college,
     }))
 
     const participants = rows.length
