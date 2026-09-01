@@ -25,6 +25,7 @@ export function getCollegeShortform(college?: string): string {
   if (college.includes('Allied')) return 'YSAHS'
   if (college.includes('Homoeopathic')) return 'YHMCH'
   if (college.includes('Ayurveda')) return 'YAMCH'
+  if (college.includes('Naturopathy') || college.includes('Yogic')) return 'YNYSC'
   if (college.includes('Technology') || college.includes('Engineering')) return 'YTech'
   if (college.includes('Research')) return 'YRC'
   return 'Other'
