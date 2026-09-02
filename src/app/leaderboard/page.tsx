@@ -67,8 +67,8 @@ export default function LeaderboardPage() {
       {/* Footer Banner */}
       <footer className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-ink font-black border-t-2 border-ink pt-2.5 z-10">
         <YentechFooterCredit className="py-0" />
-        <span className="tnum font-black text-[#231f20] bg-[#93d500] px-3.5 py-1 rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] shrink-0">
-          {totalPlayers} Participants Online
+        <span className="tnum font-black text-[#231f20] bg-[#93d500] px-4 py-1.5 rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] shrink-0 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
+          👥 <span>{totalPlayers.toLocaleString()} Participants Joined</span>
         </span>
       </footer>
 

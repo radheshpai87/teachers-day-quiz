@@ -5,7 +5,7 @@ import type { LeaderboardEntry } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Medal, ArrowUp, ArrowDown, Trophy, PaperClip } from '@/components/icons'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Building2, User, X } from 'lucide-react'
+import { Phone, Building2, User, X, Users } from 'lucide-react'
 
 interface LeaderboardViewProps {
   top: LeaderboardEntry[]
@@ -55,7 +55,7 @@ export function LeaderboardView({
       }`}
     >
       {/* Header Title */}
-      <div className="text-center space-y-1.5 select-none">
+      <div className="text-center space-y-2 select-none flex flex-col items-center">
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-ink -rotate-1">
           <PaperClip className="w-4 h-4 text-ink" />
           <Trophy className="w-4 h-4 text-[#d32f2f]" />
@@ -65,9 +65,10 @@ export function LeaderboardView({
           Leaderboard
         </h2>
         {totalPlayers !== undefined && (
-          <p className="text-xs sm:text-sm text-ink-soft tnum font-extrabold">
-            Competing out of {totalPlayers.toLocaleString()} players
-          </p>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#93d500] text-[#231f20] border-2 border-ink shadow-[2px_2px_0px_#231f20] font-black text-xs sm:text-sm uppercase tracking-wider">
+            <Users className="w-4 h-4 text-[#231f20]" />
+            <span>{totalPlayers.toLocaleString()} Total Participants</span>
+          </div>
         )}
       </div>
 
