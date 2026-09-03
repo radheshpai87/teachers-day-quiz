@@ -21,6 +21,7 @@ const COLLEGE_LIST = [
   'Yenepoya School of Allied Health Sciences',
   'Yenepoya Homoeopathic Medical College & Hospital',
   'Yenepoya Ayurveda Medical College & Hospital',
+  'Yenepoya Naturopathy and Yogic Science College',
   'Yenepoya School of  Engineering & Technology',
   'Yenepoya Research Centre (YRC)',
   'Other External Institution',
