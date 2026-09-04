@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 const CAROUSEL_IMAGES = [
   { src: '/event.png', alt: 'Yenepoya Teachers Day Event Banner' },
   { src: '/yiascm_kulur.png', alt: 'The Yenepoya Institute of Arts, Science, Commerce and Management (YIASCM, Kulur)' },
+  { src: '/yiascm_balmatta.png', alt: 'The Yenepoya Institute of Arts, Science, Commerce and Management (YIASCM, Balmatta)' },
+  { src: '/yenepoya_aerial.png', alt: 'Yenepoya Campus Aerial View' },
   { src: '/yenepoya2image.webp', alt: 'Yenepoya Campus Image' },
 ]
 
