@@ -285,65 +285,173 @@ export function getImage(id: string): { mime: string; bytes: Buffer } | null {
 }
 
 // ---------------------------------------------------------------------------
-// Seed content -- the five questions the event starts with
+// Seed content -- the 15 official questions from the docx file
 // ---------------------------------------------------------------------------
 
 function seedQuestions(quizId: string) {
   const seeds: QuestionInput[] = [
     {
       type: 'MCQ',
-      prompt: "When is Teachers' Day celebrated in India?",
-      options: ['August 15', 'September 5', 'October 2', 'November 14'],
+      prompt: 'What is the normal average human body temperature?',
+      options: ['36.0°C', '37.0°C', '38.0°C', '35.0°C'],
       correctIndex: 1,
-      timerSeconds: 5,
+      timerSeconds: 15,
       explanation:
-        "🎓 Fun Fact: September 5 marks the birthday of Dr. Sarvepalli Radhakrishnan. When his students wanted to celebrate his birthday, he said: 'Instead of celebrating my birthday, it would be my proud privilege if September 5 is observed as Teachers' Day!'",
+        '🌡️ Fun Fact: 37.0°C (98.6°F) was established as the standard normal human body temperature by German physician Carl Wunderlich in 1851.',
       imageId: null,
     },
     {
-      type: 'TRUE_FALSE',
+      type: 'MCQ',
+      prompt: 'Which blood group is known as the "universal donor"?',
+      options: ['AB positive', 'O negative', 'B positive', 'O positive'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '🩸 Fun Fact: O negative red blood cells can be given to patients of any blood type because they lack A, B, and Rh antigens.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'In dental terminology, "caries" refers to:',
+      options: ['Gum inflammation', 'Tooth decay', 'Jaw misalignment', 'Tooth sensitivity'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '🦷 Fun Fact: Dental caries (cavities) is one of the most common chronic conditions worldwide, caused by bacteria producing acids that break down tooth enamel.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
       prompt:
-        "Teachers' Day in India is celebrated on the birthday of Dr. Sarvepalli Radhakrishnan.",
-      options: ['True', 'False'],
-      correctIndex: 0,
-      timerSeconds: 5,
-      explanation:
-        '🌟 Fun Fact: Dr. Radhakrishnan was a world-renowned scholar and professor at Oxford, Calcutta, and Mysore Universities. He was nominated for the Nobel Prize 27 times during his life!',
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt: 'Which of these qualities makes an inspiring teacher?',
-      options: ['Patience', 'Curiosity', 'Empathy', 'All of the above'],
-      correctIndex: 3,
-      timerSeconds: 5,
-      explanation:
-        "💡 Fun Fact: Patience, Curiosity, and Empathy are known as the Golden Triangle of inspiring teaching. Swami Vivekananda said, 'Education is the manifestation of the perfection already in man.'",
-      imageId: null,
-    },
-    {
-      type: 'IMAGE',
-      prompt: 'What object is commonly associated with a traditional classroom?',
-      options: ['Blackboard', 'Football', 'Helmet', 'Guitar'],
-      correctIndex: 0,
-      timerSeconds: 5,
-      explanation:
-        '✏️ Fun Fact: The blackboard was invented in Scotland in 1801 by James Pillans, who joined small individual slates together so an entire classroom could learn simultaneously!',
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt: "Dr. Sarvepalli Radhakrishnan served as India's:",
+        'In the ABCDE primary survey used in emergency/nursing assessment, what do the first three letters stand for?',
       options: [
-        'First Prime Minister',
-        'First Vice President',
-        'Second President',
-        'First Chief Justice',
+        'Airway, Breathing, Circulation',
+        'Alertness, Blood pressure, Consciousness',
+        'Appearance, Behavior, Colour',
+        'Assess, Bandage, Call',
       ],
-      correctIndex: 2,
-      timerSeconds: 5,
+      correctIndex: 0,
+      timerSeconds: 15,
       explanation:
-        '🏆 Fun Fact: Dr. Radhakrishnan was India’s 1st Vice President (1952–1962) and 2nd President (1962–1967). In 1954, he received the Bharat Ratna, India’s highest civilian award.',
+        '🚑 Fun Fact: ABCDE stands for Airway, Breathing, Circulation, Disability, and Exposure — the systematic protocol for assessing critical emergency patients.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which planet in our solar system has the shortest day (fastest rotational period)?',
+      options: ['Earth', 'Jupiter', 'Saturn', 'Neptune'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '🪐 Fun Fact: Jupiter rotates on its axis in just under 10 hours (about 9 hours and 55 minutes), giving it the shortest day of any planet in our solar system.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'The Tropic of Cancer does NOT pass through which of the following Indian states?',
+      options: ['Gujarat', 'Madhya Pradesh', 'Kerala', 'West Bengal'],
+      correctIndex: 2,
+      timerSeconds: 15,
+      explanation:
+        '📍 Fun Fact: The Tropic of Cancer passes through 8 Indian states: Gujarat, Rajasthan, Madhya Pradesh, Chhattisgarh, Jharkhand, West Bengal, Tripura, and Mizoram. Kerala is located much further south.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: "Which gas is the most abundant in Earth's atmosphere by volume?",
+      options: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Argon'],
+      correctIndex: 2,
+      timerSeconds: 15,
+      explanation:
+        "🌍 Fun Fact: Nitrogen makes up roughly 78% of Earth's atmosphere, followed by Oxygen at approximately 21%.",
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which prestigious civilian award did Dr. Radhakrishnan receive in 1954?',
+      options: ['Padma Vibhushan', 'Bharat Ratna', 'Padma Bhushan', 'Param Vir Chakra'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '🏆 Fun Fact: Dr. Sarvepalli Radhakrishnan was awarded the Bharat Ratna in 1954, the very year the award was instituted.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt:
+        "Dr. Radhakrishnan's systematic two-volume study of Indian philosophical traditions was published in which years?",
+      options: ['1919 and 1923', '1923 and 1927', '1927 and 1931', '1931 and 1936'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        "📚 Fun Fact: Dr. Radhakrishnan's landmark treatise 'Indian Philosophy' was published in two volumes in 1923 and 1927, establishing Indian philosophy in global academic discourse.",
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'During which years did Dr. Radhakrishnan serve as the President of India?',
+      options: ['1950–1957', '1957–1962', '1962–1967', '1967–1972'],
+      correctIndex: 2,
+      timerSeconds: 15,
+      explanation:
+        "🇮🇳 Fun Fact: Dr. Radhakrishnan served as the 2nd President of India from 1962 to 1967, after serving as India's 1st Vice President from 1952 to 1962.",
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt:
+        "What is the highest NIRF 'University' category ranking Yenepoya (Deemed to be University) has achieved to date?",
+      options: ['97', '85', '65', '15'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        "🎓 Fun Fact: Yenepoya (Deemed to be University) achieved a rank of 85 in the NIRF 'University' category rankings.",
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which was the first institution established under the Islamic Academy of Education?',
+      options: [
+        'Yenepoya Medical College',
+        'Yenepoya Dental College',
+        'Yenepoya Nursing College',
+        'Yenepoya Physiotherapy College',
+      ],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '🏫 Fun Fact: Yenepoya Dental College was established in 1992 as the pioneer institution under the Islamic Academy of Education.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which planet is closest to the Sun?',
+      options: ['Venus', 'Mercury', 'Earth', 'Mars'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '☀️ Fun Fact: Mercury is the smallest planet in the Solar System and the closest to the Sun, orbiting it in just 88 days.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'In which year was Dr. Sarvepalli Radhakrishnan born?',
+      options: ['1886', '1888', '1890', '1892'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        '✨ Fun Fact: Dr. Sarvepalli Radhakrishnan was born on September 5, 1888, in Thiruttani, Tamil Nadu.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt:
+        "As per Outlook India's 2025 rankings, Yenepoya climbed 26 ranks in the 'Deemed To Be University' category to reach which position?",
+      options: ['#5', '#8', '#11', '#14'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation:
+        "📊 Fun Fact: Yenepoya achieved a remarkable 26-rank jump to secure the #8 rank among Deemed to be Universities in Outlook India's 2025 rankings.",
       imageId: null,
     },
   ]
