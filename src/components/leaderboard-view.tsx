@@ -6,6 +6,7 @@ import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Medal, ArrowUp, ArrowDown, Trophy, PaperClip } from '@/components/icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, Building2, User, X, Users } from 'lucide-react'
+import { YentechFooterCredit } from '@/components/yentech-branding'
 
 interface LeaderboardViewProps {
   top: LeaderboardEntry[]
@@ -231,6 +232,13 @@ export function LeaderboardView({
           </div>
         )}
       </AnimatePresence>
+
+      {/* Footer Branding for Mobile / Participant view */}
+      {!displayMode && (
+        <div className="w-full border-t-2 border-ink pt-3 mt-4">
+          <YentechFooterCredit className="py-0" />
+        </div>
+      )}
     </div>
   )
 }
