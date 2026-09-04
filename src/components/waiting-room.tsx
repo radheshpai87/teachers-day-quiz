@@ -3,6 +3,7 @@
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import { GraduationCap, Book, Pencil, Chalkboard, Star, Users, PaperClip } from '@/components/icons'
 import { motion } from 'framer-motion'
+import { ShieldAlert } from 'lucide-react'
 
 interface WaitingRoomProps {
   name: string
@@ -63,24 +64,28 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teache
         </div>
       </motion.div>
 
-      {/* Waiting Status Indicator */}
+      {/* Important Quiz Rules & Anti-Cheat Note */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="w-full sticky-note-mint p-5 rounded-2xl flex items-center gap-4 border-2 border-ink"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="w-full sticky-note-rose p-5 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#2a2440] text-left space-y-2"
       >
-        <div className="w-10 h-10 rounded-xl bg-paper-cream border-2 border-ink flex items-center justify-center shrink-0 text-ink">
-          <Chalkboard className="w-5 h-5" />
+        <div className="flex items-center gap-2 text-[#b71c1c] font-black text-sm uppercase tracking-wider">
+          <ShieldAlert className="w-5 h-5 shrink-0 animate-pulse" />
+          <span>Important Rules & Anti-Cheat Notice</span>
         </div>
-        <div className="text-left space-y-0.5">
-          <p className="font-black text-ink text-sm sm:text-base">
-            Waiting for the quiz to begin...
-          </p>
-          <p className="text-xs text-ink-soft font-extrabold">
-            The host will start the quiz shortly. Keep this screen open!
-          </p>
-        </div>
+        <ul className="text-xs font-bold text-ink space-y-1.5 list-disc list-inside">
+          <li>
+            <strong className="text-[#b71c1c]">Strict Window Lock:</strong> Once the quiz starts, do <strong>NOT</strong> switch tabs, leave the browser, or minimize the window. Leaving the quiz tab will <strong>auto-submit your test immediately</strong>.
+          </li>
+          <li>
+            <strong className="text-ink">Copy Protection:</strong> Text selection, right-clicking, and copy keyboard shortcuts are strictly disabled during the exam.
+          </li>
+          <li>
+            <strong className="text-ink">Auto-Save:</strong> Your answers are recorded live as you tap each option.
+          </li>
+        </ul>
       </motion.div>
 
       {/* Motifs Footer */}
