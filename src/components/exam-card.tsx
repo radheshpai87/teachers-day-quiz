@@ -16,7 +16,7 @@ interface ExamCardProps {
   userChoices: Record<number, number>
   self?: SelfState | null
   onSelectAnswer: (roundIndex: number, choiceIndex: number) => void
-  onFinishExam: () => void
+  onFinishExam: (tabSwitched?: boolean) => void
 }
 
 const OPTION_THEMES = [
@@ -59,7 +59,71 @@ export function ExamCard({
   const [timeLeftMs, setTimeLeftMs] = useState(0)
   const [justSelectedOpt, setJustSelectedOpt] = useState<number | null>(null)
 
-  // Live 10-minute countdown timer calculation
+  // Anti-Cheat: Detect tab switching or window blur & auto-submit
+  useEffect(() => {
+    let triggered = false
+
+    const handleAutoSubmit = () => {
+      if (triggered) return
+      triggered = true
+      try {
+        sessionStorage.setItem('exam_tab_switched', 'true')
+      } catch {
+        /* storage fallback */
+      }
+      onFinishExam(true)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden || document.visibilityState === 'hidden') {
+        handleAutoSubmit()
+      }
+    }
+
+    const handleWindowBlur = () => {
+      handleAutoSubmit()
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('blur', handleWindowBlur)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('blur', handleWindowBlur)
+    }
+  }, [onFinishExam])
+
+  // Anti-Copy & Shortcut Security Measures
+  useEffect(() => {
+    const preventCopyCut = (e: Event) => e.preventDefault()
+    const preventContextMenu = (e: MouseEvent) => e.preventDefault()
+
+    const preventShortcuts = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U' || e.key === 'a' || e.key === 'A')
+      ) {
+        e.preventDefault()
+      }
+      if (e.key === 'F12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i'))) {
+        e.preventDefault()
+      }
+    }
+
+    document.addEventListener('copy', preventCopyCut)
+    document.addEventListener('cut', preventCopyCut)
+    document.addEventListener('contextmenu', preventContextMenu)
+    document.addEventListener('keydown', preventShortcuts)
+
+    return () => {
+      document.removeEventListener('copy', preventCopyCut)
+      document.removeEventListener('cut', preventCopyCut)
+      document.removeEventListener('contextmenu', preventContextMenu)
+      document.removeEventListener('keydown', preventShortcuts)
+    }
+  }, [])
+
+  // Live 8-minute countdown timer calculation
   useEffect(() => {
     const updateTimer = () => {
       const serverNow = Date.now() + clockOffsetMs
