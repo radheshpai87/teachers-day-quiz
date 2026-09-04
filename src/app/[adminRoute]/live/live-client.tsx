@@ -23,7 +23,7 @@ export function AdminLiveClient() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Host Controls, Status Banner, Question Tallies, Full Participating Members Roster */}
         <div className="lg:col-span-7 space-y-6">
-          <HostControls snapshot={snapshot} liveTally={liveTally} />
+          <HostControls snapshot={snapshot} />
         </div>
 
         {/* Right Column: Top 10 Live Leaderboard & Projector View Launcher */}

@@ -25,11 +25,6 @@ import { ParticipantAvatar } from '@/components/participant-avatar'
 
 interface HostControlsProps {
   snapshot: HostFrame
-  liveTally: {
-    answered: number
-    players: number
-    spread: number[]
-  } | null
 }
 
 export function HostControls({ snapshot }: HostControlsProps) {
@@ -48,19 +43,17 @@ export function HostControls({ snapshot }: HostControlsProps) {
     return allMembers.filter((m) => m.name.toLowerCase().includes(q))
   }, [allMembers, searchQuery])
 
-  const { status, phase, players, roundIndex, totalRounds, quiz, phaseEndsAt, perQuestion } = snapshot
+  const { status, players, totalRounds, quiz, phaseEndsAt, perQuestion } = snapshot
 
   const isWaiting = status === 'WAITING'
   const isLive = status === 'LIVE'
-  const isPaused = status === 'PAUSED'
   const isCompleted = status === 'COMPLETED'
-  const isExamLive = phase === 'EXAM_LIVE'
 
   // Live Timer Countdown calculation
   const [remainingMs, setRemainingMs] = useState<number>(0)
 
   useEffect(() => {
-    if (!phaseEndsAt || (!isLive && !isPaused)) {
+    if (!phaseEndsAt || !isLive) {
       setRemainingMs(0)
       return
     }
@@ -73,7 +66,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
     updateTimer()
     const interval = setInterval(updateTimer, 500)
     return () => clearInterval(interval)
-  }, [phaseEndsAt, isLive, isPaused])
+  }, [phaseEndsAt, isLive])
 
   const formatTimer = (ms: number) => {
     const totalSec = Math.ceil(ms / 1000)
@@ -192,17 +185,12 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 className={`w-3 h-3 rounded-full border border-ink ${
                   isLive
                     ? 'bg-emerald-500 animate-ping'
-                    : isPaused
-                    ? 'bg-amber-500'
                     : isCompleted
                     ? 'bg-gray-400'
                     : 'bg-[#0284c7]'
                 }`}
               />
               <span className="text-ink font-black">{status}</span>
-              {phase && phase !== 'WAITING' && (
-                <span className="text-ink-soft text-[10px]">({phase})</span>
-              )}
             </div>
 
             {/* Live Participants Count */}
@@ -211,22 +199,14 @@ export function HostControls({ snapshot }: HostControlsProps) {
               <span>{players} players</span>
             </div>
 
-            {/* Mode / Round Info */}
-            {isExamLive ? (
-              <div className="text-xs font-black text-ink tnum sticky-note-lavender px-3 py-2 rounded-xl border-2 border-ink flex items-center gap-1.5 shadow-[2px_2px_0px_#2a2440]">
-                <FileText className="w-4 h-4 text-[#0284c7]" />
-                <span>Live Exam Mode ({totalRounds} Questions)</span>
-              </div>
-            ) : (
-              roundIndex >= 0 && (
-                <div className="text-xs font-black text-ink tnum bg-paper-warm px-3 py-2 rounded-xl border-2 border-ink">
-                  Question {roundIndex + 1} / {totalRounds}
-                </div>
-              )
-            )}
+            {/* Questions Badge */}
+            <div className="text-xs font-black text-ink tnum sticky-note-lavender px-3 py-2 rounded-xl border-2 border-ink flex items-center gap-1.5 shadow-[2px_2px_0px_#2a2440]">
+              <FileText className="w-4 h-4 text-[#0284c7]" />
+              <span>Quiz ({totalRounds} Questions)</span>
+            </div>
 
             {/* Live Countdown Timer Badge */}
-            {(isLive || isPaused) && remainingMs > 0 && (
+            {isLive && remainingMs > 0 && (
               <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-paper-cream border-2 border-ink text-ink text-sm font-black tnum shadow-[2px_2px_0px_#2a2440]">
                 <Clock className="w-4 h-4 text-[#d32f2f] animate-spin" style={{ animationDuration: '3s' }} />
                 <span>Timer: <span className="text-[#d32f2f] font-mono">{formatTimer(remainingMs)}</span></span>
@@ -247,7 +227,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             </button>
           )}
 
-          {(isLive || isPaused) && (
+          {isLive && (
             <button
               type="button"
               onClick={() => {
@@ -325,7 +305,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
           </div>
         ) : (
           <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
-            No questions active. Start the quiz to monitor live submission progress across all {totalRounds} questions!
+            Start the quiz to monitor live submission progress across all {totalRounds} questions!
           </div>
         )}
       </div>
