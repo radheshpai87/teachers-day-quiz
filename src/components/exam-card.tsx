@@ -5,7 +5,7 @@ import type { PublicQuestion, SelfState } from '@/lib/types'
 import { ANSWER_SHAPES } from '@/components/icons'
 import { sound } from '@/lib/client/sound'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, CheckCircle2, Check, Sparkles } from 'lucide-react'
+import { Clock, CheckCircle2, Check, Sparkles, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
 
 interface ExamCardProps {
@@ -71,7 +71,7 @@ export function ExamCard({
     return merged
   }, [userChoices, localChoices])
 
-  // Anti-Cheat: Detect tab switching or window blur & auto-submit
+  // Anti-Cheat: Detect tab switching, window blur or leaving page & auto-submit
   useEffect(() => {
     let triggered = false
 
@@ -79,6 +79,7 @@ export function ExamCard({
       if (triggered) return
       triggered = true
       try {
+        localStorage.setItem('exam_tab_switched', 'true')
         sessionStorage.setItem('exam_tab_switched', 'true')
       } catch {
         /* storage fallback */
@@ -96,12 +97,18 @@ export function ExamCard({
       handleAutoSubmit()
     }
 
+    const handlePageHide = () => {
+      handleAutoSubmit()
+    }
+
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('blur', handleWindowBlur)
+    window.addEventListener('pagehide', handlePageHide)
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('blur', handleWindowBlur)
+      window.removeEventListener('pagehide', handlePageHide)
     }
   }, [onFinishExam])
 
