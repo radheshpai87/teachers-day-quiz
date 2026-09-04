@@ -20,6 +20,18 @@ export default function ResultsPage() {
   const [results, setResults] = useState<FinalSummary | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const [wasTabSwitched, setWasTabSwitched] = useState(false)
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('exam_tab_switched') === 'true') {
+        setWasTabSwitched(true)
+      }
+    } catch {
+      /* storage fallback */
+    }
+  }, [])
+
   useEffect(() => {
     loadSession().then((s) => {
       if (!s?.participantId) {
@@ -86,6 +98,11 @@ export default function ResultsPage() {
   }, [loading, results])
 
   const handlePlayAgain = async () => {
+    try {
+      sessionStorage.removeItem('exam_tab_switched')
+    } catch {
+      /* storage fallback */
+    }
     await clearSession()
     router.replace('/join')
   }
@@ -149,6 +166,18 @@ export default function ResultsPage() {
             All quiz questions are done! Here are your final event results.
           </p>
         </div>
+
+        {/* Anti-Cheat Tab Switch Warning Banner */}
+        {wasTabSwitched && (
+          <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#231f20] text-center space-y-1.5">
+            <span className="font-black text-sm sm:text-base text-[#b71c1c] block uppercase tracking-wider">
+              ⚠️ Anti-Cheat Triggered: Quiz Auto-Submitted
+            </span>
+            <p className="text-xs font-bold text-ink-soft">
+              Your quiz session was automatically submitted because you left the quiz tab or switched browser windows during the test.
+            </p>
+          </div>
+        )}
 
         {/* Profile & Main Stats Card */}
         <div className="w-full notebook-card p-6 sm:p-8 space-y-6">

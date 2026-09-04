@@ -5,6 +5,10 @@ import { isAdmin } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
+export function generateStaticParams() {
+  return [{ adminRoute: process.env.ADMIN_ROUTE || 'admin' }]
+}
+
 export default async function AdminLayout({
   children,
   params,

@@ -34,10 +34,10 @@ export function YentechBranding({ className = '' }: { className?: string }) {
 export function YentechFooterCredit({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-4 lg:gap-6 py-2 ${className}`}
+      className={`flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-4 gap-y-1.5 py-2 w-full max-w-full text-center px-2 ${className}`}
     >
-      {/* Line 1 (on mobile) / Segment 1 (on desktop): Powered by YENTECH */}
-      <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft shrink-0">
+      {/* Line 1 (on mobile/narrow) / Segment 1 (on desktop/wide): Powered by YENTECH */}
+      <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-extrabold text-ink-soft shrink-0">
         <span>Powered by</span>
         <Image
           src="/yentech.png"
@@ -45,17 +45,12 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           width={160}
           height={44}
           priority
-          className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs"
         />
       </div>
 
-      {/* Subtle Dot Separator (Desktop only) */}
-      <span className="hidden md:inline-block text-ink-soft/40 font-bold select-none text-base">
-        •
-      </span>
-
-      {/* Line 2 (on mobile) / Segment 2 (on desktop): Official Technical Club of YSET */}
-      <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft shrink-0">
+      {/* Line 2 (on mobile/narrow) / Segment 2 (on desktop/wide): Official Technical Club of YSET */}
+      <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-extrabold text-ink-soft shrink-0">
         <span>Official Technical Club of</span>
         <Image
           src="/yenepoya-school-engineering-and-technology.svg"
@@ -63,7 +58,7 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           width={180}
           height={48}
           priority
-          className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs"
         />
       </div>
     </div>

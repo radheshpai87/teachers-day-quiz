@@ -62,6 +62,16 @@ export default function PlayPage() {
   }, [status, router])
 
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem('exam_tab_switched') === 'true') {
+        router.replace('/results')
+      }
+    } catch {
+      /* storage fallback */
+    }
+  }, [router])
+
+  useEffect(() => {
     if (state?.phase === 'COMPLETED') {
       router.replace('/results')
     }
@@ -100,7 +110,14 @@ export default function PlayPage() {
     }
   }
 
-  const handleFinishExam = () => {
+  const handleFinishExam = (tabSwitched = false) => {
+    if (tabSwitched) {
+      try {
+        sessionStorage.setItem('exam_tab_switched', 'true')
+      } catch {
+        /* storage fallback */
+      }
+    }
     router.push('/results')
   }
 
