@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
   const roundIndex = typeof body?.roundIndex === 'number' ? body.roundIndex : -1
   if (!participantId) return fail('Missing participant id.')
 
-  // Per-participant rate limit (max 5 answer taps per 5 seconds per participant ID)
-  if (!rateLimit(`answer:pid:${participantId}`, 5, 5_000)) {
+  // Per-participant rate limit (up to 50 answer taps per 5 seconds per participant ID for exam mode)
+  if (!rateLimit(`answer:pid:${participantId}`, 50, 5_000)) {
     return fail('Too many requests. Please tap once.', 429)
   }
 
