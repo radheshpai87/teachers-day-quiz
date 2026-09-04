@@ -3,11 +3,9 @@
 import { useState, useMemo, useEffect } from 'react'
 import type { HostFrame } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
-import { ANSWER_SHAPES, Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
+import { Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
 import {
   Play,
-  Pause,
-  SkipForward,
   Square,
   BarChart2,
   RotateCcw,
@@ -34,14 +32,7 @@ interface HostControlsProps {
   } | null
 }
 
-const ANSWER_COLORS = [
-  'bg-[#e53935]',
-  'bg-[#1e88e5]',
-  'bg-[#fb8c00]',
-  'bg-[#43a047]',
-]
-
-export function HostControls({ snapshot, liveTally }: HostControlsProps) {
+export function HostControls({ snapshot }: HostControlsProps) {
   const [showQr, setShowQr] = useState(false)
   const [loadingAction, setLoadingAction] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -91,10 +82,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`
   }
 
-  const currentAnswered = liveTally?.answered ?? snapshot.answered
-  const currentSpread = liveTally?.spread ?? snapshot.spread
-
-  const handleAction = async (action: 'start' | 'pause' | 'resume' | 'skip' | 'end' | 'reset') => {
+  const handleAction = async (action: 'start' | 'end' | 'reset') => {
     try {
       setLoadingAction(action)
       await apiPost('/api/admin/control', { action })
@@ -117,31 +105,24 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
     }
   }
 
-  // Keyboard Shortcuts (Space to Pause/Resume, S to Skip, Q for QR Code)
+  // Keyboard Shortcut (Q for QR Code)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
 
-      if (e.code === 'Space') {
-        e.preventDefault()
-        if (isWaiting) handleAction('start')
-        else if (isLive) handleAction('pause')
-        else if (isPaused) handleAction('resume')
-      } else if (e.key === 's' || e.key === 'S') {
-        if (isLive || isPaused) handleAction('skip')
-      } else if (e.key === 'q' || e.key === 'Q') {
+      if (e.key === 'q' || e.key === 'Q') {
         setShowQr((prev) => !prev)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isWaiting, isLive, isPaused])
+  }, [])
 
   return (
     <div className="w-full space-y-6 select-none">
-      {/* Top Banner: Quiz Name, System Status & Action Buttons */}
+      {/* Top Banner: Quiz Name, System Status & Primary Control Actions */}
       <div className="notebook-card p-6 border-2 border-ink space-y-4 shadow-[4px_4px_0px_#2a2440]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
@@ -165,11 +146,11 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
             </h1>
             <div className="flex items-center gap-2 text-[11px] font-extrabold text-ink-soft pt-0.5">
               <Keyboard className="w-3.5 h-3.5 text-[#0284c7]" />
-              <span>Hotkeys: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Space</kbd> Start/Pause • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">S</kbd> Skip • <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Q</kbd> QR Code</span>
+              <span>Hotkey: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Q</kbd> QR Code</span>
             </div>
           </div>
 
-          {/* Action Trigger Buttons */}
+          {/* Action Trigger Buttons: Display QR & Reset Event */}
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
@@ -202,7 +183,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
 
         <div className="w-full border-t-2 border-ink" />
 
-        {/* Live Status, Live Countdown Timer & Main Action Controls */}
+        {/* Live Status, Live Countdown Timer & Main Action Controls (Start / End) */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             {/* Status Badge */}
@@ -253,7 +234,7 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
             )}
           </div>
 
-          {/* Primary Action Button (START QUIZ) */}
+          {/* Primary Action Controls: START QUIZ when Waiting, END QUIZ when Live */}
           {isWaiting && (
             <button
               type="button"
@@ -266,135 +247,88 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
             </button>
           )}
 
-          {/* Controls during live quiz */}
           {(isLive || isPaused) && (
-            <div className="flex flex-wrap items-center gap-2">
-              {isPaused ? (
-                <button
-                  type="button"
-                  onClick={() => handleAction('resume')}
-                  disabled={loadingAction !== null}
-                  className="px-4 py-2.5 rounded-xl bg-[#388e3c] text-white font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5 hover:-translate-y-0.5 cursor-pointer"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>Resume</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleAction('pause')}
-                  disabled={loadingAction !== null}
-                  className="px-4 py-2.5 rounded-xl bg-[#fbc02d] text-ink font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5 hover:-translate-y-0.5 cursor-pointer"
-                >
-                  <Pause className="w-4 h-4" />
-                  <span>Pause</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={() => handleAction('skip')}
-                disabled={loadingAction !== null || isCompleted}
-                className="px-4 py-2.5 rounded-xl sticky-note-lavender text-ink font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5 hover:-translate-y-0.5 cursor-pointer"
-              >
-                <SkipForward className="w-4 h-4" />
-                <span>Skip</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Are you sure you want to end the quiz early?')) {
-                    handleAction('end')
-                  }
-                }}
-                disabled={loadingAction !== null}
-                className="px-4 py-2.5 rounded-xl sticky-note-rose text-ink font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5 hover:-translate-y-0.5 cursor-pointer"
-              >
-                <Square className="w-4 h-4" />
-                <span>End Quiz</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm('Are you sure you want to end the quiz early?')) {
+                  handleAction('end')
+                }
+              }}
+              disabled={loadingAction !== null}
+              className="px-6 py-3 rounded-2xl sticky-note-rose text-ink font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] flex items-center gap-2 hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
+            >
+              <Square className="w-4.5 h-4.5" />
+              <span>End Quiz</span>
+            </button>
           )}
         </div>
       </div>
 
-      {/* Live Question Completion Progress / Tallies Card */}
-      {(isExamLive || roundIndex >= 0) && (
-        <div className="notebook-card p-6 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <BarChart2 className="w-5 h-5 text-[#0284c7]" />
-              <h2 className="font-black text-ink text-base">
-                {isExamLive ? 'Exam Questions Live Submission Progress' : 'Live Question Tallies'}
-              </h2>
-            </div>
-
-            <div className="text-xs font-black text-ink tnum">
-              {isExamLive ? (
-                <span>Total Exam Submissions</span>
-              ) : (
-                <span>Answered: <span className="text-[#0284c7] font-black">{currentAnswered}</span> / {players}</span>
-              )}
-            </div>
+      {/* 15 Questions Live Submission Progress Card */}
+      <div className="notebook-card p-6 space-y-4 border-2 border-ink shadow-[4px_4px_0px_#2a2440]">
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b-2 border-ink">
+          <div className="flex items-center gap-2">
+            <BarChart2 className="w-5 h-5 text-[#0284c7]" />
+            <h2 className="font-black text-ink text-lg">
+              Questions Live Submission Progress
+            </h2>
           </div>
 
-          {/* Per-Question Live Completion Bars for Exam Mode */}
-          {isExamLive && perQuestion && perQuestion.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto custom-scrollbar pr-1">
-              {perQuestion.map((item, idx) => {
-                const pct = players > 0 ? Math.min(100, Math.round((item.answered / players) * 100)) : 0
-                return (
-                  <div
-                    key={item.questionId || idx}
-                    className="p-3.5 rounded-xl border-2 border-ink bg-paper-cream space-y-2 shadow-[2px_2px_0px_#2a2440]"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="font-extrabold text-ink text-xs line-clamp-2">
-                        Q{idx + 1}. {item.prompt}
-                      </span>
-                      <span className="shrink-0 text-xs font-black text-[#0284c7] tnum">
-                        {item.answered} / {players}
-                      </span>
-                    </div>
+          <div className="text-xs font-black text-ink tnum sticky-note-mint px-3 py-1 rounded-full border border-ink shadow-xs">
+            {perQuestion?.length || totalRounds} Total Questions
+          </div>
+        </div>
 
-                    {/* Progress Bar */}
-                    <div className="w-full bg-paper-warm rounded-full h-3 border border-ink overflow-hidden relative">
+        {/* Question Cards Grid */}
+        {perQuestion && perQuestion.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto custom-scrollbar pr-1">
+            {perQuestion.map((item, idx) => {
+              const answeredCount = item.answered ?? 0
+              const pct = players > 0 ? Math.min(100, Math.round((answeredCount / players) * 100)) : 0
+              const isAllAnswered = players > 0 && answeredCount >= players
+
+              return (
+                <div
+                  key={item.questionId || idx}
+                  className={`p-4 rounded-2xl border-2 border-ink space-y-2.5 shadow-[2px_2px_0px_#2a2440] transition-all ${
+                    isAllAnswered ? 'sticky-note-mint' : 'bg-paper-cream'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="font-black text-ink text-xs sm:text-sm line-clamp-2">
+                      Q{idx + 1}. {item.prompt}
+                    </span>
+                    <span className="shrink-0 px-2 py-0.5 rounded-lg bg-paper-warm border border-ink text-xs font-black text-[#0284c7] tnum">
+                      {answeredCount} / {players}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar & Percentage */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[11px] font-extrabold text-ink-soft">
+                      <span>Completion Rate</span>
+                      <span className="font-black text-ink tnum">{pct}%</span>
+                    </div>
+                    <div className="w-full bg-paper-warm rounded-full h-3.5 border-2 border-ink overflow-hidden relative shadow-inner">
                       <div
-                        className="bg-[#0284c7] h-full rounded-full transition-all duration-500"
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isAllAnswered ? 'bg-[#388e3c]' : 'bg-[#0284c7]'
+                        }`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          ) : (
-            /* Option Tallies for Traditional QUESTION mode */
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {currentSpread.map((count, idx) => {
-                const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
-                const pct = currentAnswered > 0 ? Math.round((count / currentAnswered) * 100) : 0
-
-                return (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-xl border-2 border-ink bg-paper-cream flex flex-col items-center text-center space-y-2 shadow-[2px_2px_0px_#2a2440]"
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl ${ANSWER_COLORS[idx]} text-white flex items-center justify-center border-2 border-ink`}
-                    >
-                      <Shape className="w-5 h-5 fill-current" />
-                    </div>
-                    <span className="tnum font-black text-2xl text-ink">{count}</span>
-                    <span className="text-xs font-extrabold text-ink-soft tnum">{pct}%</span>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      )}
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
+            No questions active. Start the quiz to monitor live submission progress across all {totalRounds} questions!
+          </div>
+        )}
+      </div>
 
       {/* Participating Members Roster Card */}
       <div className="notebook-card p-6 space-y-4">
