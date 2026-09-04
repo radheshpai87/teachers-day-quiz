@@ -12,6 +12,8 @@ import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
+import confetti from 'canvas-confetti'
+
 export default function ResultsPage() {
   const router = useRouter()
   const [session, setSession] = useState<StoredSession | null>(null)
@@ -43,6 +45,45 @@ export default function ResultsPage() {
       fetchResults()
     })
   }, [router])
+
+  // Fire celebratory sound effect and multi-burst confetti animation when results load
+  useEffect(() => {
+    if (!loading && results) {
+      sound.celebrate()
+
+      // Initial center burst
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#0284c7', '#388e3c', '#fbc02d', '#e53935', '#a855f7'],
+      })
+
+      // Side confetti cannons firing for 2.5 seconds
+      const end = Date.now() + 2500
+      const frameFunc = () => {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.7 },
+          colors: ['#0284c7', '#388e3c', '#fbc02d'],
+        })
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.7 },
+          colors: ['#e53935', '#a855f7', '#fbc02d'],
+        })
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frameFunc)
+        }
+      }
+      requestAnimationFrame(frameFunc)
+    }
+  }, [loading, results])
 
   const handlePlayAgain = async () => {
     await clearSession()
