@@ -39,7 +39,7 @@ export default function LeaderboardPage() {
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft font-extrabold flex items-center gap-1">
               <PaperClip className="w-3.5 h-3.5 text-ink" />
-              <span>Live Event Leaderboard</span>
+              <span>Hall of Fame</span>
             </p>
           </div>
         </div>

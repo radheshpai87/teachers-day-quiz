@@ -36,7 +36,7 @@ export function AdminLiveClient() {
                 </div>
                 <div>
                   <h2 className="font-black text-ink text-base">
-                    Top 10 Live Leaderboard
+                    Top 10 Participants
                   </h2>
                   <p className="text-[11px] font-bold text-ink-soft">
                     Broadcast to projector & participant screens

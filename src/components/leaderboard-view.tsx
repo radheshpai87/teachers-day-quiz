@@ -62,7 +62,7 @@ export function LeaderboardView({
           <span>Live Rankings</span>
         </div>
         <h2 className={`font-black text-ink ${displayMode ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-3xl'}`}>
-          Leaderboard
+          Hall of Fame
         </h2>
         {totalPlayers !== undefined && (
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#93d500] text-[#231f20] border-2 border-ink shadow-[2px_2px_0px_#231f20] font-black text-xs sm:text-sm uppercase tracking-wider">
