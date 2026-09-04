@@ -6,9 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const CAROUSEL_IMAGES = [
   { src: '/event.png', alt: 'Yenepoya Teachers Day Event Banner' },
-  { src: '/yenepoya1.jpeg', alt: 'Yenepoya Campus Event Image 1' },
-  { src: '/yenepoya2image.webp', alt: 'Yenepoya Campus Event Image 2' },
-  { src: '/yenepoya3image.jpeg', alt: 'Yenepoya Campus Event Image 3' },
+  { src: '/yiascm_kulur.png', alt: 'The Yenepoya Institute of Arts, Science, Commerce and Management (YIASCM, Kulur)' },
+  { src: '/yenepoya2image.webp', alt: 'Yenepoya Campus Image' },
 ]
 
 export function EventImageCarousel() {
