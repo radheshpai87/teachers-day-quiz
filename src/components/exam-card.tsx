@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { PublicQuestion, SelfState } from '@/lib/types'
 import { ANSWER_SHAPES } from '@/components/icons'
 import { sound } from '@/lib/client/sound'
@@ -58,6 +58,18 @@ export function ExamCard({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [timeLeftMs, setTimeLeftMs] = useState(0)
   const [justSelectedOpt, setJustSelectedOpt] = useState<number | null>(null)
+  const [localChoices, setLocalChoices] = useState<Record<number, number>>({})
+
+  // Combine server choices (which may use string keys "0", "1") with local optimistic choices
+  const mergedChoices = useMemo(() => {
+    const merged: Record<number, number> = { ...localChoices }
+    if (userChoices) {
+      for (const [k, v] of Object.entries(userChoices)) {
+        merged[Number(k)] = v
+      }
+    }
+    return merged
+  }, [userChoices, localChoices])
 
   // Live 10-minute countdown timer calculation
   useEffect(() => {
@@ -79,13 +91,14 @@ export function ExamCard({
   const seconds = Math.floor((timeLeftMs % 60000) / 1000)
   const timeFormatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 
-  const answeredCount = Object.keys(userChoices).length
+  const answeredCount = Object.keys(mergedChoices).length
   const totalQ = questions.length
-  const selectedChoice = userChoices[currentIndex]
+  const selectedChoice = mergedChoices[currentIndex]
 
   const handleSelectChoice = (optIdx: number) => {
     sound.tap()
     setJustSelectedOpt(optIdx)
+    setLocalChoices((prev) => ({ ...prev, [currentIndex]: optIdx }))
     onSelectAnswer(currentIndex, optIdx)
 
     // Smooth confirmation animation delay (350ms) then auto-advance
@@ -121,7 +134,7 @@ export function ExamCard({
       {/* Question Number Pills Navigation Bar */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
         {questions.map((_, idx) => {
-          const isAnswered = userChoices[idx] !== undefined
+          const isAnswered = mergedChoices[idx] !== undefined
           const isCurrent = idx === currentIndex
 
           return (
