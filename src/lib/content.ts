@@ -297,7 +297,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🌡️ Fun Fact: 37.0°C (98.6°F) was established as the standard normal human body temperature by German physician Carl Wunderlich in 1851.',
+        'Fun Fact: 37.0°C (98.6°F) was established as the standard normal human body temperature by German physician Carl Wunderlich in 1851.',
       imageId: null,
     },
     {
@@ -307,7 +307,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🩸 Fun Fact: O negative red blood cells can be given to patients of any blood type because they lack A, B, and Rh antigens.',
+        'Fun Fact: O negative red blood cells can be given to patients of any blood type because they lack A, B, and Rh antigens.',
       imageId: null,
     },
     {
@@ -317,7 +317,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🦷 Fun Fact: Dental caries (cavities) is one of the most common chronic conditions worldwide, caused by bacteria producing acids that break down tooth enamel.',
+        'Fun Fact: Dental caries (cavities) is one of the most common chronic conditions worldwide, caused by bacteria producing acids that break down tooth enamel.',
       imageId: null,
     },
     {
@@ -333,7 +333,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 0,
       timerSeconds: 15,
       explanation:
-        '🚑 Fun Fact: ABCDE stands for Airway, Breathing, Circulation, Disability, and Exposure — the systematic protocol for assessing critical emergency patients.',
+        'Fun Fact: ABCDE stands for Airway, Breathing, Circulation, Disability, and Exposure — the systematic protocol for assessing critical emergency patients.',
       imageId: null,
     },
     {
@@ -343,7 +343,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🪐 Fun Fact: Jupiter rotates on its axis in just under 10 hours (about 9 hours and 55 minutes), giving it the shortest day of any planet in our solar system.',
+        'Fun Fact: Jupiter rotates on its axis in just under 10 hours (about 9 hours and 55 minutes), giving it the shortest day of any planet in our solar system.',
       imageId: null,
     },
     {
@@ -353,7 +353,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 2,
       timerSeconds: 15,
       explanation:
-        '📍 Fun Fact: The Tropic of Cancer passes through 8 Indian states: Gujarat, Rajasthan, Madhya Pradesh, Chhattisgarh, Jharkhand, West Bengal, Tripura, and Mizoram. Kerala is located much further south.',
+        'Fun Fact: The Tropic of Cancer passes through 8 Indian states: Gujarat, Rajasthan, Madhya Pradesh, Chhattisgarh, Jharkhand, West Bengal, Tripura, and Mizoram. Kerala is located much further south.',
       imageId: null,
     },
     {
@@ -363,7 +363,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 2,
       timerSeconds: 15,
       explanation:
-        "🌍 Fun Fact: Nitrogen makes up roughly 78% of Earth's atmosphere, followed by Oxygen at approximately 21%.",
+        "Fun Fact: Nitrogen makes up roughly 78% of Earth's atmosphere, followed by Oxygen at approximately 21%.",
       imageId: null,
     },
     {
@@ -373,7 +373,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🏆 Fun Fact: Dr. Sarvepalli Radhakrishnan was awarded the Bharat Ratna in 1954, the very year the award was instituted.',
+        'Fun Fact: Dr. Sarvepalli Radhakrishnan was awarded the Bharat Ratna in 1954, the very year the award was instituted.',
       imageId: null,
     },
     {
@@ -384,7 +384,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        "📚 Fun Fact: Dr. Radhakrishnan's landmark treatise 'Indian Philosophy' was published in two volumes in 1923 and 1927, establishing Indian philosophy in global academic discourse.",
+        "Fun Fact: Dr. Radhakrishnan's landmark treatise 'Indian Philosophy' was published in two volumes in 1923 and 1927, establishing Indian philosophy in global academic discourse.",
       imageId: null,
     },
     {
@@ -394,7 +394,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 2,
       timerSeconds: 15,
       explanation:
-        "🇮🇳 Fun Fact: Dr. Radhakrishnan served as the 2nd President of India from 1962 to 1967, after serving as India's 1st Vice President from 1952 to 1962.",
+        "Fun Fact: Dr. Radhakrishnan served as the 2nd President of India from 1962 to 1967, after serving as India's 1st Vice President from 1952 to 1962.",
       imageId: null,
     },
     {
@@ -405,7 +405,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        "🎓 Fun Fact: Yenepoya (Deemed to be University) achieved a rank of 85 in the NIRF 'University' category rankings.",
+        "Fun Fact: Yenepoya (Deemed to be University) achieved a rank of 85 in the NIRF 'University' category rankings.",
       imageId: null,
     },
     {
@@ -420,7 +420,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '🏫 Fun Fact: Yenepoya Dental College was established in 1992 as the pioneer institution under the Islamic Academy of Education.',
+        'Fun Fact: Yenepoya Dental College was established in 1992 as the pioneer institution under the Islamic Academy of Education.',
       imageId: null,
     },
     {
@@ -430,7 +430,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '☀️ Fun Fact: Mercury is the smallest planet in the Solar System and the closest to the Sun, orbiting it in just 88 days.',
+        'Fun Fact: Mercury is the smallest planet in the Solar System and the closest to the Sun, orbiting it in just 88 days.',
       imageId: null,
     },
     {
@@ -440,7 +440,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        '✨ Fun Fact: Dr. Sarvepalli Radhakrishnan was born on September 5, 1888, in Thiruttani, Tamil Nadu.',
+        'Fun Fact: Dr. Sarvepalli Radhakrishnan was born on September 5, 1888, in Thiruttani, Tamil Nadu.',
       imageId: null,
     },
     {
@@ -451,7 +451,7 @@ function seedQuestions(quizId: string) {
       correctIndex: 1,
       timerSeconds: 15,
       explanation:
-        "📊 Fun Fact: Yenepoya achieved a remarkable 26-rank jump to secure the #8 rank among Deemed to be Universities in Outlook India's 2025 rankings.",
+        "Fun Fact: Yenepoya achieved a remarkable 26-rank jump to secure the #8 rank among Deemed to be Universities in Outlook India's 2025 rankings.",
       imageId: null,
     },
   ]

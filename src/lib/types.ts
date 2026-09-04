@@ -186,7 +186,7 @@ export interface PlayersFrame {
   players: number
 }
 
-export type ReactionEmoji = '❤️' | '👏' | '🔥' | '🎓' | '🌟'
+export type ReactionEmoji = 'heart' | 'clap' | 'fire' | 'cap' | 'star'
 
 export interface ReactionFrame {
   t: 'reaction'

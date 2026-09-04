@@ -27,7 +27,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teache
         </div>
 
         <h1 className="text-3xl font-black text-ink">
-          You're In! 🎉
+          You're In!
         </h1>
 
         <p className="text-ink-soft text-sm sm:text-base font-extrabold max-w-md mx-auto">

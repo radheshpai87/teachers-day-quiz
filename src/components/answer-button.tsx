@@ -2,6 +2,7 @@
 
 import { ANSWER_SHAPES } from '@/components/icons'
 import { motion } from 'framer-motion'
+import { Check, X } from 'lucide-react'
 
 interface AnswerButtonProps {
   index: number
@@ -87,12 +88,12 @@ export function AnswerButton({
       <div className="shrink-0 ml-2">
         {revealed && correct && (
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm">
-            ✓
+            <Check className="w-4 h-4 stroke-[3]" />
           </span>
         )}
         {revealed && selected && !correct && (
           <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-rose-700 font-extrabold text-sm">
-            ✕
+            <X className="w-4 h-4 stroke-[3]" />
           </span>
         )}
         {!revealed && selected && (

@@ -51,7 +51,7 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   }
   if (bucket.count >= limit) {
     console.warn(
-      `[429_RATE_LIMIT_TRIGGERED] 🛑 Rate limit exceeded for key="${key}" (count=${bucket.count}, limit=${limit}, window=${windowMs}ms)`
+      `[429_RATE_LIMIT_TRIGGERED] Rate limit exceeded for key="${key}" (count=${bucket.count}, limit=${limit}, window=${windowMs}ms)`
     )
     return false
   }

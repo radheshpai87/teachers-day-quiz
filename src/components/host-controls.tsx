@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react'
 import type { HostFrame } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
 import { ANSWER_SHAPES, Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
-import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw, Search, Trophy, Check, UserX, Keyboard } from 'lucide-react'
+import { Play, Pause, SkipForward, Square, BarChart2, RotateCcw, Search, Trophy, Check, UserX, Keyboard, Phone } from 'lucide-react'
 import { QrModal } from '@/components/qr-modal'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 
@@ -365,8 +365,9 @@ export function HostControls({ snapshot, liveTally }: HostControlsProps) {
                       </div>
                       <div className="text-[11px] font-bold text-ink-soft flex items-center gap-3 flex-wrap mt-0.5">
                         {member.phone && (
-                          <span className="text-ink-soft">
-                            📞 {member.phone}
+                          <span className="text-ink-soft flex items-center gap-1">
+                            <Phone className="w-3 h-3 text-ink-soft shrink-0" />
+                            <span>{member.phone}</span>
                           </span>
                         )}
                         {typeof member.correct === 'number' && (

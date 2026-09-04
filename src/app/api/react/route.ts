@@ -6,7 +6,7 @@ import type { ReactionEmoji } from '@/lib/types'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-const ALLOWED_EMOJIS: ReactionEmoji[] = ['❤️', '👏', '🔥', '🎓', '🌟']
+const ALLOWED_EMOJIS: ReactionEmoji[] = ['heart', 'clap', 'fire', 'cap', 'star']
 
 export async function POST(req: NextRequest) {
   const ip = clientIp(req)
