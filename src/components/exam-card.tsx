@@ -70,7 +70,6 @@ export function ExamCard({
     }
     return merged
   }, [userChoices, localChoices])
-
   // Anti-Cheat: Detect tab switching, window blur or leaving page & auto-submit
   useEffect(() => {
     let triggered = false
