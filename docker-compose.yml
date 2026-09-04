@@ -1,18 +1,32 @@
-version: '3.8'
-
 services:
   quiz-app:
     build:
       context: .
       dockerfile: Dockerfile
+
     container_name: teachers_day_quiz
+
     restart: unless-stopped
-    ports:
-      - '3000:3000'
+
     volumes:
-      # Mount host ./data directory into container to persist SQLite quiz.db
       - ./data:/app/data
+
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+
+    networks:
+      - quiz
+      - monitoring
+
+    labels:
+      kuma.monitor: "true"
+      kuma.url: "http://teachers_day_quiz:3000"
+
+networks:
+  quiz:
+    driver: bridge
+
+  monitoring:
+    external: true
