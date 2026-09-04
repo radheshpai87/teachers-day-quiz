@@ -207,7 +207,7 @@ export default function PlayPage() {
               <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-ink flex items-center justify-center shadow-[3px_3px_0px_#2a2440]">
                 <Pause className="w-8 h-8 text-ink fill-current animate-pulse" />
               </div>
-              <h2 className="text-2xl font-black text-ink">Quiz Paused by Host ⏸️</h2>
+              <h2 className="text-2xl font-black text-ink">Quiz Paused by Host</h2>
               <p className="text-sm font-bold text-ink-soft max-w-md">
                 The event host has temporarily paused the quiz session. Take a quick breather — your progress is saved and answering will resume shortly!
               </p>

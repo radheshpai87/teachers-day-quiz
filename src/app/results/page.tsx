@@ -99,7 +99,7 @@ export default function ResultsPage() {
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6bc4e8] text-[#231f20] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-ink shadow-[2px_2px_0px_#231f20]">
             <PaperClip className="w-4 h-4 text-[#231f20]" />
             <Trophy className="w-4 h-4 text-[#231f20]" />
-            <span>All Questions Completed! 🎉</span>
+            <span>All Questions Completed!</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-ink">
             Great Job, {session.name}!
@@ -175,7 +175,7 @@ export default function ResultsPage() {
           {/* Teachers' Day Message */}
           <div className="pt-2 text-center space-y-1">
             <p className="font-black text-[#0284c7] text-base sm:text-lg">
-              Happy Teachers' Day! 🎓
+              Happy Teachers' Day!
             </p>
             <p className="text-xs text-ink-soft font-extrabold">
               Thank you for participating in honoring our incredible teachers.

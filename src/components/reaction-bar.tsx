@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { ReactionEmoji } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
+import { Heart, ThumbsUp, Flame, GraduationCap, Sparkles } from 'lucide-react'
 
 interface FloatingReaction {
   id: string
@@ -17,7 +18,30 @@ interface ReactionBarProps {
   lastReaction?: { id: string; emoji: ReactionEmoji; senderName?: string } | null
 }
 
-const EMOJIS: ReactionEmoji[] = ['❤️', '👏', '🔥', '🎓', '🌟']
+const REACTIONS: { id: ReactionEmoji; label: string; icon: React.ReactNode }[] = [
+  { id: 'heart', label: 'Heart', icon: <Heart className="w-5 h-5 fill-rose-500 text-rose-500" /> },
+  { id: 'clap', label: 'Clap', icon: <ThumbsUp className="w-5 h-5 fill-amber-400 text-amber-500" /> },
+  { id: 'fire', label: 'Fire', icon: <Flame className="w-5 h-5 fill-orange-500 text-orange-500" /> },
+  { id: 'cap', label: 'Cap', icon: <GraduationCap className="w-5 h-5 fill-sky-500 text-sky-600" /> },
+  { id: 'star', label: 'Star', icon: <Sparkles className="w-5 h-5 fill-yellow-400 text-yellow-500" /> },
+]
+
+function renderReactionIcon(emoji: ReactionEmoji) {
+  switch (emoji) {
+    case 'heart':
+      return <Heart className="w-7 h-7 sm:w-8 sm:h-8 fill-rose-500 text-rose-500 filter drop-shadow-md" />
+    case 'clap':
+      return <ThumbsUp className="w-7 h-7 sm:w-8 sm:h-8 fill-amber-400 text-amber-500 filter drop-shadow-md" />
+    case 'fire':
+      return <Flame className="w-7 h-7 sm:w-8 sm:h-8 fill-orange-500 text-orange-500 filter drop-shadow-md" />
+    case 'cap':
+      return <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 fill-sky-500 text-sky-600 filter drop-shadow-md" />
+    case 'star':
+      return <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 fill-yellow-400 text-yellow-500 filter drop-shadow-md" />
+    default:
+      return <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 fill-yellow-400 text-yellow-500 filter drop-shadow-md" />
+  }
+}
 
 export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionBarProps) {
   const [floating, setFloating] = useState<FloatingReaction[]>([])
@@ -69,7 +93,7 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
               transition={{ duration: 2.2, ease: 'easeOut' }}
               className="absolute flex flex-col items-center select-none"
             >
-              <span className="text-3xl sm:text-4xl filter drop-shadow-md">{item.emoji}</span>
+              {renderReactionIcon(item.emoji)}
               {item.senderName && (
                 <span className="text-[10px] font-black px-2 py-0.5 rounded-full sticky-note-yellow text-ink border border-ink shadow-xs mt-1">
                   {item.senderName}
@@ -83,15 +107,16 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
       {/* Interactive Bottom Reaction Bar (Only when participantId is present) */}
       {participantId && (
         <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-paper-cream/90 backdrop-blur-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440]">
-          {EMOJIS.map((emoji) => (
+          {REACTIONS.map((item) => (
             <button
-              key={emoji}
+              key={item.id}
               type="button"
-              onClick={() => handleSendReaction(emoji)}
+              onClick={() => handleSendReaction(item.id)}
               disabled={cooldown}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl hover:bg-note-yellow/60 active:scale-90 transition-all flex items-center justify-center text-lg sm:text-xl cursor-pointer disabled:opacity-60"
+              aria-label={item.label}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl hover:bg-note-yellow/60 active:scale-90 transition-all flex items-center justify-center cursor-pointer disabled:opacity-60"
             >
-              {emoji}
+              {item.icon}
             </button>
           ))}
         </div>
