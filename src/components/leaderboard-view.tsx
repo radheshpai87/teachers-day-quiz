@@ -6,6 +6,7 @@ import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Medal, ArrowUp, ArrowDown, Trophy, PaperClip } from '@/components/icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, Building2, User, X, Users } from 'lucide-react'
+import { YentechFooterCredit } from '@/components/yentech-branding'
 
 interface LeaderboardViewProps {
   top: LeaderboardEntry[]
@@ -62,7 +63,7 @@ export function LeaderboardView({
           <span>Live Rankings</span>
         </div>
         <h2 className={`font-black text-ink ${displayMode ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-3xl'}`}>
-          Leaderboard
+          Hall of Fame
         </h2>
         {totalPlayers !== undefined && (
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#93d500] text-[#231f20] border-2 border-ink shadow-[2px_2px_0px_#231f20] font-black text-xs sm:text-sm uppercase tracking-wider">
@@ -231,6 +232,13 @@ export function LeaderboardView({
           </div>
         )}
       </AnimatePresence>
+
+      {/* Footer Branding for Mobile / Participant view */}
+      {!displayMode && (
+        <div className="w-full border-t-2 border-ink pt-3 mt-4">
+          <YentechFooterCredit className="py-0" />
+        </div>
+      )}
     </div>
   )
 }

@@ -9,8 +9,9 @@ export const runtime = 'nodejs'
 const ALLOWED_EMOJIS: ReactionEmoji[] = ['heart', 'clap', 'fire', 'cap', 'star']
 
 export async function POST(req: NextRequest) {
+  // Campus Wi-Fi NAT safety limit (up to 25,000 reactions/min across shared gateway IP)
   const ip = clientIp(req)
-  if (ip !== 'unknown' && !rateLimit(`react:ip:${ip}`, 300, 60_000)) {
+  if (ip !== 'unknown' && !rateLimit(`react:ip:${ip}`, 25000, 60_000)) {
     return fail('Too many reactions.', 429)
   }
 

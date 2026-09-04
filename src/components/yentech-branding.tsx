@@ -33,9 +33,11 @@ export function YentechBranding({ className = '' }: { className?: string }) {
 
 export function YentechFooterCredit({ className = '' }: { className?: string }) {
   return (
-    <div className={`flex flex-col items-center justify-center gap-1.5 py-2 ${className}`}>
-      {/* Line 1: Powered by YENTECH */}
-      <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft">
+    <div
+      className={`flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-4 lg:gap-6 py-2 ${className}`}
+    >
+      {/* Line 1 (on mobile) / Segment 1 (on desktop): Powered by YENTECH */}
+      <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft shrink-0">
         <span>Powered by</span>
         <Image
           src="/yentech.png"
@@ -43,12 +45,17 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           width={160}
           height={44}
           priority
-          className="h-7 sm:h-9 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0 drop-shadow-xs"
         />
       </div>
 
-      {/* Line 2: Official Technical Club of YSET */}
-      <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft">
+      {/* Subtle Dot Separator (Desktop only) */}
+      <span className="hidden md:inline-block text-ink-soft/40 font-bold select-none text-base">
+        •
+      </span>
+
+      {/* Line 2 (on mobile) / Segment 2 (on desktop): Official Technical Club of YSET */}
+      <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-extrabold text-ink-soft shrink-0">
         <span>Official Technical Club of</span>
         <Image
           src="/yenepoya-school-engineering-and-technology.svg"
@@ -56,7 +63,7 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           width={180}
           height={48}
           priority
-          className="h-7 sm:h-9 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-6 sm:h-7 md:h-8 w-auto object-contain shrink-0 drop-shadow-xs"
         />
       </div>
     </div>

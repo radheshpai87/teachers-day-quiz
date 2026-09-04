@@ -617,7 +617,7 @@ class QuizEngine {
   private beginExam() {
     this.flushAnswers()
     const now = Date.now()
-    const durationMs = 10 * 60 * 1000 // 10 Minutes Total Event Window
+    const durationMs = 8 * 60 * 1000 // 8 Minutes Total Event Window
     this.phase = 'EXAM_LIVE'
     this.phaseStartedAt = now
     this.answersOpenAt = now

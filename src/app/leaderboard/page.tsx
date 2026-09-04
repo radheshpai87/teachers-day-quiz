@@ -35,6 +35,15 @@ export default function LeaderboardPage() {
             priority
             className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
           />
+          <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
+            <h1 className="text-xl sm:text-2xl font-black text-ink">
+              Teachers' Day Quiz
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-soft font-extrabold flex items-center gap-1">
+              <PaperClip className="w-3.5 h-3.5 text-ink" />
+              <span>Hall of Fame</span>
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="sticky-note-yellow px-3 py-1 text-xs font-black text-[#231f20] rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] uppercase tracking-wider">
