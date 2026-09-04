@@ -1068,6 +1068,13 @@ class QuizEngine {
 
     const activePool = this.pool.length > 0 ? this.pool : [...this.questions.keys()]
 
+    const perQuestionCounts = new Map<string, number>()
+    for (const p of this.participants.values()) {
+      for (const a of p.answers.values()) {
+        perQuestionCounts.set(a.questionId, (perQuestionCounts.get(a.questionId) ?? 0) + 1)
+      }
+    }
+
     return {
       quiz: { ...this.quiz, questionCount: this.totalRounds },
       runId: this.runId,
@@ -1086,7 +1093,7 @@ class QuizEngine {
       perQuestion: activePool.map((id) => ({
         questionId: id,
         prompt: this.questions.get(id)?.prompt ?? '(removed)',
-        answered: this.roundPerQuestion.get(id) ?? 0,
+        answered: perQuestionCounts.get(id) ?? 0,
       })),
       top: this.topEntries(),
       allParticipants: this.ranked.map((p, i) => ({
