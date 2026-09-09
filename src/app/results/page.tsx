@@ -8,6 +8,7 @@ import type { FinalSummary } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import Image from 'next/image'
 import { Trophy, Target, Bolt, GraduationCap, Check, ArrowUp, PaperClip, Star } from '@/components/icons'
+import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
@@ -110,9 +111,10 @@ export default function ResultsPage() {
 
   if (loading || !session) {
     return (
-      <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none">
-        <div className="flex flex-col items-center gap-3 text-ink">
-          <GraduationCap className="w-10 h-10 text-[#0284c7] animate-bounce" />
+      <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
+        <NotebookBackgroundDecor />
+        <div className="flex flex-col items-center gap-3 text-ink z-10">
+          <GraduationCap className="w-10 h-10 text-[#00d2ff] animate-bounce" />
           <span className="text-sm font-black">Loading your final results...</span>
         </div>
       </main>
@@ -121,6 +123,7 @@ export default function ResultsPage() {
 
   return (
     <main className="min-h-screen notebook-paper flex flex-col items-center justify-center p-4 sm:p-6 select-none relative overflow-hidden">
+      <NotebookBackgroundDecor />
       {/* Floating Animated Motifs */}
       <motion.div
         animate={{ y: [0, -10, 0], rotate: [0, 8, 0] }}

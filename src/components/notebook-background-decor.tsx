@@ -13,7 +13,7 @@ import {
   PaperClip,
 } from '@/components/icons'
 
-export function NotebookBackgroundDecor() {
+export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean } = {}) {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
       {/* 1. Authentic Blueprint Cyan Radial Backdrop Gradient */}
@@ -158,55 +158,59 @@ export function NotebookBackgroundDecor() {
         ))}
       </div>
 
-      {/* 5. Rotating Gears Animation */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-        className="absolute top-3 right-3 sm:top-10 sm:right-12 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
-      >
-        <Gear className="w-12 h-12 sm:w-20 sm:h-20 stroke-[2]" />
-      </motion.div>
+      {!minimal && (
+        <>
+          {/* 5. Rotating Gears Animation */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+            className="absolute top-3 right-3 sm:top-10 sm:right-12 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
+          >
+            <Gear className="w-12 h-12 sm:w-20 sm:h-20 stroke-[2]" />
+          </motion.div>
 
-      {/* 6. Mid-Page Interlocking Gear Train & Caliper */}
-      <div className="absolute top-[14%] left-8 opacity-40 sm:opacity-90 text-[#10b981] pointer-events-none z-0">
-        <GearsSet className="w-16 h-16 sm:w-28 sm:h-28 stroke-[1.8]" />
-      </div>
+          {/* 6. Mid-Page Interlocking Gear Train & Caliper */}
+          <div className="absolute top-[14%] left-8 opacity-40 sm:opacity-90 text-[#10b981] pointer-events-none z-0">
+            <GearsSet className="w-16 h-16 sm:w-28 sm:h-28 stroke-[1.8]" />
+          </div>
 
-      <div className="absolute top-1/3 right-5 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0">
-        <CircuitBoard className="w-12 h-12 sm:w-18 sm:h-18 stroke-[1.8]" />
-      </div>
+          <div className="absolute top-1/3 right-5 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0">
+            <CircuitBoard className="w-12 h-12 sm:w-18 sm:h-18 stroke-[1.8]" />
+          </div>
 
-      {/* 7. Bottom-Left Drafting Compass & Caliper */}
-      <motion.div
-        animate={{ y: [0, -5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-4 left-6 sm:bottom-10 sm:left-12 opacity-70 sm:opacity-90 text-[#fbbf24] pointer-events-none flex items-center gap-2 sm:gap-3 z-0"
-      >
-        <Compass className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2]" />
-        <Caliper className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2] -rotate-12" />
-      </motion.div>
+          {/* 7. Bottom-Left Drafting Compass & Caliper */}
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute bottom-4 left-6 sm:bottom-10 sm:left-12 opacity-70 sm:opacity-90 text-[#fbbf24] pointer-events-none flex items-center gap-2 sm:gap-3 z-0"
+          >
+            <Compass className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2]" />
+            <Caliper className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2] -rotate-12" />
+          </motion.div>
 
-      {/* 8. Bottom-Right Engineer Hard Hat */}
-      <motion.div
-        animate={{ y: [0, 6, 0] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 opacity-70 sm:opacity-90 text-[#38bdf8] pointer-events-none z-0"
-      >
-        <HardHat className="w-8 h-8 sm:w-14 sm:h-14 stroke-[2.2]" />
-      </motion.div>
+          {/* 8. Bottom-Right Engineer Hard Hat */}
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 opacity-70 sm:opacity-90 text-[#38bdf8] pointer-events-none z-0"
+          >
+            <HardHat className="w-8 h-8 sm:w-14 sm:h-14 stroke-[2.2]" />
+          </motion.div>
 
-      {/* 9. Side Blueprint Sticky Specs (Desktop Large Viewports Only) */}
-      <div className="absolute top-[42%] left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
-        <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
-        <p className="text-xs font-black text-[#081a2e]">Engineers' Day 2026</p>
-        <p className="text-[10px] font-bold text-[#081a2e]/80">Honoring Sir M. Visvesvaraya</p>
-      </div>
+          {/* 9. Side Blueprint Sticky Specs (Desktop Large Viewports Only) */}
+          <div className="absolute top-[42%] left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
+            <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
+            <p className="text-xs font-black text-[#081a2e]">Engineers' Day 2026</p>
+            <p className="text-[10px] font-bold text-[#081a2e]/80">Honoring Sir M. Visvesvaraya</p>
+          </div>
 
-      <div className="absolute top-1/2 right-6 sticky-note-lavender p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
-        <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
-        <p className="text-xs font-black text-[#081a2e]">Live Rankings</p>
-        <p className="text-[10px] font-bold text-[#081a2e]/80">Innovation Hall of Fame</p>
-      </div>
+          <div className="absolute top-1/2 right-6 sticky-note-lavender p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
+            <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
+            <p className="text-xs font-black text-[#081a2e]">Live Rankings</p>
+            <p className="text-[10px] font-bold text-[#081a2e]/80">Innovation Hall of Fame</p>
+          </div>
+        </>
+      )}
     </div>
   )
 }
