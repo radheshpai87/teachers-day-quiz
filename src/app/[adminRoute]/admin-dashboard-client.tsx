@@ -46,7 +46,7 @@ export function AdminDashboardClient() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={adminPath('live')}
-              className="px-6 py-3 rounded-xl bg-[#0284c7] text-white font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Open Live Control</span>
@@ -68,7 +68,7 @@ export function AdminDashboardClient() {
                   }
                 }
               }}
-              className="px-5 py-3 rounded-xl sticky-note-yellow text-ink font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 rounded-xl sticky-note-yellow text-ink font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
               <span>Reset Event</span>
@@ -82,7 +82,7 @@ export function AdminDashboardClient() {
         {/* Participants */}
         <div className="sticky-note-lavender p-5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Users className="w-4 h-4 text-[#0284c7]" />
+            <Users className="w-4 h-4 text-[#081a2e]" />
             <span>Participants</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
@@ -93,7 +93,7 @@ export function AdminDashboardClient() {
         {/* Questions */}
         <div className="sticky-note-mint p-5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <HelpCircle className="w-4 h-4 text-[#1976d2]" />
+            <HelpCircle className="w-4 h-4 text-[#081a2e]" />
             <span>Questions</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
@@ -104,7 +104,7 @@ export function AdminDashboardClient() {
         {/* Average Score */}
         <div className="sticky-note-yellow p-5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Trophy className="w-4 h-4 text-[#d32f2f]" />
+            <Trophy className="w-4 h-4 text-[#081a2e]" />
             <span>Avg. Score</span>
           </div>
           <div className="tnum text-3xl font-black text-ink">
@@ -114,11 +114,11 @@ export function AdminDashboardClient() {
 
         {/* Average Accuracy */}
         <div className="sticky-note-rose p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Target className="w-4 h-4 text-[#388e3c]" />
+          <div className="flex items-center gap-2 text-white text-xs font-black uppercase">
+            <Target className="w-4 h-4 text-white" />
             <span>Avg. Accuracy</span>
           </div>
-          <div className="tnum text-3xl font-black text-ink">
+          <div className="tnum text-3xl font-black text-white">
             {avgAccuracy}%
           </div>
         </div>
@@ -130,7 +130,7 @@ export function AdminDashboardClient() {
           href={adminPath('live')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#0284c7] text-white flex items-center justify-center font-bold border-2 border-ink">
+          <div className="w-10 h-10 rounded-xl bg-[#00d2ff] text-[#081a2e] flex items-center justify-center font-bold border-2 border-ink">
             <Play className="w-5 h-5 fill-current" />
           </div>
           <div className="flex items-center justify-between">
@@ -138,7 +138,7 @@ export function AdminDashboardClient() {
             <ArrowRight className="w-4 h-4 text-ink-soft group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-ink-soft font-medium">
-            Status: <span className="font-black text-[#0284c7] uppercase">{status}</span>. Single-click start & monitor.
+            Status: <span className="font-black text-[#00d2ff] uppercase">{status}</span>. Single-click start & monitor.
           </p>
         </Link>
 

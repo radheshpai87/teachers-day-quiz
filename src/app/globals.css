@@ -8,13 +8,13 @@
 --------------------------------------------------------------------------- */
 
 @theme {
-  --color-paper-light: #0e2e4e;
-  --color-paper-warm: #0c2340;
-  --color-paper-cream: #081a2e;
+  --color-paper-light: #0f355c;
+  --color-paper-warm: #0b2847;
+  --color-paper-cream: #082038;
 
   --color-ink: #f8fafc;
-  --color-ink-soft: #94a3b8;
-  --color-ink-faint: #64748b;
+  --color-ink-soft: #7dd3fc;
+  --color-ink-faint: #94a3b8;
 
   --color-notebook-rule: rgba(0, 210, 255, 0.2);
   --color-notebook-margin: #00d2ff;
@@ -39,7 +39,7 @@
   --color-note-mint: #10b981;      /* Circuit Green */
   --color-note-lavender: #00d2ff;  /* Blueprint Neon Cyan */
   --color-note-peach: #38bdf8;     /* Technical Sky Blue */
-  --color-note-rose: #f97316;      /* Safety Alert Orange */
+  --color-note-rose: #f43f5e;      /* Safety Alert Rose */
 
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -181,8 +181,8 @@
 
   .sticky-note-mint {
     background-color: #10b981;
-    color: #ffffff;
-    border: 2px solid #00d2ff;
+    color: #081a2e;
+    border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }
 
@@ -201,9 +201,9 @@
   }
 
   .sticky-note-rose {
-    background-color: #f97316;
+    background-color: #f43f5e;
     color: #ffffff;
-    border: 2px solid #00d2ff;
+    border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }
 

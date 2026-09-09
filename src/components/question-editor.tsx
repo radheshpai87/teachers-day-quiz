@@ -53,7 +53,7 @@ function SortableQuestionRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="p-4 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-3 shadow-[2px_2px_0px_#2a2440] hover:shadow-[4px_4px_0px_#2a2440] transition-all"
+      className="p-4 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-3 shadow-[2px_2px_0px_#04101d] hover:shadow-[4px_4px_0px_#04101d] transition-all"
     >
       <div className="flex items-center gap-3 min-w-0">
         <button
@@ -84,21 +84,21 @@ function SortableQuestionRow({
         <button
           type="button"
           onClick={() => onEdit(question)}
-          className="p-2 rounded-xl sticky-note-lavender border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#2a2440]"
+          className="p-2 rounded-xl sticky-note-lavender border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#04101d]"
         >
           <Edit3 className="w-4 h-4" />
         </button>
         <button
           type="button"
           onClick={() => onDuplicate(question.id)}
-          className="p-2 rounded-xl sticky-note-yellow border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#2a2440]"
+          className="p-2 rounded-xl sticky-note-yellow border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#04101d]"
         >
           <Copy className="w-4 h-4" />
         </button>
         <button
           type="button"
           onClick={() => onDelete(question.id)}
-          className="p-2 rounded-xl sticky-note-rose border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#2a2440]"
+          className="p-2 rounded-xl sticky-note-rose border border-ink text-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[1px_1px_0px_#04101d]"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -256,7 +256,7 @@ export function QuestionEditor({
         <button
           type="button"
           onClick={handleCreateNew}
-          className="px-4 py-2.5 rounded-2xl bg-[#0284c7] text-white font-black text-xs sm:text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
+          className="px-4 py-2.5 rounded-2xl bg-[#0284c7] text-white font-black text-xs sm:text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Question</span>
@@ -283,11 +283,11 @@ export function QuestionEditor({
       {/* Question Edit / Create Modal */}
       {editingQuestion && (
         <div className="fixed inset-0 z-50 bg-ink/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl notebook-card bg-[#fffdf7] p-6 sm:p-8 space-y-6 border-3 border-ink shadow-[8px_8px_0px_#2a2440] relative my-6 animate-pop">
+          <div className="w-full max-w-2xl notebook-card bg-[#fffdf7] p-6 sm:p-8 space-y-6 border-3 border-ink shadow-[8px_8px_0px_#04101d] relative my-6 animate-pop">
             <button
               type="button"
               onClick={() => setEditingQuestion(null)}
-              className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-ink text-ink font-bold hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440]"
+              className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-ink text-ink font-bold hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d]"
             >
               <X className="w-5 h-5" />
             </button>
@@ -322,7 +322,7 @@ export function QuestionEditor({
                             : ['', '', '', '']
                         setEditingQuestion((prev) => ({ ...prev, type: t, options: opts, correctIndex: 0 }))
                       }}
-                      className={`py-2.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440] ${
+                      className={`py-2.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] ${
                         editingQuestion.type === t
                           ? 'sticky-note-lavender text-ink'
                           : 'bg-paper-cream text-ink hover:bg-note-yellow/40'
@@ -346,7 +346,7 @@ export function QuestionEditor({
                     setEditingQuestion((prev) => ({ ...prev, prompt: e.target.value }))
                   }
                   placeholder="Enter the question prompt..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#2a2440] focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#04101d] focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
                 />
               </div>
 
@@ -361,7 +361,7 @@ export function QuestionEditor({
                     <button
                       type="button"
                       onClick={() => setEditingQuestion((prev) => ({ ...prev, correctIndex: idx }))}
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-ink transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440] ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border-2 border-ink transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] ${
                         editingQuestion.correctIndex === idx
                           ? 'bg-[#388e3c] text-white'
                           : 'bg-paper-cream text-ink-soft hover:text-ink'
@@ -379,7 +379,7 @@ export function QuestionEditor({
                         setEditingQuestion((prev) => ({ ...prev, options: newOpts }))
                       }}
                       placeholder={`Option ${String.fromCharCode(65 + idx)}`}
-                      className="w-full px-3.5 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#2a2440] focus:outline-hidden"
+                      className="w-full px-3.5 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold shadow-[2px_2px_0px_#04101d] focus:outline-hidden"
                     />
                   </div>
                 ))}
@@ -396,7 +396,7 @@ export function QuestionEditor({
                       key={sec}
                       type="button"
                       onClick={() => setEditingQuestion((prev) => ({ ...prev, timerSeconds: sec }))}
-                      className={`py-1.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#2a2440] ${
+                      className={`py-1.5 px-3 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer shadow-[1.5px_1.5px_0px_#04101d] ${
                         (editingQuestion.timerSeconds || 5) === sec
                           ? 'bg-[#0284c7] text-white'
                           : 'bg-paper-cream text-ink hover:bg-note-yellow/40'
@@ -417,7 +417,7 @@ export function QuestionEditor({
 
                   {editingQuestion.imageId ? (
                     <div className="flex flex-col sm:flex-row items-center gap-3">
-                      <div className="w-32 h-24 relative rounded-lg border-2 border-ink overflow-hidden bg-white shrink-0 shadow-[2px_2px_0px_#2a2440]">
+                      <div className="w-32 h-24 relative rounded-lg border-2 border-ink overflow-hidden bg-white shrink-0 shadow-[2px_2px_0px_#04101d]">
                         {/* eslint-disable-next-html-element-suppression */}
                         <img
                           src={`/api/image/${editingQuestion.imageId}`}
@@ -427,7 +427,7 @@ export function QuestionEditor({
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <label className="px-3.5 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-black flex items-center gap-1.5 hover:bg-paper-light cursor-pointer shadow-[1.5px_1.5px_0px_#2a2440]">
+                        <label className="px-3.5 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-black flex items-center gap-1.5 hover:bg-paper-light cursor-pointer shadow-[1.5px_1.5px_0px_#04101d]">
                           <ImageIcon className="w-4 h-4" />
                           <span>{uploadingImage ? 'Uploading...' : 'Replace Image'}</span>
                           <input
@@ -442,7 +442,7 @@ export function QuestionEditor({
                         <button
                           type="button"
                           onClick={() => setEditingQuestion((prev) => (prev ? { ...prev, imageId: null } : null))}
-                          className="px-3.5 py-1.5 rounded-xl border-2 border-ink sticky-note-rose text-ink text-xs font-black hover:bg-rose-tint cursor-pointer shadow-[1.5px_1.5px_0px_#2a2440]"
+                          className="px-3.5 py-1.5 rounded-xl border-2 border-ink sticky-note-rose text-ink text-xs font-black hover:bg-rose-tint cursor-pointer shadow-[1.5px_1.5px_0px_#04101d]"
                         >
                           Remove Image
                         </button>
@@ -450,7 +450,7 @@ export function QuestionEditor({
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
-                      <label className="px-4 py-2.5 rounded-xl border-2 border-ink sticky-note-lavender text-ink text-xs font-black flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440]">
+                      <label className="px-4 py-2.5 rounded-xl border-2 border-ink sticky-note-lavender text-ink text-xs font-black flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d]">
                         <ImageIcon className="w-4 h-4" />
                         <span>{uploadingImage ? 'Uploading Image...' : 'Choose Question Image'}</span>
                         <input
@@ -478,7 +478,7 @@ export function QuestionEditor({
                   }
                   rows={2}
                   placeholder="Shown during the reveal phase to teach participants fun facts..."
-                  className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-extrabold shadow-[2px_2px_0px_#2a2440] focus:outline-hidden"
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-extrabold shadow-[2px_2px_0px_#04101d] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -488,7 +488,7 @@ export function QuestionEditor({
               <button
                 type="button"
                 onClick={() => setEditingQuestion(null)}
-                className="px-5 py-2.5 rounded-xl sticky-note-rose border-2 border-ink text-ink text-xs font-black shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-xl sticky-note-rose border-2 border-ink text-ink text-xs font-black shadow-[2px_2px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 Cancel
               </button>
@@ -496,7 +496,7 @@ export function QuestionEditor({
                 type="button"
                 onClick={handleSaveModal}
                 disabled={isSaving}
-                className="px-6 py-2.5 rounded-xl bg-[#0284c7] text-white text-xs font-black border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-[#0284c7] text-white text-xs font-black border-2 border-ink shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save Question'}
               </button>

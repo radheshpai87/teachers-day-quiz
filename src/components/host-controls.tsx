@@ -147,7 +147,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             <button
               type="button"
               onClick={() => setShowQr(true)}
-              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440] sm:shadow-[3px_3px_0px_#2a2440] flex items-center justify-center gap-1.5 sm:gap-2"
+              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2"
             >
               <QrFrame className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284c7]" />
               <span>QR Code</span>
@@ -165,7 +165,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 }
               }}
               disabled={loadingAction !== null}
-              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-yellow border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#2a2440] sm:shadow-[3px_3px_0px_#2a2440] flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
+              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-yellow border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
             >
               <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-[#d32f2f]" />
               <span>{loadingAction === 'reset' ? 'Resetting...' : 'Reset'}</span>
@@ -178,7 +178,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
         {/* Responsive 4 Stat Tiles Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {/* Tile 1: Status */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-mint flex items-center gap-2.5 shadow-[2px_2px_0px_#2a2440]">
+          <div className="p-3 rounded-xl border-2 border-ink sticky-note-mint flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <span
               className={`w-3.5 h-3.5 rounded-full border border-ink shrink-0 ${
                 isLive
@@ -195,7 +195,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
           </div>
 
           {/* Tile 2: Connected Players */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-yellow flex items-center gap-2.5 shadow-[2px_2px_0px_#2a2440]">
+          <div className="p-3 rounded-xl border-2 border-ink sticky-note-yellow flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <Users className="w-4 h-4 text-ink shrink-0" />
             <div className="min-w-0">
               <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">Joined</span>
@@ -204,7 +204,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
           </div>
 
           {/* Tile 3: Questions */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-lavender flex items-center gap-2.5 shadow-[2px_2px_0px_#2a2440]">
+          <div className="p-3 rounded-xl border-2 border-ink sticky-note-lavender flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <FileText className="w-4 h-4 text-[#0284c7] shrink-0" />
             <div className="min-w-0">
               <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">Questions</span>
@@ -213,7 +213,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
           </div>
 
           {/* Tile 4: Live Timer or SSE Status */}
-          <div className="p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center gap-2.5 shadow-[2px_2px_0px_#2a2440]">
+          <div className="p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <Clock className={`w-4 h-4 text-[#d32f2f] shrink-0 ${isLive ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
             <div className="min-w-0">
               <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">
@@ -233,7 +233,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               type="button"
               onClick={() => handleAction('start')}
               disabled={loadingAction !== null}
-              className="w-full py-3.5 px-6 rounded-2xl bg-[#388e3c] text-white font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#388e3c] text-white font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
             >
               <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
               <span>START QUIZ NOW</span>
@@ -249,7 +249,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 }
               }}
               disabled={loadingAction !== null}
-              className="w-full py-3.5 px-6 rounded-2xl sticky-note-rose text-ink font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#2a2440] hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-2xl sticky-note-rose text-ink font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <Square className="w-5 h-5" />
               <span>END QUIZ EARLY</span>
@@ -259,7 +259,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
       </div>
 
       {/* 15 Questions Live Submission Progress Card */}
-      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4 border-2 border-ink shadow-[4px_4px_0px_#2a2440]">
+      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4 border-2 border-ink shadow-[4px_4px_0px_#04101d]">
         <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b-2 border-ink">
           <div className="flex items-center gap-2">
             <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284c7]" />
@@ -284,7 +284,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               return (
                 <div
                   key={item.questionId || idx}
-                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-ink space-y-2 shadow-[2px_2px_0px_#2a2440] transition-all ${
+                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-ink space-y-2 shadow-[2px_2px_0px_#04101d] transition-all ${
                     isAllAnswered ? 'sticky-note-mint' : 'bg-paper-cream'
                   }`}
                 >
@@ -371,7 +371,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               return (
                 <div
                   key={member.id}
-                  className="p-2.5 sm:p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-2 sm:gap-3 shadow-[2px_2px_0px_#2a2440] hover:-translate-y-0.5 transition-all"
+                  className="p-2.5 sm:p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-2 sm:gap-3 shadow-[2px_2px_0px_#04101d] hover:-translate-y-0.5 transition-all"
                 >
                   <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     {/* Rank Badge */}
@@ -466,7 +466,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
           <button
             type="button"
             onClick={() => setShowQr(true)}
-            className="p-2.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#2a2440]"
+            className="p-2.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
             title="Display QR Code"
           >
             <QrFrame className="w-4 h-4 text-[#0284c7]" />
@@ -478,7 +478,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               if (confirm('Reset the quiz session?')) handleAction('reset')
             }}
             disabled={loadingAction !== null}
-            className="p-2.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#2a2440]"
+            className="p-2.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
             title="Reset Quiz"
           >
             <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
@@ -489,7 +489,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               type="button"
               onClick={() => handleAction('start')}
               disabled={loadingAction !== null}
-              className="px-4 py-2 rounded-xl bg-[#388e3c] text-white font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#388e3c] text-white font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#04101d] flex items-center gap-1.5"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>START</span>
