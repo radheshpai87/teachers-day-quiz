@@ -127,7 +127,7 @@ export default function JoinPage() {
         </div>
 
         {/* Join Form Card */}
-        <div className="w-full notebook-card p-6 sm:p-8 space-y-5 bg-[#fffdf7]">
+        <div className="w-full notebook-card p-6 sm:p-8 space-y-5 bg-[#0e2e4e]">
           {/* Avatar Preview */}
           <div className="flex flex-col items-center space-y-1.5">
             <ParticipantAvatar seed={previewSeed} size="xl" className="shadow-[3px_3px_0px_#231f20] border-2 border-ink" />

@@ -1,55 +1,55 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   Pen & Notebook Design System
-   A tactile, solid-colored Teachers' Day theme: lined notebook paper, red margins,
-   solid ink borders, sticky-note cards, and snappy paper drop-shadows.
-   NO GRADIENTS -- clean, bold, solid colors and tactile micro-interactions.
+   Engineering Blueprint Design System
+   An authentic technical blueprint theme: deep navy grid backdrop, major/minor
+   blueprint grid lines, cyan & gold accent cards, and 3D drafting shadows.
+   NO EMOJIS -- 100% SVG technical schematics and precision typography.
 --------------------------------------------------------------------------- */
 
 @theme {
-  --color-paper-light: #ffffff;
-  --color-paper-warm: #fffdf8;
-  --color-paper-cream: #faf7f0;
+  --color-paper-light: #0e2e4e;
+  --color-paper-warm: #0c2340;
+  --color-paper-cream: #081a2e;
 
-  --color-ink: #231f20;
-  --color-ink-soft: #4a4849;
-  --color-ink-faint: #787677;
+  --color-ink: #f8fafc;
+  --color-ink-soft: #94a3b8;
+  --color-ink-faint: #64748b;
 
-  --color-notebook-rule: #a4c2f4;
-  --color-notebook-margin: #e53935;
+  --color-notebook-rule: rgba(0, 210, 255, 0.2);
+  --color-notebook-margin: #00d2ff;
 
-  /* Yenepoya Emblem Accent Colors */
-  --color-yenepoya-cyan: #6bc4e8;
+  /* Engineering Blueprint Accent Colors */
+  --color-yenepoya-cyan: #00d2ff;
   --color-yenepoya-blue: #0284c7;
-  --color-yenepoya-lime: #93d500;
-  --color-yenepoya-green: #7ea900;
-  --color-yenepoya-ink: #231f20;
+  --color-yenepoya-lime: #10b981;
+  --color-yenepoya-green: #059669;
+  --color-yenepoya-ink: #081a2e;
 
-  /* Solid Pen & Chalk Accent Colors aligned with Yenepoya Emblem */
-  --color-pen-red: #e53935;
-  --color-pen-blue: #0284c7;
-  --color-pen-cyan: #6bc4e8;
-  --color-pen-yellow: #93d500;
-  --color-pen-green: #93d500;
-  --color-pen-purple: #0284c7;
+  /* Solid Engineering Accent Colors */
+  --color-pen-red: #ef4444;
+  --color-pen-blue: #00d2ff;
+  --color-pen-cyan: #38bdf8;
+  --color-pen-yellow: #fbbf24;
+  --color-pen-green: #10b981;
+  --color-pen-purple: #818cf8;
 
-  /* Solid Sticky Note Family aligned with Yenepoya Emblem */
-  --color-note-yellow: #f4fce3;    /* Light Emblem Lime Note */
-  --color-note-mint: #d9f99d;      /* Emblem Lime Tint */
-  --color-note-lavender: #e0f7fe;  /* Light Emblem Cyan Note */
-  --color-note-peach: #bae6fd;     /* Sky Cyan Tint */
-  --color-note-rose: #fed7aa;      /* Warm Accent Note */
+  /* Technical Blueprint Spec Cards */
+  --color-note-yellow: #fbbf24;    /* Hard Hat Gold */
+  --color-note-mint: #10b981;      /* Circuit Green */
+  --color-note-lavender: #00d2ff;  /* Blueprint Neon Cyan */
+  --color-note-peach: #38bdf8;     /* Technical Sky Blue */
+  --color-note-rose: #f97316;      /* Safety Alert Orange */
 
-  --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --radius-card: 1.25rem;
   --radius-pill: 999px;
 
-  --shadow-paper: 4px 4px 0px #231f20;
-  --shadow-paper-lg: 6px 6px 0px #231f20;
-  --shadow-paper-sm: 2px 2px 0px #231f20;
+  --shadow-paper: 4px 4px 0px #04101d;
+  --shadow-paper-lg: 6px 6px 0px #04101d;
+  --shadow-paper-sm: 2px 2px 0px #04101d;
 
   --animate-float-slow: float-slow 10s ease-in-out infinite;
   --animate-float-mid: float-mid 7s ease-in-out infinite;
@@ -80,7 +80,7 @@
 
 @layer base {
   * {
-    border-color: #231f20;
+    border-color: #00d2ff;
   }
 
   html {
@@ -89,26 +89,26 @@
   }
 
   body {
-    background-color: var(--color-paper-cream);
-    color: var(--color-ink);
+    background-color: #081a2e;
+    color: #f8fafc;
     font-family: var(--font-sans);
     overflow-x: hidden;
   }
 
   ::selection {
-    background: var(--color-note-yellow);
-    color: var(--color-ink);
+    background: #00d2ff;
+    color: #081a2e;
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-pen-blue);
+    outline: 3px solid #00d2ff;
     outline-offset: 2px;
     border-radius: 8px;
   }
 
   h1, h2, h3 {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.015em;
   }
 
@@ -118,21 +118,16 @@
 }
 
 @layer utilities {
-  /* Lined Notebook Paper Background with Left Red Margin */
+  /* Technical Blueprint Grid Background with Major & Minor Grid Lines */
   .notebook-paper {
-    background-color: var(--color-paper-cream);
+    background-color: #0a2239;
     background-image: 
-      linear-gradient(90deg, transparent 22px, rgba(229, 57, 53, 0.35) 22px, rgba(229, 57, 53, 0.35) 24px, transparent 24px),
-      linear-gradient(to bottom, transparent 31px, rgba(63, 116, 192, 0.15) 31px, rgba(63, 116, 192, 0.15) 32px);
-    background-size: 100% 100%, 100% 32px;
-  }
-
-  @media (min-width: 640px) {
-    .notebook-paper {
-      background-image: 
-        linear-gradient(90deg, transparent 48px, rgba(229, 57, 53, 0.35) 48px, rgba(229, 57, 53, 0.35) 50px, transparent 50px),
-        linear-gradient(to bottom, transparent 31px, rgba(63, 116, 192, 0.15) 31px, rgba(63, 116, 192, 0.15) 32px);
-    }
+      linear-gradient(90deg, rgba(0, 210, 255, 0.25) 1.5px, transparent 1.5px),
+      linear-gradient(0deg, rgba(0, 210, 255, 0.25) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
   }
 
   .pb-safe {
@@ -148,19 +143,21 @@
     min-height: 100dvh;
   }
 
-  /* Notebook Card: Solid paper fill, dark ink border, offset paper drop shadow */
+  /* Blueprint Card: Deep Navy Fill, Neon Cyan Border, 3D Drafting Shadow */
   .notebook-card {
-    background-color: var(--color-paper-light);
-    border: 2.5px solid var(--color-ink);
+    background-color: #0e2e4e;
+    border: 2.5px solid #00d2ff;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-paper);
+    color: #f8fafc;
   }
 
   .notebook-card-interactive {
-    background-color: var(--color-paper-light);
-    border: 2.5px solid var(--color-ink);
+    background-color: #0e2e4e;
+    border: 2.5px solid #00d2ff;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-paper);
+    color: #f8fafc;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
@@ -174,47 +171,47 @@
     box-shadow: var(--shadow-paper-sm);
   }
 
-  /* Sticky Note Styling - Rich Yenepoya Emblem Cyan Blue & Lime Green */
+  /* Technical Spec Cards & Sticky Notes */
   .sticky-note-yellow {
-    background-color: #93d500;
-    color: #231f20;
-    border: 2px solid var(--color-ink);
-    box-shadow: var(--shadow-paper);
+    background-color: #fbbf24;
+    color: #081a2e;
+    border: 2px solid #081a2e;
+    box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-mint {
-    background-color: #d9f99d;
-    color: #231f20;
-    border: 2px solid var(--color-ink);
-    box-shadow: var(--shadow-paper);
+    background-color: #10b981;
+    color: #ffffff;
+    border: 2px solid #00d2ff;
+    box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-lavender {
-    background-color: #6bc4e8;
-    color: #231f20;
-    border: 2px solid var(--color-ink);
-    box-shadow: var(--shadow-paper);
+    background-color: #00d2ff;
+    color: #081a2e;
+    border: 2px solid #081a2e;
+    box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-peach {
-    background-color: #e0f7fe;
-    color: #231f20;
-    border: 2px solid var(--color-ink);
-    box-shadow: var(--shadow-paper);
+    background-color: #38bdf8;
+    color: #081a2e;
+    border: 2px solid #081a2e;
+    box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-rose {
-    background-color: #bae6fd;
-    color: #231f20;
-    border: 2px solid var(--color-ink);
-    box-shadow: var(--shadow-paper);
+    background-color: #f97316;
+    color: #ffffff;
+    border: 2px solid #00d2ff;
+    box-shadow: 3px 3px 0px #04101d;
   }
 
-  /* Blackboard Surface for Host / Projector Screens */
+  /* Technical Control Surface */
   .chalkboard-solid {
-    background-color: #1e2a38;
-    color: #f2f6f5;
-    border: 3px solid #0f172a;
+    background-color: #07172b;
+    color: #f8fafc;
+    border: 3px solid #00d2ff;
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -225,3 +222,4 @@
     scrollbar-width: none;
   }
 }
+
