@@ -38,12 +38,12 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="w-full max-w-lg notebook-card p-6 sm:p-8 space-y-6 text-center relative shadow-[6px_6px_0px_#2a2440] animate-pop">
+    <div className="fixed inset-0 z-50 bg-[#031324]/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="w-full max-w-lg notebook-card bg-[#0b2440] p-6 sm:p-8 space-y-6 text-center relative border-2 border-[#00d2ff] shadow-[6px_6px_0px_#04101d] animate-pop">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl bg-paper-cream border-2 border-ink text-ink font-bold hover:bg-note-rose transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-ink text-white font-bold hover:scale-105 transition-transform cursor-pointer"
         >
           <Cross className="w-5 h-5" />
         </button>
