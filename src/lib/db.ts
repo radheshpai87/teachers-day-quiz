@@ -68,12 +68,14 @@ CREATE TABLE IF NOT EXISTS runs (
 CREATE INDEX IF NOT EXISTS idx_runs_status ON runs(status, created_at);
 
 CREATE TABLE IF NOT EXISTS participants (
-  id           TEXT PRIMARY KEY,
-  run_id       TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE,
-  name         TEXT NOT NULL,
-  avatar_seed  TEXT NOT NULL,
-  joined_at    INTEGER NOT NULL,
-  last_seen_at INTEGER NOT NULL
+  id              TEXT PRIMARY KEY,
+  run_id          TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE,
+  name            TEXT NOT NULL,
+  avatar_seed     TEXT NOT NULL,
+  year            TEXT,
+  edutech_partner TEXT,
+  joined_at       INTEGER NOT NULL,
+  last_seen_at    INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_participants_run ON participants(run_id);
 
@@ -110,6 +112,8 @@ function open(): DatabaseSync {
   db.exec('PRAGMA synchronous = NORMAL;')
   db.exec('PRAGMA foreign_keys = ON;')
   db.exec(SCHEMA)
+  try { db.exec('ALTER TABLE participants ADD COLUMN year TEXT;') } catch {}
+  try { db.exec('ALTER TABLE participants ADD COLUMN edutech_partner TEXT;') } catch {}
   return db
 }
 

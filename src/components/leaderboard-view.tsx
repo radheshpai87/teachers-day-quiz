@@ -5,7 +5,7 @@ import type { LeaderboardEntry } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import { Medal, ArrowUp, ArrowDown, Trophy, PaperClip } from '@/components/icons'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Building2, User, X, Users } from 'lucide-react'
+import { GraduationCap, Building2, User, X, Users } from 'lucide-react'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
 interface LeaderboardViewProps {
@@ -13,23 +13,6 @@ interface LeaderboardViewProps {
   totalPlayers?: number
   currentParticipantId?: string
   displayMode?: boolean
-}
-
-export function getCollegeShortform(college?: string): string {
-  if (!college) return 'Yenepoya'
-  if (college.includes('Medical')) return 'YMC'
-  if (college.includes('Dental')) return 'YDC'
-  if (college.includes('Nursing')) return 'YNC'
-  if (college.includes('Pharmacy')) return 'YPC'
-  if (college.includes('Physiotherapy')) return 'YPT'
-  if (college.includes('Arts') || college.includes('YIASCM')) return 'YIASCM'
-  if (college.includes('Allied')) return 'YSAHS'
-  if (college.includes('Homoeopathic')) return 'YHMCH'
-  if (college.includes('Ayurveda')) return 'YAMCH'
-  if (college.includes('Naturopathy') || college.includes('Yogic')) return 'YNYSC'
-  if (college.includes('Technology') || college.includes('Engineering')) return 'YTech'
-  if (college.includes('Research')) return 'YRC'
-  return 'Other'
 }
 
 export function LeaderboardView({
@@ -113,10 +96,19 @@ export function LeaderboardView({
                   {entry.name}
                 </span>
 
-                {/* College Shortform Badge */}
-                <span className="px-2 py-0.5 mt-1 rounded-md sticky-note-mint text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] uppercase">
-                  {getCollegeShortform(entry.college)}
-                </span>
+                {/* Year & Edutech Badges */}
+                <div className="flex items-center gap-1 mt-1 flex-wrap justify-center">
+                  {entry.year && (
+                    <span className="px-1.5 py-0.5 rounded-md sticky-note-yellow text-[9px] font-black border border-ink shadow-[1px_1px_0px_#231f20] uppercase">
+                      {entry.year}
+                    </span>
+                  )}
+                  {entry.edutechPartner && (
+                    <span className="px-1.5 py-0.5 rounded-md sticky-note-mint text-[9px] font-black border border-ink shadow-[1px_1px_0px_#231f20] uppercase">
+                      {entry.edutechPartner}
+                    </span>
+                  )}
+                </div>
 
                 <span className="tnum font-black text-[#0284c7] text-[11px] sm:text-sm mt-1">
                   {entry.score.toLocaleString()} pts
@@ -158,10 +150,17 @@ export function LeaderboardView({
                       {entry.name}
                     </span>
 
-                    {/* Shortform College Badge */}
-                    <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] shrink-0 uppercase">
-                      {getCollegeShortform(entry.college)}
-                    </span>
+                    {/* Year & Edutech Badges */}
+                    {entry.year && (
+                      <span className="px-2 py-0.5 rounded-md sticky-note-yellow text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] shrink-0 uppercase">
+                        {entry.year}
+                      </span>
+                    )}
+                    {entry.edutechPartner && (
+                      <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] shrink-0 uppercase">
+                        {entry.edutechPartner}
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2.5 shrink-0 ml-auto">
@@ -213,18 +212,18 @@ export function LeaderboardView({
                 </div>
 
                 <div className="flex items-center gap-2.5 border-t border-ink/10 pt-2">
-                  <Phone className="w-4 h-4 text-[#43a047] shrink-0" />
+                  <GraduationCap className="w-4 h-4 text-[#43a047] shrink-0" />
                   <div>
-                    <span className="block text-[10px] text-ink-soft uppercase font-black">Phone Number</span>
-                    <span>{selectedStudent.phone || 'Not Provided'}</span>
+                    <span className="block text-[10px] text-ink-soft uppercase font-black">Year of Study</span>
+                    <span>{selectedStudent.year || 'N/A'}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2.5 border-t border-ink/10 pt-2">
                   <Building2 className="w-4 h-4 text-[#e53935] shrink-0" />
                   <div>
-                    <span className="block text-[10px] text-ink-soft uppercase font-black">College / Institution</span>
-                    <span>{selectedStudent.college || 'Yenepoya University'}</span>
+                    <span className="block text-[10px] text-ink-soft uppercase font-black">Edutech Partner / Program</span>
+                    <span>{selectedStudent.edutechPartner || 'N/A'}</span>
                   </div>
                 </div>
               </div>

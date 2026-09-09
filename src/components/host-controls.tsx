@@ -392,9 +392,14 @@ export function HostControls({ snapshot }: HostControlsProps) {
                     <div className="min-w-0 flex-1">
                       <div className="font-extrabold text-ink text-xs sm:text-sm truncate flex items-center gap-1.5 flex-wrap">
                         <span className="truncate">{member.name}</span>
-                        {member.college && (
+                        {member.year && (
+                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-yellow border border-ink shrink-0">
+                            {member.year}
+                          </span>
+                        )}
+                        {member.edutechPartner && (
                           <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-mint border border-ink shrink-0">
-                            {member.college}
+                            {member.edutechPartner}
                           </span>
                         )}
                         {isCompletedAll && (
@@ -405,12 +410,6 @@ export function HostControls({ snapshot }: HostControlsProps) {
                         )}
                       </div>
                       <div className="text-[10px] sm:text-[11px] font-bold text-ink-soft flex items-center gap-2 sm:gap-3 flex-wrap mt-0.5">
-                        {member.phone && (
-                          <span className="text-ink-soft flex items-center gap-1">
-                            <Phone className="w-3 h-3 text-ink-soft shrink-0" />
-                            <span>{member.phone}</span>
-                          </span>
-                        )}
                         <span>
                           Progress: <span className="font-black text-[#0284c7]">{answeredCount}/{totalRounds}</span>
                         </span>

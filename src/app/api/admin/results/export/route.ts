@@ -21,8 +21,8 @@ export async function GET() {
   const header = [
     'Rank',
     'Name',
-    'Phone Number',
-    'College / Institution',
+    'Year of Study',
+    'Edutech Partner',
     'Score',
     'Correct',
     'Answered',
@@ -37,8 +37,8 @@ export async function GET() {
       [
         row.rank,
         row.name,
-        row.phone || '',
-        row.college || '',
+        row.year || '',
+        row.edutechPartner || '',
         row.score,
         row.correct,
         row.answered,

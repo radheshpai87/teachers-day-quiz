@@ -68,8 +68,8 @@ interface EngineParticipant {
   answers: Map<string, StoredAnswer>
   /** Derived question order for this participant; cached on first use. */
   order: string[]
-  phone?: string
-  college?: string
+  year?: string
+  edutechPartner?: string
 }
 
 export type SubmitResult =
@@ -256,12 +256,14 @@ class QuizEngine {
   private loadParticipants() {
     const rows = getDb()
       .prepare(
-        'SELECT id, name, avatar_seed, joined_at FROM participants WHERE run_id = ?',
+        'SELECT id, name, avatar_seed, year, edutech_partner, joined_at FROM participants WHERE run_id = ?',
       )
       .all(this.runId) as {
       id: string
       name: string
       avatar_seed: string
+      year?: string
+      edutech_partner?: string
       joined_at: number
     }[]
 
@@ -278,6 +280,8 @@ class QuizEngine {
         totalElapsedMs: 0,
         answers: new Map(),
         order: this.orderFor(row.id),
+        year: row.year ?? undefined,
+        edutechPartner: row.edutech_partner ?? undefined,
       })
     }
     this.recomputeRanks()
@@ -431,7 +435,7 @@ class QuizEngine {
   // Joining
   // -------------------------------------------------------------------------
 
-  join(name: string, phone?: string, college?: string): { id: string; avatarSeed: string } | { error: string } {
+  join(name: string, year?: string, edutechPartner?: string): { id: string; avatarSeed: string } | { error: string } {
     if (this.phase === 'COMPLETED') {
       return { error: 'This quiz has already finished.' }
     }
@@ -452,17 +456,17 @@ class QuizEngine {
       totalElapsedMs: 0,
       answers: new Map(),
       order: this.orderFor(id),
-      phone,
-      college,
+      year,
+      edutechPartner,
     }
     this.participants.set(id, participant)
 
     getDb()
       .prepare(
-        `INSERT INTO participants (id, run_id, name, avatar_seed, joined_at, last_seen_at)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO participants (id, run_id, name, avatar_seed, year, edutech_partner, joined_at, last_seen_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(id, this.runId, name, id, now, now)
+      .run(id, this.runId, name, id, year ?? null, edutechPartner ?? null, now, now)
 
     this.recomputeRanks()
     this.schedulePlayerCountBroadcast()
@@ -870,8 +874,8 @@ class QuizEngine {
       delta: before === undefined ? null : before - rank,
       correct: p.correct,
       answered: p.answered,
-      phone: p.phone,
-      college: p.college,
+      year: p.year,
+      edutechPartner: p.edutechPartner,
     }
   }
 
@@ -889,8 +893,8 @@ class QuizEngine {
       rank: this.rankMap.get(p.id) ?? this.participants.size,
       correct: p.correct,
       answered: p.answered,
-      phone: p.phone,
-      college: p.college,
+      year: p.year,
+      edutechPartner: p.edutechPartner,
     }
   }
 
@@ -1104,8 +1108,8 @@ class QuizEngine {
         rank: i + 1,
         correct: p.correct,
         answered: p.answered,
-        phone: p.phone,
-        college: p.college,
+        year: p.year,
+        edutechPartner: p.edutechPartner,
       })),
       averageScore: Math.round(scoreTotal / n),
       averageAccuracy: Math.round(accuracyTotal / n),
@@ -1129,8 +1133,8 @@ class QuizEngine {
       accuracy: total > 0 ? Math.round((p.correct / total) * 100) : 0,
       averageResponseSeconds: p.answered > 0 ? Number((p.totalElapsedMs / p.answered / 1000).toFixed(1)) : 0,
       rank: i + 1,
-      phone: p.phone,
-      college: p.college,
+      year: p.year,
+      edutechPartner: p.edutechPartner,
     }))
 
     const participants = rows.length

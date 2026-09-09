@@ -14,17 +14,24 @@ export async function POST(req: NextRequest) {
     return fail('Too many attempts. Please wait a moment and try again.', 429)
   }
 
-  const body = await readJson<{ name?: unknown; phone?: unknown; college?: unknown }>(req)
+  const body = await readJson<{ name?: unknown; year?: unknown; edutechPartner?: unknown }>(req)
   const name = sanitizeName(body?.name)
   if (name.length < 2) {
     return fail('Please enter a name with at least 2 characters.')
   }
 
-  const phone = typeof body?.phone === 'string' ? body.phone.trim() : ''
-  const college = typeof body?.college === 'string' ? body.college.trim() : ''
+  const year = typeof body?.year === 'string' ? body.year.trim() : ''
+  const edutechPartner = typeof body?.edutechPartner === 'string' ? body.edutechPartner.trim() : ''
+
+  if (!year) {
+    return fail('Please select your year of study.')
+  }
+  if (!edutechPartner) {
+    return fail('Please select your Edutech Partner / Program.')
+  }
 
   const engine = getEngine()
-  const result = engine.join(name, phone, college)
+  const result = engine.join(name, year, edutechPartner)
   if ('error' in result) return fail(result.error, 409)
 
   return ok({
