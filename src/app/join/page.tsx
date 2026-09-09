@@ -11,27 +11,14 @@ import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
-const COLLEGE_LIST = [
-  'Yenepoya Medical College',
-  'Yenepoya Dental College',
-  'Yenepoya Nursing College',
-  'Yenepoya Pharmacy College & Research Centre',
-  'Yenepoya Physiotherapy College',
-  'Yenepoya Institute of Arts, Science, Commerce & Management (YIASCM)',
-  'Yenepoya School of Allied Health Sciences',
-  'Yenepoya Homoeopathic Medical College & Hospital',
-  'Yenepoya Ayurveda Medical College & Hospital',
-  'Yenepoya Naturopathy and Yogic Science College',
-  'Yenepoya School of  Engineering & Technology',
-  'Yenepoya Research Centre (YRC)',
-  'Other External Institution',
-]
+const YEAR_OPTIONS = ['1st Year', '2nd Year', '3rd Year']
+const EDUTECH_OPTIONS = ['Kavium', 'Proxima', 'NxtWave']
 
 export default function JoinPage() {
   const router = useRouter()
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [college, setCollege] = useState('')
+  const [year, setYear] = useState('')
+  const [edutechPartner, setEdutechPartner] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -48,19 +35,17 @@ export default function JoinPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const trimmedName = name.trim()
-    const trimmedPhone = phone.trim()
-    const trimmedCollege = college.trim()
 
     if (!trimmedName) {
       setError('Please enter your full name')
       return
     }
-    if (!trimmedPhone || trimmedPhone.length < 10) {
-      setError('Please enter a valid 10-digit phone number')
+    if (!year) {
+      setError('Please select your Year of Study from the dropdown')
       return
     }
-    if (!trimmedCollege) {
-      setError('Please select your College / Institution from the dropdown')
+    if (!edutechPartner) {
+      setError('Please select your Edutech Partner / Program from the dropdown')
       return
     }
 
@@ -76,8 +61,8 @@ export default function JoinPage() {
         quizName: string
       }>('/api/join', {
         name: trimmedName,
-        phone: trimmedPhone,
-        college: trimmedCollege,
+        year,
+        edutechPartner,
       })
 
       await saveSession({
@@ -159,47 +144,51 @@ export default function JoinPage() {
               />
             </div>
 
-            {/* Phone Number Field */}
+            {/* Year of Study Dropdown Select */}
             <div className="space-y-1.5">
-              <label htmlFor="participant-phone" className="block text-xs font-black uppercase text-ink-soft">
-                Phone Number *
-              </label>
-              <input
-                id="participant-phone"
-                suppressHydrationWarning
-                type="tel"
-                required
-                pattern="[0-9]{10}"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))
-                  if (error) setError(null)
-                }}
-                placeholder="Enter 10-digit mobile number"
-                className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all placeholder:text-ink-faint shadow-[2px_2px_0px_#231f20]"
-              />
-            </div>
-
-            {/* College / Institution Dropdown Select */}
-            <div className="space-y-1.5">
-              <label htmlFor="participant-college" className="block text-xs font-black uppercase text-ink-soft">
-                College / Institution *
+              <label htmlFor="participant-year" className="block text-xs font-black uppercase text-ink-soft">
+                Year of Study *
               </label>
               <select
-                id="participant-college"
+                id="participant-year"
                 suppressHydrationWarning
                 required
-                value={college}
+                value={year}
                 onChange={(e) => {
-                  setCollege(e.target.value)
+                  setYear(e.target.value)
                   if (error) setError(null)
                 }}
                 className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all shadow-[2px_2px_0px_#231f20] cursor-pointer"
               >
-                <option value="">-- Choose your College --</option>
-                {COLLEGE_LIST.map((col) => (
-                  <option key={col} value={col}>
-                    {col}
+                <option value="">-- Choose Year of Study --</option>
+                {YEAR_OPTIONS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Edutech Partner / Program Dropdown Select */}
+            <div className="space-y-1.5">
+              <label htmlFor="participant-edutech" className="block text-xs font-black uppercase text-ink-soft">
+                Edutech Partner / Program *
+              </label>
+              <select
+                id="participant-edutech"
+                suppressHydrationWarning
+                required
+                value={edutechPartner}
+                onChange={(e) => {
+                  setEdutechPartner(e.target.value)
+                  if (error) setError(null)
+                }}
+                className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all shadow-[2px_2px_0px_#231f20] cursor-pointer"
+              >
+                <option value="">-- Choose Edutech Partner / Program --</option>
+                {EDUTECH_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
                   </option>
                 ))}
               </select>
@@ -214,7 +203,7 @@ export default function JoinPage() {
             <button
               suppressHydrationWarning
               type="submit"
-              disabled={loading || !name.trim() || phone.length < 10 || !college.trim()}
+              disabled={loading || !name.trim() || !year || !edutechPartner}
               className="w-full py-4 px-6 rounded-2xl bg-[#6bc4e8] hover:bg-[#38bdf8] text-[#231f20] font-black text-lg border-2 border-ink shadow-[4px_4px_0px_#231f20] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
             >
               <span>{loading ? 'Joining...' : 'Join Quiz'}</span>
