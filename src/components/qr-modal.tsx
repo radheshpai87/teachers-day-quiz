@@ -55,7 +55,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
             <span>Scan QR Code to Join</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-ink">
-            Teachers' Day Quiz
+            Engineers' Day Quiz
           </h2>
           <p className="text-xs sm:text-sm font-extrabold text-ink-soft">
             Scan with any smartphone camera to open the quiz instantly!

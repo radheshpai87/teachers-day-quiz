@@ -54,7 +54,7 @@ export function AdminNav() {
               Host Console
             </span>
             <span className="text-[10px] text-ink-soft uppercase font-black tracking-wider mt-0.5">
-              Teachers' Day Quiz
+              Engineers' Day Quiz
             </span>
           </div>
         </Link>

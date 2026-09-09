@@ -13,6 +13,7 @@ import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
 import confetti from 'canvas-confetti'
+import { ShieldAlert } from 'lucide-react'
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -170,8 +171,9 @@ export default function ResultsPage() {
         {/* Anti-Cheat Tab Switch Warning Banner */}
         {wasTabSwitched && (
           <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#231f20] text-center space-y-1.5">
-            <span className="font-black text-sm sm:text-base text-[#b71c1c] block uppercase tracking-wider">
-              ⚠️ Anti-Cheat Triggered: Quiz Auto-Submitted
+            <span className="font-black text-sm sm:text-base text-[#b71c1c] flex items-center justify-center gap-1.5 uppercase tracking-wider">
+              <ShieldAlert className="w-5 h-5 text-[#b71c1c]" />
+              <span>Anti-Cheat Triggered: Quiz Auto-Submitted</span>
             </span>
             <p className="text-xs font-bold text-ink-soft">
               Your quiz session was automatically submitted because you left the quiz tab or switched browser windows during the test.
@@ -242,13 +244,13 @@ export default function ResultsPage() {
             </div>
           )}
 
-          {/* Teachers' Day Message */}
+          {/* Engineers' Day Message */}
           <div className="pt-2 text-center space-y-1">
             <p className="font-black text-[#0284c7] text-base sm:text-lg">
-              Happy Teachers' Day!
+              Happy Engineers' Day!
             </p>
             <p className="text-xs text-ink-soft font-extrabold">
-              Thank you for participating in honoring our incredible teachers.
+              Thank you for celebrating innovation, engineering, and the minds shaping our future.
             </p>
           </div>
 

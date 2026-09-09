@@ -13,53 +13,45 @@ import { YentechFooterCredit } from '@/components/yentech-branding'
 import { EventImageCarousel } from '@/components/event-carousel'
 import { motion } from 'framer-motion'
 
-const TEACHERS_DAY_QUOTES = [
+const ENGINEERS_DAY_QUOTES = [
   {
-    quote: "Teaching is a very noble profession that shapes the character, caliber, and future of an individual.",
+    quote: "Remember, your work is only done when it is done right.",
+    author: "Sir M. Visvesvaraya",
+  },
+  {
+    quote: "The scientist explores what is; the engineer creates what has never been.",
+    author: "Theodore von Kármán",
+  },
+  {
+    quote: "Science is about knowing; engineering is about doing.",
+    author: "Henry Petroski",
+  },
+  {
+    quote: "Engineers turn dreams into reality.",
+    author: "Hayao Miyazaki",
+  },
+  {
+    quote: "Engineering is the professional art of applying science to the benefit of humankind.",
     author: "Dr. A.P.J. Abdul Kalam",
   },
   {
-    quote: "Teachers should be the best minds in the country.",
-    author: "Dr. Sarvepalli Radhakrishnan",
-  },
-  {
-    quote: "Education is the manifestation of the perfection already in man.",
-    author: "Swami Vivekananda",
-  },
-  {
-    quote: "Education is the most powerful weapon which you can use to change the world.",
-    author: "Nelson Mandela",
-  },
-  {
-    quote: "It is the supreme art of the teacher to awaken joy in creative expression and knowledge.",
-    author: "Albert Einstein",
-  },
-  {
-    quote: "One child, one teacher, one book, one pen can change the world.",
-    author: "Malala Yousafzai",
-  },
-  {
-    quote: "A good teacher can inspire hope, ignite the imagination, and instil a love of learning.",
-    author: "Brad Henry",
-  },
-  {
-    quote: "The mind is not a vessel to be filled, but a fire to be kindled.",
-    author: "Plutarch",
+    quote: "Strive for perfection in everything you do. Take the best that exists and make it better.",
+    author: "Sir Henry Royce",
   },
 ]
 
 export default function HomePage() {
-  const [quote, setQuote] = useState(TEACHERS_DAY_QUOTES[0])
+  const [quote, setQuote] = useState(ENGINEERS_DAY_QUOTES[0])
 
   // Pick a fresh random quote on client mount after hydration
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * TEACHERS_DAY_QUOTES.length)
-    setQuote(TEACHERS_DAY_QUOTES[randomIndex])
+    const randomIndex = Math.floor(Math.random() * ENGINEERS_DAY_QUOTES.length)
+    setQuote(ENGINEERS_DAY_QUOTES[randomIndex])
   }, [])
 
   return (
     <main className="min-h-dvh notebook-paper flex flex-col items-center justify-center pl-6 pr-3 sm:px-6 py-3 sm:py-6 pb-safe text-center select-none relative overflow-hidden">
-      {/* Consistent Notebook Background Geometry */}
+      {/* Consistent Blueprint Background Geometry */}
       <NotebookBackgroundDecor />
 
       {/* Main Content Container */}
@@ -68,7 +60,7 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md flex flex-col items-center space-y-3.5 sm:space-y-5 z-10"
       >
-        {/* Yenepoya University Transparent Logo */}
+        {/* Yenepoya University Logo */}
         <div className="flex items-center justify-center py-1 sm:py-2">
           <Image
             src="/yenepoya-university-logo.svg"
@@ -83,14 +75,14 @@ export default function HomePage() {
         {/* Title */}
         <div className="space-y-0.5 sm:space-y-1">
           <h1 className="text-2xl sm:text-4xl font-black text-ink tracking-tight leading-tight">
-            Teachers' Day Live Quiz
+            Engineers' Day Live Quiz
           </h1>
           <p className="text-xs sm:text-sm font-extrabold text-ink-soft">
-            Ready to celebrate the teachers who inspire us?
+            Celebrating innovation, precision, and the minds that build our future.
           </p>
         </div>
 
-        {/* Main Hero Card with Teachers' Day Event Carousel */}
+        {/* Main Hero Card with Event Carousel */}
         <div className="w-full notebook-card p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 bg-[#fffdf7]">
           {/* Auto-playing Event Image Carousel */}
           <EventImageCarousel />
@@ -105,12 +97,12 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Teachers' Day Quote Sticky Note Card */}
+        {/* Engineers' Day Quote Sticky Note Card */}
         <div className="w-full sticky-note-lavender p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#231f20] sm:shadow-[4px_4px_0px_#231f20] space-y-2 sm:space-y-3 text-left relative -rotate-1">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-black text-[#231f20] uppercase tracking-wider">
               <Book className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#231f20]" />
-              <span>Teachers' Day Quote</span>
+              <span>Engineers' Day Quote</span>
             </div>
             <ThumbtackPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#231f20] opacity-70" />
           </div>
