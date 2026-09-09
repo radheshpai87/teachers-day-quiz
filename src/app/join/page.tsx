@@ -195,7 +195,7 @@ export default function JoinPage() {
             </div>
 
             {error && (
-              <div className="text-xs font-black text-[#231f20] sticky-note-rose p-3 rounded-xl border border-ink shadow-[2px_2px_0px_#231f20]">
+              <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl border border-[#00d2ff] shadow-[2px_2px_0px_#04101d]">
                 {error}
               </div>
             )}
@@ -204,7 +204,7 @@ export default function JoinPage() {
               suppressHydrationWarning
               type="submit"
               disabled={loading || !name.trim() || !year || !edutechPartner}
-              className="w-full py-4 px-6 rounded-2xl bg-[#6bc4e8] hover:bg-[#38bdf8] text-[#231f20] font-black text-lg border-2 border-ink shadow-[4px_4px_0px_#231f20] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+              className="w-full py-4 px-6 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-lg border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
             >
               <span>{loading ? 'Joining...' : 'Join Quiz'}</span>
               {!loading && <ArrowUp className="w-5 h-5 rotate-90 stroke-[3]" />}

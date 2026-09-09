@@ -155,9 +155,9 @@ export default function ResultsPage() {
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm"
             />
           </div>
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#6bc4e8] text-[#231f20] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-ink shadow-[2px_2px_0px_#231f20]">
-            <PaperClip className="w-4 h-4 text-[#231f20]" />
-            <Trophy className="w-4 h-4 text-[#231f20]" />
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            <PaperClip className="w-4 h-4 text-[#081a2e]" />
+            <Trophy className="w-4 h-4 text-[#081a2e]" />
             <span>All Questions Completed!</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-ink">
@@ -170,12 +170,12 @@ export default function ResultsPage() {
 
         {/* Anti-Cheat Tab Switch Warning Banner */}
         {wasTabSwitched && (
-          <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#231f20] text-center space-y-1.5">
-            <span className="font-black text-sm sm:text-base text-[#b71c1c] flex items-center justify-center gap-1.5 uppercase tracking-wider">
-              <ShieldAlert className="w-5 h-5 text-[#b71c1c]" />
+          <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-[#00d2ff] shadow-[3px_3px_0px_#04101d] text-center space-y-1.5">
+            <span className="font-black text-sm sm:text-base text-white flex items-center justify-center gap-1.5 uppercase tracking-wider">
+              <ShieldAlert className="w-5 h-5 text-white" />
               <span>Anti-Cheat Triggered: Quiz Auto-Submitted</span>
             </span>
-            <p className="text-xs font-bold text-ink-soft">
+            <p className="text-xs font-bold text-white/90">
               Your quiz session was automatically submitted because you left the quiz tab or switched browser windows during the test.
             </p>
           </div>
@@ -184,48 +184,48 @@ export default function ResultsPage() {
         {/* Profile & Main Stats Card */}
         <div className="w-full notebook-card p-6 sm:p-8 space-y-6">
           <div className="flex flex-col items-center">
-            <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-ink shadow-[4px_4px_0px_#231f20]" />
+            <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]" />
             <h2 className="text-xl font-black text-ink mt-3">{session.name}</h2>
           </div>
 
-          <div className="w-full border-t-2 border-ink" />
+          <div className="w-full border-t-2 border-[#00d2ff]/30" />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {/* Rank */}
-            <div className="p-4 rounded-2xl sticky-note-lavender border-2 border-ink flex flex-col items-center justify-center shadow-[3px_3px_0px_#231f20]">
-              <span className="text-xs uppercase font-black text-[#231f20]">Rank</span>
-              <span className="tnum font-black text-3xl text-[#231f20] mt-1">
+            <div className="p-4 rounded-2xl sticky-note-lavender border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <span className="text-xs uppercase font-black text-[#081a2e]">Rank</span>
+              <span className="tnum font-black text-3xl text-[#081a2e] mt-1">
                 #{results?.rank ?? '-'}
               </span>
             </div>
 
             {/* Score */}
-            <div className="p-4 rounded-2xl sticky-note-yellow border-2 border-ink flex flex-col items-center justify-center shadow-[3px_3px_0px_#231f20]">
-              <span className="text-xs uppercase font-black text-[#231f20]">Score</span>
-              <span className="tnum font-black text-3xl text-[#231f20] mt-1">
+            <div className="p-4 rounded-2xl sticky-note-yellow border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <span className="text-xs uppercase font-black text-[#081a2e]">Score</span>
+              <span className="tnum font-black text-3xl text-[#081a2e] mt-1">
                 {results?.score.toLocaleString() ?? 0}
               </span>
             </div>
 
             {/* Correct */}
-            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-ink flex flex-col items-center justify-center shadow-[3px_3px_0px_#231f20]">
-              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#231f20]">
+            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-[#00d2ff] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <div className="flex items-center gap-1 text-xs uppercase font-black text-white">
                 <Check className="w-3.5 h-3.5 stroke-[3]" />
                 <span>Correct</span>
               </div>
-              <span className="tnum font-black text-2xl text-[#231f20] mt-1">
+              <span className="tnum font-black text-2xl text-white mt-1">
                 {results?.correct ?? 0} / {results?.totalQuestions ?? 0}
               </span>
             </div>
 
             {/* Accuracy */}
-            <div className="p-4 rounded-2xl sticky-note-peach border-2 border-ink flex flex-col items-center justify-center shadow-[3px_3px_0px_#231f20]">
-              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#231f20]">
-                <Target className="w-3.5 h-3.5 text-[#231f20]" />
+            <div className="p-4 rounded-2xl sticky-note-peach border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#081a2e]">
+                <Target className="w-3.5 h-3.5 text-[#081a2e]" />
                 <span>Accuracy</span>
               </div>
-              <span className="tnum font-black text-2xl text-[#231f20] mt-1">
+              <span className="tnum font-black text-2xl text-[#081a2e] mt-1">
                 {results?.accuracy ?? 0}%
               </span>
             </div>
@@ -233,12 +233,12 @@ export default function ResultsPage() {
 
           {/* Response Speed */}
           {results && (
-            <div className="p-3.5 rounded-xl bg-paper-cream border-2 border-ink flex items-center justify-between text-xs font-extrabold text-ink shadow-[2px_2px_0px_#231f20]">
+            <div className="p-3.5 rounded-xl bg-[#081a2e] border-2 border-[#00d2ff] flex items-center justify-between text-xs font-extrabold text-ink shadow-[2px_2px_0px_#04101d]">
               <div className="flex items-center gap-2">
-                <Bolt className="w-4 h-4 text-[#93d500]" />
+                <Bolt className="w-4 h-4 text-[#10b981]" />
                 <span>Avg. Response Speed</span>
               </div>
-              <span className="tnum font-black text-[#0284c7] text-sm">
+              <span className="tnum font-black text-[#00d2ff] text-sm">
                 {results.averageResponseSeconds.toFixed(1)}s
               </span>
             </div>
@@ -246,7 +246,7 @@ export default function ResultsPage() {
 
           {/* Engineers' Day Message */}
           <div className="pt-2 text-center space-y-1">
-            <p className="font-black text-[#0284c7] text-base sm:text-lg">
+            <p className="font-black text-[#00d2ff] text-base sm:text-lg">
               Happy Engineers' Day!
             </p>
             <p className="text-xs text-ink-soft font-extrabold">
@@ -257,9 +257,9 @@ export default function ResultsPage() {
           <button
             type="button"
             onClick={handlePlayAgain}
-            className="w-full py-3.5 px-6 rounded-2xl bg-[#6bc4e8] hover:bg-[#38bdf8] text-[#231f20] font-black text-sm border-2 border-ink hover:-translate-y-0.5 transition-all cursor-pointer shadow-[3px_3px_0px_#231f20] flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-6 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] hover:-translate-y-0.5 transition-all cursor-pointer shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-2"
           >
-            <ArrowUp className="w-4 h-4 rotate-180 text-ink" />
+            <ArrowUp className="w-4 h-4 rotate-180 text-[#081a2e]" />
             <span>Join Another Session</span>
           </button>
         </div>
