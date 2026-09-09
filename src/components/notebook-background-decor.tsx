@@ -168,7 +168,7 @@ export function NotebookBackgroundDecor() {
       </motion.div>
 
       {/* 6. Mid-Page Interlocking Gear Train & Caliper */}
-      <div className="absolute top-1/4 left-5 opacity-40 sm:opacity-90 text-[#10b981] pointer-events-none z-0">
+      <div className="absolute top-[14%] left-8 opacity-40 sm:opacity-90 text-[#10b981] pointer-events-none z-0">
         <GearsSet className="w-16 h-16 sm:w-28 sm:h-28 stroke-[1.8]" />
       </div>
 
@@ -196,7 +196,7 @@ export function NotebookBackgroundDecor() {
       </motion.div>
 
       {/* 9. Side Blueprint Sticky Specs (Desktop Large Viewports Only) */}
-      <div className="absolute top-1/3 left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
+      <div className="absolute top-[42%] left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
         <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
         <p className="text-xs font-black text-[#081a2e]">Engineers' Day 2026</p>
         <p className="text-[10px] font-bold text-[#081a2e]/80">Honoring Sir M. Visvesvaraya</p>
