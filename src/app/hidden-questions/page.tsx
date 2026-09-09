@@ -104,28 +104,28 @@ export default function HiddenQuestionsPage() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full sticky-note-yellow p-6 sm:p-8 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#231f20] space-y-6"
+          className="w-full sticky-note-yellow p-6 sm:p-8 rounded-3xl border-3 border-[#081a2e] shadow-[6px_6px_0px_#04101d] space-y-6 text-[#081a2e]"
         >
           {/* Question Header Badge */}
-          <div className="flex items-center justify-between border-b-2 border-ink/15 pb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#6bc4e8] text-ink font-black text-xs uppercase tracking-wider border border-ink shadow-[1px_1px_0px_#231f20]">
-              <Trophy className="w-3.5 h-3.5 text-ink" />
+          <div className="flex items-center justify-between border-b-2 border-[#081a2e]/20 pb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider border border-[#081a2e] shadow-[1px_1px_0px_#04101d]">
+              <Trophy className="w-3.5 h-3.5 text-[#081a2e]" />
               Cricket Record Quiz
             </span>
             {selectedIndex !== null && (
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-ink font-black text-xs uppercase tracking-wider border border-ink shadow-[1px_1px_0px_#231f20] hover:bg-paper-cream cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white text-[#081a2e] font-black text-xs uppercase tracking-wider border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:bg-paper-cream cursor-pointer"
               >
-                <RotateCcw className="w-3 h-3 text-ink" />
+                <RotateCcw className="w-3 h-3 text-[#081a2e]" />
                 Try Again
               </button>
             )}
           </div>
 
           {/* Question Prompt */}
-          <h2 className="text-lg sm:text-2xl font-black text-ink leading-relaxed">
+          <h2 className="text-lg sm:text-2xl font-black text-[#081a2e] leading-relaxed">
             "Despite playing only 14 ODI matches in his career, which of these Indian cricketers holds the all-time record for the best ODI bowling figures by an Indian (taking 6 wickets for just 4 runs)?"
           </h2>
 

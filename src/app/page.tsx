@@ -90,7 +90,7 @@ export default function HomePage() {
           {/* Primary Join Action Button */}
           <Link
             href="/join"
-            className="w-full py-3.5 sm:py-4 px-5 sm:px-6 rounded-xl sm:rounded-2xl bg-[#6bc4e8] hover:bg-[#38bdf8] text-[#231f20] font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#231f20] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 sm:gap-2.5"
+            className="w-full py-3.5 sm:py-4 px-5 sm:px-6 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-base sm:text-lg border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 sm:gap-2.5"
           >
             <QrFrame className="w-5 h-5 sm:w-6 sm:h-6" />
             <span>Join Live Quiz</span>
@@ -98,20 +98,20 @@ export default function HomePage() {
         </div>
 
         {/* Engineers' Day Quote Sticky Note Card */}
-        <div className="w-full sticky-note-lavender p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#231f20] sm:shadow-[4px_4px_0px_#231f20] space-y-2 sm:space-y-3 text-left relative -rotate-1">
+        <div className="w-full sticky-note-lavender p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] sm:shadow-[4px_4px_0px_#04101d] space-y-2 sm:space-y-3 text-left relative -rotate-1">
           <div className="flex items-center justify-between">
-            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-black text-[#231f20] uppercase tracking-wider">
-              <Book className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#231f20]" />
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-black text-[#081a2e] uppercase tracking-wider">
+              <Book className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#081a2e]" />
               <span>Engineers' Day Quote</span>
             </div>
-            <ThumbtackPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#231f20] opacity-70" />
+            <ThumbtackPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#081a2e] opacity-70" />
           </div>
 
-          <p className="text-xs sm:text-sm font-extrabold text-[#231f20] leading-snug italic">
+          <p className="text-xs sm:text-sm font-extrabold text-[#081a2e] leading-snug italic">
             "{quote.quote}"
           </p>
 
-          <p className="text-[11px] sm:text-xs font-black text-[#231f20] text-right">
+          <p className="text-[11px] sm:text-xs font-black text-[#081a2e] text-right">
             — {quote.author}
           </p>
         </div>

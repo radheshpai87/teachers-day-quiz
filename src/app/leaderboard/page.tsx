@@ -24,7 +24,7 @@ export default function LeaderboardPage() {
       <NotebookBackgroundDecor />
 
       {/* Top Header */}
-      <header className="w-full max-w-6xl mx-auto flex items-center justify-between gap-3 text-[#231f20] border-b-2 border-ink pb-3 z-10">
+      <header className="w-full max-w-6xl mx-auto flex items-center justify-between gap-3 text-ink border-b-2 border-[#00d2ff] pb-3 z-10">
         <div className="flex items-center gap-3">
           <PaperClip className="w-5 h-5 text-ink-soft hidden sm:block shrink-0" />
           <Image
@@ -35,7 +35,7 @@ export default function LeaderboardPage() {
             priority
             className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
           />
-          <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
+          <div className="hidden sm:block border-l-2 border-[#00d2ff]/30 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">
               Engineers' Day Quiz
             </h1>
@@ -46,13 +46,13 @@ export default function LeaderboardPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="sticky-note-yellow px-3 py-1 text-xs font-black text-[#231f20] rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] uppercase tracking-wider">
+          <span className="sticky-note-yellow px-3 py-1 text-xs font-black text-[#081a2e] rounded-full border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] uppercase tracking-wider">
             Live Standings
           </span>
           <button
             type="button"
             onClick={() => setShowQr(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-paper-cream border-2 border-ink hover:bg-[#6bc4e8] transition-colors cursor-pointer text-xs font-black text-[#231f20] shadow-[2px_2px_0px_#231f20]"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full sticky-note-lavender border-2 border-[#081a2e] hover:bg-[#38bdf8] transition-colors cursor-pointer text-xs font-black text-[#081a2e] shadow-[2px_2px_0px_#04101d]"
           >
             <QrFrame className="w-4 h-4" />
             <span className="hidden sm:inline">Join QR</span>
@@ -66,10 +66,10 @@ export default function LeaderboardPage() {
       </section>
 
       {/* Footer Banner */}
-      <footer className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-ink font-black border-t-2 border-ink pt-2.5 z-10">
+      <footer className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-ink font-black border-t-2 border-[#00d2ff] pt-2.5 z-10">
         <YentechFooterCredit className="py-0" />
-        <span className="tnum font-black text-[#231f20] bg-[#93d500] px-4 py-1.5 rounded-full border-2 border-ink shadow-[2px_2px_0px_#231f20] shrink-0 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
-          <Users className="w-4 h-4 text-[#231f20]" /> <span>{totalPlayers.toLocaleString()} Participants Joined</span>
+        <span className="tnum font-black text-white bg-[#10b981] px-4 py-1.5 rounded-full border-2 border-[#00d2ff] shadow-[2px_2px_0px_#04101d] shrink-0 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
+          <Users className="w-4 h-4 text-white" /> <span>{totalPlayers.toLocaleString()} Participants Joined</span>
         </span>
       </footer>
 

@@ -21,9 +21,9 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
         animate={{ opacity: 1, y: 0 }}
         className="w-full notebook-card p-6 text-center space-y-3 relative"
       >
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow text-ink font-black text-xs uppercase tracking-wider -rotate-1">
-          <PaperClip className="w-4 h-4 text-ink" />
-          <GraduationCap className="w-4 h-4 text-ink" />
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e]">
+          <PaperClip className="w-4 h-4 text-[#081a2e]" />
+          <GraduationCap className="w-4 h-4 text-[#081a2e]" />
           <span>{quizName}</span>
         </div>
 
@@ -44,7 +44,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
         className="w-full notebook-card p-6 flex flex-col items-center text-center space-y-4"
       >
         <div className="relative">
-          <ParticipantAvatar seed={avatarSeed} size="xl" className="border-2 border-ink shadow-[4px_4px_0px_#2a2440]" />
+          <ParticipantAvatar seed={avatarSeed} size="xl" className="border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]" />
         </div>
 
         <div className="space-y-1">
@@ -54,12 +54,12 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
           <h2 className="text-2xl font-black text-ink">{name}</h2>
         </div>
 
-        <div className="w-full border-t-2 border-ink my-1" />
+        <div className="w-full border-t-2 border-[#00d2ff]/30 my-1" />
 
         {/* Live Players Pill */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black text-sm shadow-[2px_2px_0px_#2a2440]">
-          <Users className="w-4 h-4 text-ink animate-bounce" />
-          <span className="tnum font-black text-[#0284c7]">{playersCount}</span>
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-sm shadow-[2px_2px_0px_#04101d]">
+          <Users className="w-4 h-4 text-[#081a2e] animate-bounce" />
+          <span className="tnum font-black text-[#081a2e]">{playersCount}</span>
           <span>{playersCount === 1 ? 'player joined' : 'players joined'}</span>
         </div>
       </motion.div>
