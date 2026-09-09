@@ -212,8 +212,8 @@ export default function HiddenQuestionsPage() {
               >
                 <p className="font-black text-sm sm:text-base leading-relaxed">
                   {isCorrect
-                    ? '✅ Correct! Stuart Binny stunned the world in 2014 by taking 6/4 against Bangladesh to defend a total of just 105.'
-                    : '❌ Incorrect. The right answer is Stuart Binny (6/4 vs Bangladesh, 2014).'}
+                    ? '[Correct] Stuart Binny stunned the world in 2014 by taking 6/4 against Bangladesh to defend a total of just 105.'
+                    : '[Incorrect] The right answer is Stuart Binny (6/4 vs Bangladesh, 2014).'}
                 </p>
               </motion.div>
             )}

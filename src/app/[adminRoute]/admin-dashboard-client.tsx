@@ -36,7 +36,7 @@ export function AdminDashboardClient() {
               Admin Overview
             </span>
             <h1 className="text-3xl font-black text-ink mt-2">
-              {current?.quiz?.name || "Teachers' Day Quiz"}
+              {current?.quiz?.name || "Engineers' Day Quiz"}
             </h1>
             <p className="text-sm text-ink-soft mt-0.5 font-medium">
               {current?.quiz?.description || 'Event control room & analytics.'}

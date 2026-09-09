@@ -25,22 +25,44 @@ function Svg({ children, ...props }: IconProps & { children: React.ReactNode }) 
   )
 }
 
-export function GraduationCap(props: IconProps) {
+export function HardHat(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z" />
-      <path d="M6 10.7v4.4c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.4" />
-      <path d="M21.5 9v5.2" />
+      <path d="M4 14a8 8 0 0 1 16 0v2H4v-2Z" />
+      <path d="M2 16h20v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2Z" />
+      <path d="M12 6v8" />
+      <path d="M8 10h8" />
     </Svg>
   )
 }
 
-export function Book(props: IconProps) {
+export function Blueprint(props: IconProps) {
   return (
     <Svg {...props}>
-      <path d="M4 4.8A1.8 1.8 0 0 1 5.8 3H19v18H5.8A1.8 1.8 0 0 1 4 19.2V4.8Z" />
-      <path d="M8 3v18" />
-      <path d="M11.5 7.5h4M11.5 11h4" />
+      <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={1.8} />
+      <path d="M7 7h10M7 11h6M7 15h10" strokeDasharray="2 2" />
+      <circle cx="16" cy="11" r="1.5" />
+      <path d="M12 15l4-4" />
+    </Svg>
+  )
+}
+
+export function Gear(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    </Svg>
+  )
+}
+
+export function GearsSet(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="9" cy="9" r="2.5" />
+      <path d="M9 4.5v1M9 12.5v1M4.5 9h1M12.5 9h1M5.8 5.8l.7.7M11.5 11.5l.7.7M11.5 5.8l-.7.7M5.8 11.5l-.7.7" strokeWidth={1.8} />
+      <circle cx="16" cy="16" r="2" />
+      <path d="M16 12.5v1M16 18.5v1M12.5 16h1M18.5 16h1" strokeWidth={1.8} />
     </Svg>
   )
 }
@@ -55,11 +77,49 @@ export function Pencil(props: IconProps) {
   )
 }
 
+export function Caliper(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 5h18" strokeWidth={2} />
+      <path d="M5 5v14M8 5v14" />
+      <path d="M5 9h3M5 13h3M5 17h3" />
+      <path d="M12 5v10l3 3V5" />
+      <rect x="11" y="4" width="4" height="4" rx="1" fill="currentColor" />
+    </Svg>
+  )
+}
+
+export function CircuitBoard(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+      <path d="M9 9h6v6H9z" fill="currentColor" fillOpacity={0.2} />
+      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" />
+    </Svg>
+  )
+}
+
+export function WrenchNut(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </Svg>
+  )
+}
+
+export function GraduationCap(props: IconProps) {
+  return <HardHat {...props} />
+}
+
+export function Book(props: IconProps) {
+  return <Blueprint {...props} />
+}
+
 export function Chalkboard(props: IconProps) {
   return (
     <Svg {...props}>
       <rect x="2.5" y="4" width="19" height="12.5" rx="1.8" />
-      <path d="M6 8.5h7M6 12h4.5" />
+      <path d="M6 8.5h12M6 12h8" strokeDasharray="2 2" />
       <path d="M8 20.5 12 16.5l4 4" />
     </Svg>
   )
@@ -74,13 +134,7 @@ export function Star(props: IconProps) {
 }
 
 export function Notebook(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <rect x="4.5" y="3" width="15" height="18" rx="2" />
-      <path d="M8.5 3v18" />
-      <path d="M11.5 8h5M11.5 12h5M11.5 16h3" />
-    </Svg>
-  )
+  return <Blueprint {...props} />
 }
 
 export function Ruler(props: IconProps) {

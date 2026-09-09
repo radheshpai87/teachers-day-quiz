@@ -12,7 +12,7 @@ interface WaitingRoomProps {
   quizName?: string
 }
 
-export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teachers' Day Quiz" }: WaitingRoomProps) {
+export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engineers' Day Quiz" }: WaitingRoomProps) {
   return (
     <div className="w-full max-w-xl mx-auto flex flex-col items-center justify-center py-4 px-3 space-y-6 select-none">
       {/* Decorative Header Banner */}
@@ -32,7 +32,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teache
         </h1>
 
         <p className="text-ink-soft text-sm sm:text-base font-extrabold max-w-md mx-auto">
-          Ready to celebrate the teachers who inspire us?
+          Celebrating innovation, precision, and the minds that build our future.
         </p>
       </motion.div>
 
@@ -100,7 +100,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Teache
         </div>
         <div className="flex items-center gap-1.5 text-xs">
           <Book className="w-4 h-4 text-[#1976d2]" />
-          <span>Teachers' Day</span>
+          <span>Engineers' Day</span>
         </div>
       </div>
     </div>

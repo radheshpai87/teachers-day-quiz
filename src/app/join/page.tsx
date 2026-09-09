@@ -122,7 +122,7 @@ export default function JoinPage() {
             Join the Celebration
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft font-bold">
-            Enter your details to participate in the Teachers' Day Live Quiz
+            Enter your details to participate in the Engineers' Day Live Quiz
           </p>
         </div>
 

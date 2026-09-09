@@ -89,8 +89,8 @@ export function getQuiz(): Quiz {
      VALUES (?, ?, ?, 5, 3, 3, 3, ?, ?)`,
   ).run(
     id,
-    "Teachers' Day Quiz",
-    'A celebration of the teachers who inspire us.',
+    "Engineers' Day Quiz",
+    'A celebration of innovation, engineering, and the minds shaping our future.',
     now,
     now,
   )

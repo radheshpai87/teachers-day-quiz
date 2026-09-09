@@ -15,9 +15,9 @@ const sans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Teachers' Day Quiz",
+  title: "Engineers' Day Quiz",
   description:
-    'A live quiz celebrating the teachers who inspire us. Scan, join, and play together.',
+    'A live quiz celebrating innovation, engineering, and the minds shaping our future. Scan, join, and play together.',
   robots: { index: false, follow: false },
 }
 

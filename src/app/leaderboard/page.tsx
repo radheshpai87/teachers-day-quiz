@@ -37,7 +37,7 @@ export default function LeaderboardPage() {
           />
           <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">
-              Teachers' Day Quiz
+              Engineers' Day Quiz
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft font-extrabold flex items-center gap-1">
               <PaperClip className="w-3.5 h-3.5 text-ink" />
