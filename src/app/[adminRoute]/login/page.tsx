@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#00d2ff]"
               />
             </div>
           </div>
@@ -89,13 +89,13 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#0284c7]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:ring-3 focus:ring-[#00d2ff]"
               />
             </div>
           </div>
 
           {error && (
-            <div className="text-xs font-black text-ink sticky-note-rose p-3 rounded-xl">
+            <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl">
               {error}
             </div>
           )}
@@ -104,10 +104,10 @@ export default function AdminLoginPage() {
             suppressHydrationWarning
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-[#0284c7] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Authenticating...' : 'Login to Console'}</span>
-            {!loading && <ArrowRight className="w-4 h-4" />}
+            {!loading && <ArrowRight className="w-4 h-4 text-[#081a2e]" />}
           </button>
         </form>
       </div>

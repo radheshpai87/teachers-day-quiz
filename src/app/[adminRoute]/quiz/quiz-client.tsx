@@ -92,7 +92,7 @@ export function AdminQuizClient() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-2 focus:ring-[#00d2ff]"
           />
         </div>
 
@@ -105,7 +105,7 @@ export function AdminQuizClient() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-semibold focus:outline-hidden"
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-sm font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#00d2ff]"
           />
         </div>
 
@@ -120,10 +120,10 @@ export function AdminQuizClient() {
                 key={sec}
                 type="button"
                 onClick={() => setDefaultTimer(sec)}
-                className={`px-4 py-2 rounded-xl border-2 border-ink text-xs font-extrabold transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-xl border-2 border-ink text-xs font-black transition-all cursor-pointer ${
                   defaultTimer === sec
-                    ? 'bg-[#0284c7] text-white shadow-[2px_2px_0px_#2a2440]'
-                    : 'bg-paper-cream text-ink hover:bg-note-yellow'
+                    ? 'sticky-note-lavender shadow-[2px_2px_0px_#04101d]'
+                    : 'bg-paper-cream text-ink hover:bg-note-yellow/40'
                 }`}
               >
                 {sec} seconds
@@ -173,8 +173,8 @@ export function AdminQuizClient() {
         </div>
 
         {savedSuccess && (
-          <div className="p-3 rounded-xl sticky-note-mint font-extrabold text-xs flex items-center gap-2 text-ink">
-            <Check className="w-4 h-4 text-[#388e3c]" />
+          <div className="p-3 rounded-xl sticky-note-mint font-black text-xs flex items-center gap-2 text-[#081a2e]">
+            <Check className="w-4 h-4 text-[#081a2e]" />
             <span>Quiz settings updated and live engine synchronized!</span>
           </div>
         )}
@@ -182,9 +182,9 @@ export function AdminQuizClient() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3.5 rounded-xl bg-[#0284c7] text-white font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#2a2440] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          <Save className="w-4 h-4" />
+          <Save className="w-4 h-4 text-[#081a2e]" />
           <span>{saving ? 'Saving Settings...' : 'Save Configuration'}</span>
         </button>
       </form>
