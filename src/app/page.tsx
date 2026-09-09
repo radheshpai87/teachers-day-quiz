@@ -83,7 +83,7 @@ export default function HomePage() {
         </div>
 
         {/* Main Hero Card with Event Carousel */}
-        <div className="w-full notebook-card p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 bg-[#fffdf7]">
+        <div className="w-full notebook-card p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 bg-[#0e2e4e]">
           {/* Auto-playing Event Image Carousel */}
           <EventImageCarousel />
 
