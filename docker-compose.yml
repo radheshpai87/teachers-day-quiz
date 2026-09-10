@@ -19,6 +19,11 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
 
+    ulimits:
+          nofile:
+            soft: 65536
+            hard: 65536
+            
     networks:
       - quiz
       - monitoring
