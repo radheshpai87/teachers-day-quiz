@@ -42,12 +42,12 @@ export function AdminNav() {
           className="flex items-center gap-2 group shrink-0"
         >
           <Image
-            src="/yenepoya-university-logo.svg"
+            src="/yenepoya-university-logo.svg?v=2"
             alt="Yenepoya University Logo"
             width={200}
             height={70}
             priority
-            className="h-9 sm:h-12 w-auto object-contain drop-shadow-sm"
+            className="h-9 sm:h-12 w-auto object-contain drop-shadow-sm brightness-200"
           />
           <div className="hidden sm:flex flex-col border-l-2 border-[#00d2ff]/30 pl-2.5">
             <span className="font-extrabold text-ink text-xs sm:text-sm leading-none">

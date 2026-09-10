@@ -150,12 +150,12 @@ export default function ResultsPage() {
         <div className="space-y-3 flex flex-col items-center">
           <div className="flex items-center justify-center py-1 sm:py-2">
             <Image
-              src="/yenepoya-university-logo.svg"
+              src="/yenepoya-university-logo.svg?v=2"
               alt="Yenepoya University Logo"
               width={340}
               height={110}
               priority
-              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm"
+              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
             />
           </div>
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
