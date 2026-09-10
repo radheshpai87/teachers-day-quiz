@@ -28,12 +28,12 @@ export default function LeaderboardPage() {
         <div className="flex items-center gap-3">
           <PaperClip className="w-5 h-5 text-ink-soft hidden sm:block shrink-0" />
           <Image
-            src="/yenepoya-university-logo.svg"
+            src="/yenepoya-university-logo.svg?v=2"
             alt="Yenepoya University Logo"
             width={240}
             height={55}
             priority
-            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
+            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs brightness-200"
           />
           <div className="hidden sm:block border-l-2 border-[#00d2ff]/30 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">

@@ -14,17 +14,17 @@ export function YentechBranding({ className = '' }: { className?: string }) {
           alt="YENTECH Logo"
           width={110}
           height={30}
-          className="h-5 sm:h-6 w-auto object-contain"
+          className="h-5 sm:h-6 w-auto object-contain brightness-0 invert"
         />
       </div>
       <div className="flex items-center gap-1.5 text-[10px] font-bold text-ink-soft">
         <span>Official Tech Club of</span>
         <Image
-          src="/yenepoya-school-engineering-and-technology.svg"
+          src="/yenepoya-school-engineering-and-technology.svg?v=2"
           alt="YSET Logo"
           width={120}
           height={32}
-          className="h-5 sm:h-6 w-auto object-contain"
+          className="h-5 sm:h-6 w-auto object-contain brightness-200"
         />
       </div>
     </div>
@@ -45,7 +45,7 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           width={160}
           height={44}
           priority
-          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs brightness-0 invert"
         />
       </div>
 
@@ -53,12 +53,12 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
       <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-extrabold text-ink-soft shrink-0">
         <span>Official Technical Club of</span>
         <Image
-          src="/yenepoya-school-engineering-and-technology.svg"
+          src="/yenepoya-school-engineering-and-technology.svg?v=2"
           alt="YSET Logo"
           width={180}
           height={48}
           priority
-          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs"
+          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs brightness-200"
         />
       </div>
     </div>
