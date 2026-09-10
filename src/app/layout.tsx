@@ -6,12 +6,14 @@ const display = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
   display: 'swap',
+  fallback: ['system-ui', 'ui-sans-serif', 'sans-serif'],
 })
 
 const sans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-jakarta',
   display: 'swap',
+  fallback: ['system-ui', 'ui-sans-serif', 'sans-serif'],
 })
 
 export const metadata: Metadata = {

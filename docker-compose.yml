@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
 
     container_name: teachers_day_quiz
 
