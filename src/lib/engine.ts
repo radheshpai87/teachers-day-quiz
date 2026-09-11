@@ -174,7 +174,7 @@ class QuizEngine {
       storedPool = []
     }
 
-    if (row.status === 'WAITING' || storedPool.length === 0) {
+    if (row.status === 'WAITING' || row.status === 'COMPLETED' || storedPool.length === 0) {
       // Nothing in flight: pick up whatever the admin has authored since.
       this.phase = 'WAITING'
       this.roundIndex = -1

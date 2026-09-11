@@ -21,7 +21,7 @@ export function AdminDashboardClient() {
   const current = snapshot || initialData
 
   const playersCount = current?.players ?? 0
-  const totalQuestions = current?.totalRounds ?? 5
+  const totalQuestions = current?.totalRounds ?? current?.quiz?.questionCount ?? 0
   const avgScore = current?.averageScore ?? 0
   const avgAccuracy = Math.round(current?.averageAccuracy ?? 0)
   const status = current?.status ?? 'WAITING'
