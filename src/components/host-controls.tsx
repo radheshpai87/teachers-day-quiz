@@ -258,17 +258,17 @@ export function HostControls({ snapshot }: HostControlsProps) {
         </div>
       </div>
 
-      {/* 15 Questions Live Submission Progress Card */}
-      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4">
+      {/* Questions Live Submission Progress Card */}
+      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4 bg-[#0e2e4e] border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]">
         <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#00d2ff]/30">
           <div className="flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284c7]" />
+            <BarChart2 className="w-5 h-5 text-[#00d2ff]" />
             <h2 className="font-black text-ink text-base sm:text-lg">
               Questions Live Submission Progress
             </h2>
           </div>
 
-          <div className="text-[11px] sm:text-xs font-black text-[#081a2e] tnum sticky-note-mint px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-[#081a2e] shadow-xs">
+          <div className="text-xs font-black text-[#00d2ff] tnum bg-[#00d2ff]/15 px-3 py-1 rounded-full border border-[#00d2ff]/40 shadow-xs">
             {perQuestion?.length || totalRounds} Questions
           </div>
         </div>
@@ -284,29 +284,52 @@ export function HostControls({ snapshot }: HostControlsProps) {
               return (
                 <div
                   key={item.questionId || idx}
-                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-[#00d2ff]/40 space-y-2 shadow-[2px_2px_0px_#04101d] transition-all ${
-                    isAllAnswered ? 'sticky-note-mint' : 'bg-paper-cream'
+                  className={`p-3.5 rounded-xl border transition-all space-y-2.5 shadow-[2px_2px_0px_#04101d] ${
+                    isAllAnswered
+                      ? 'bg-[#0a2744] border-emerald-400/50 ring-1 ring-emerald-400/20'
+                      : 'bg-[#081f37] border-[#00d2ff]/30 hover:border-[#00d2ff]/60'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-black text-ink text-xs sm:text-sm line-clamp-2 leading-tight">
-                      Q{idx + 1}. {item.prompt}
-                    </span>
-                    <span className="shrink-0 px-2 py-0.5 rounded-lg bg-paper-warm border border-[#00d2ff]/30 text-[11px] sm:text-xs font-black text-[#0284c7] tnum">
-                      {answeredCount} / {players}
-                    </span>
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-start gap-2 min-w-0 flex-1">
+                      <span className="shrink-0 px-2 py-0.5 rounded-md bg-[#00d2ff]/15 text-[#00d2ff] font-black text-xs border border-[#00d2ff]/30">
+                        Q{idx + 1}
+                      </span>
+                      <span className="font-extrabold text-ink text-xs sm:text-sm line-clamp-2 leading-snug pt-0.5">
+                        {item.prompt}
+                      </span>
+                    </div>
+
+                    <div className="shrink-0">
+                      {isAllAnswered ? (
+                        <span className="px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-black tnum flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          {answeredCount}/{players}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-lg bg-[#00d2ff]/10 border border-[#00d2ff]/30 text-[#00d2ff] text-xs font-black tnum">
+                          {answeredCount}/{players}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Progress Bar & Percentage */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-extrabold text-ink-soft">
-                      <span>Submitted</span>
-                      <span className="font-black text-ink tnum">{pct}%</span>
+                  <div className="space-y-1.5 pt-0.5">
+                    <div className="flex items-center justify-between text-[11px] font-extrabold">
+                      <span className="text-ink-soft">
+                        {isAllAnswered ? 'All Participants Submitted' : 'Live Submissions'}
+                      </span>
+                      <span className={`font-black tnum ${isAllAnswered ? 'text-emerald-400' : 'text-[#00d2ff]'}`}>
+                        {pct}%
+                      </span>
                     </div>
-                    <div className="w-full bg-paper-warm rounded-full h-3 border border-[#00d2ff]/40 overflow-hidden relative shadow-inner">
+                    <div className="w-full bg-[#041220] rounded-full h-2.5 border border-[#00d2ff]/20 overflow-hidden relative shadow-inner">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
-                          isAllAnswered ? 'bg-[#388e3c]' : 'bg-[#0284c7]'
+                          isAllAnswered
+                            ? 'bg-gradient-to-r from-emerald-500 to-[#00d2ff]'
+                            : 'bg-gradient-to-r from-[#0284c7] to-[#00d2ff]'
                         }`}
                         style={{ width: `${pct}%` }}
                       />
