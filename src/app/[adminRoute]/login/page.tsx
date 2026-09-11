@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
             width={340}
             height={90}
             priority
-            className="h-14 sm:h-18 w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-14 sm:h-18 w-auto object-contain"
           />
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full sticky-note-lavender text-[#081a2e] font-black text-xs -rotate-1">
             <PaperClip className="w-4 h-4" />

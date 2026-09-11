@@ -100,7 +100,7 @@ export default function JoinPage() {
               width={380}
               height={100}
               priority
-              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
+              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain"
             />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink">

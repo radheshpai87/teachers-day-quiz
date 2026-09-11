@@ -149,7 +149,7 @@ export default function PlayPage() {
             width={200}
             height={60}
             priority
-            className="h-8 sm:h-12 max-w-[55vw] w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-8 sm:h-12 max-w-[55vw] w-auto object-contain"
           />
         </div>
 

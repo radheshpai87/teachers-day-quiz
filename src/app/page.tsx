@@ -68,7 +68,7 @@ export default function HomePage() {
             width={380}
             height={100}
             priority
-            className="h-14 sm:h-22 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-14 sm:h-22 max-w-[85vw] w-auto object-contain"
           />
         </div>
 

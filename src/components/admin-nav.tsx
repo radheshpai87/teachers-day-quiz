@@ -47,7 +47,7 @@ export function AdminNav() {
             width={180}
             height={50}
             priority
-            className="h-8 sm:h-10 w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-8 sm:h-10 w-auto object-contain"
           />
           <div className="hidden sm:flex flex-col border-l-2 border-[#00d2ff]/30 pl-2.5">
             <span className="font-extrabold text-ink text-xs sm:text-sm leading-none">

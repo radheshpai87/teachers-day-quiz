@@ -155,7 +155,7 @@ export default function ResultsPage() {
               width={380}
               height={100}
               priority
-              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
+              className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain"
             />
           </div>
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">

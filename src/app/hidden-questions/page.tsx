@@ -75,7 +75,7 @@ export default function HiddenQuestionsPage() {
             width={240}
             height={60}
             priority
-            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs brightness-200"
+            className="h-10 sm:h-12 w-auto object-contain"
           />
           <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">
