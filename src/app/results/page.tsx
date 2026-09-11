@@ -111,7 +111,7 @@ export default function ResultsPage() {
 
   if (loading || !session) {
     return (
-      <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
+      <main className="min-h-dvh notebook-paper flex items-center justify-center px-4 py-4 pb-safe select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
           <GraduationCap className="w-10 h-10 text-[#00d2ff] animate-bounce" />
@@ -122,7 +122,7 @@ export default function ResultsPage() {
   }
 
   return (
-    <main className="min-h-screen notebook-paper flex flex-col items-center justify-center p-4 sm:p-6 select-none relative overflow-hidden">
+    <main className="min-h-dvh notebook-paper flex flex-col items-center justify-center px-4 py-4 sm:p-6 pb-safe select-none relative overflow-hidden">
       <NotebookBackgroundDecor />
       {/* Floating Animated Motifs */}
       <motion.div

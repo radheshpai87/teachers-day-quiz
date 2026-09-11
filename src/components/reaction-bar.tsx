@@ -106,7 +106,7 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
 
       {/* Interactive Bottom Reaction Bar (Only when participantId is present) */}
       {participantId && (
-        <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-paper-cream/90 backdrop-blur-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440]">
+        <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 sm:bottom-4 sm:right-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-paper-cream/90 backdrop-blur-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440]">
           {REACTIONS.map((item) => (
             <button
               key={item.id}
