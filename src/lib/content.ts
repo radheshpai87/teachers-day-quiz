@@ -70,6 +70,8 @@ function mapQuestion(row: QuestionRow): Question {
 // Quiz
 // ---------------------------------------------------------------------------
 
+let isSeeding = false
+
 /**
  * This app runs a single event, so there is exactly one quiz row. Creating it
  * on first read means a fresh checkout is immediately usable.
@@ -81,21 +83,28 @@ export function getQuiz(): Quiz {
     .get() as unknown as QuizRow | undefined
 
   if (row) {
-    const qCount = db
-      .prepare('SELECT COUNT(*) as count FROM questions WHERE quiz_id = ?')
-      .get(row.id) as unknown as { count: number }
-    const firstQ = db
-      .prepare(
-        'SELECT prompt FROM questions WHERE quiz_id = ? ORDER BY position ASC LIMIT 1',
-      )
-      .get(row.id) as unknown as { prompt: string } | undefined
+    if (!isSeeding) {
+      isSeeding = true
+      try {
+        const qCount = db
+          .prepare('SELECT COUNT(*) as count FROM questions WHERE quiz_id = ?')
+          .get(row.id) as unknown as { count: number }
+        const firstQ = db
+          .prepare(
+            'SELECT prompt FROM questions WHERE quiz_id = ? ORDER BY position ASC LIMIT 1',
+          )
+          .get(row.id) as unknown as { prompt: string } | undefined
 
-    if (
-      qCount.count === 0 ||
-      (firstQ && firstQ.prompt.includes('human body temperature'))
-    ) {
-      db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
-      seedQuestions(row.id)
+        if (
+          qCount.count === 0 ||
+          (firstQ && firstQ.prompt.includes('human body temperature'))
+        ) {
+          db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
+          seedQuestions(row.id)
+        }
+      } finally {
+        isSeeding = false
+      }
     }
     return mapQuiz(row)
   }
@@ -114,8 +123,20 @@ export function getQuiz(): Quiz {
     now,
     now,
   )
-  seedQuestions(id)
-  return getQuiz()
+
+  if (!isSeeding) {
+    isSeeding = true
+    try {
+      seedQuestions(id)
+    } finally {
+      isSeeding = false
+    }
+  }
+
+  const createdRow = db
+    .prepare('SELECT * FROM quizzes WHERE id = ?')
+    .get(id) as unknown as QuizRow
+  return mapQuiz(createdRow)
 }
 
 export function updateQuiz(
@@ -193,8 +214,7 @@ export type QuestionInput = Pick<
 
 export function createQuestion(quizId: string, input: QuestionInput): Question {
   const db = getDb()
-  const quiz = getQuiz()
-  const timerSeconds = input.timerSeconds && input.timerSeconds > 0 ? input.timerSeconds : quiz.defaultTimer
+  const timerSeconds = input.timerSeconds && input.timerSeconds > 0 ? input.timerSeconds : 15
   const maxPos = db
     .prepare(
       'SELECT COALESCE(MAX(position), -1) AS pos FROM questions WHERE quiz_id = ?',
@@ -222,8 +242,7 @@ export function createQuestion(quizId: string, input: QuestionInput): Question {
 }
 
 export function updateQuestion(id: string, input: QuestionInput): Question | null {
-  const quiz = getQuiz()
-  const timerSeconds = input.timerSeconds && input.timerSeconds > 0 ? input.timerSeconds : quiz.defaultTimer
+  const timerSeconds = input.timerSeconds && input.timerSeconds > 0 ? input.timerSeconds : 15
   getDb()
     .prepare(
       `UPDATE questions SET
