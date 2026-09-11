@@ -54,8 +54,13 @@ function readMirror(): StoredSession | null {
 
 function writeMirror(session: StoredSession | null) {
   try {
-    if (session) localStorage.setItem(MIRROR_KEY, JSON.stringify(session))
-    else localStorage.removeItem(MIRROR_KEY)
+    if (session) {
+      localStorage.setItem(MIRROR_KEY, JSON.stringify(session))
+      localStorage.removeItem(LEGACY_MIRROR_KEY)
+    } else {
+      localStorage.removeItem(MIRROR_KEY)
+      localStorage.removeItem(LEGACY_MIRROR_KEY)
+    }
   } catch {
     /* storage disabled -- nothing we can do, and nothing critical is lost */
   }
@@ -108,5 +113,12 @@ export async function clearSession(): Promise<void> {
     db.close()
   } catch {
     /* nothing to clear */
+  }
+  try {
+    if (typeof indexedDB !== 'undefined') {
+      indexedDB.deleteDatabase('teachers-day-quiz')
+    }
+  } catch {
+    /* ignore */
   }
 }

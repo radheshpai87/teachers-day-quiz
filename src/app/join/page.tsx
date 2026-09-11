@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { saveSession, loadSession } from '@/lib/client/idb'
-import { apiPost } from '@/lib/client/api'
+import { saveSession, loadSession, clearSession } from '@/lib/client/idb'
+import { apiGet, apiPost } from '@/lib/client/api'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import Image from 'next/image'
 import { ArrowUp } from '@/components/icons'
@@ -25,11 +25,21 @@ export default function JoinPage() {
   const previewSeed = name.trim() ? `preview-${name.trim()}` : 'preview-guest'
 
   useEffect(() => {
-    loadSession().then((session) => {
-      if (session?.participantId) {
-        router.replace('/play')
+    let active = true
+    loadSession().then(async (session) => {
+      if (!session?.participantId) return
+      try {
+        await apiGet(`/api/me?pid=${encodeURIComponent(session.participantId)}`)
+        if (active) {
+          router.replace('/play')
+        }
+      } catch {
+        await clearSession()
       }
     })
+    return () => {
+      active = false
+    }
   }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
