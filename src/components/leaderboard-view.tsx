@@ -49,7 +49,7 @@ export function LeaderboardView({
           Hall of Fame
         </h2>
         {totalPlayers !== undefined && (
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#93d500] text-[#231f20] border-2 border-ink shadow-[2px_2px_0px_#231f20] font-black text-xs sm:text-sm uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#93d500] text-[#231f20] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] font-black text-xs sm:text-sm uppercase tracking-wider">
             <Users className="w-4 h-4 text-[#231f20]" />
             <span>{totalPlayers.toLocaleString()} Total Participants</span>
           </div>
@@ -73,38 +73,38 @@ export function LeaderboardView({
                 transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex flex-col items-center text-center p-2.5 sm:p-4 rounded-2xl border-2 border-ink transition-all cursor-pointer hover:scale-105 ${
+                className={`flex flex-col items-center text-center p-2.5 sm:p-4 rounded-2xl border-2 border-[#081a2e] transition-all cursor-pointer hover:scale-105 ${
                   isFirst
-                    ? 'sticky-note-yellow shadow-[4px_4px_0px_#231f20] -translate-y-2'
+                    ? 'sticky-note-yellow shadow-[4px_4px_0px_#04101d] -translate-y-2'
                     : place === 2
-                    ? 'sticky-note-lavender shadow-[3px_3px_0px_#231f20]'
-                    : 'sticky-note-rose shadow-[3px_3px_0px_#231f20]'
+                    ? 'sticky-note-lavender shadow-[3px_3px_0px_#04101d]'
+                    : 'sticky-note-rose shadow-[3px_3px_0px_#04101d]'
                 } ${isSelf ? 'ring-4 ring-[#0284c7]' : ''}`}
               >
                 <div className="relative mb-1">
                   <ParticipantAvatar
                     seed={entry.avatarSeed}
                     size={displayMode ? (isFirst ? 'xl' : 'lg') : isFirst ? 'lg' : 'md'}
-                    className="border-2 border-ink shadow-[2px_2px_0px_#231f20]"
+                    className="border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]"
                   />
                   <div className="absolute -bottom-2 -right-1">
                     <Medal place={place} className="w-6 h-6 sm:w-8 sm:h-8 drop-shadow-xs" />
                   </div>
                 </div>
 
-                <span className="font-black text-ink text-xs sm:text-base line-clamp-1 mt-1 break-all">
+                <span className="font-black text-[#081a2e] text-xs sm:text-base line-clamp-1 mt-1 break-all">
                   {entry.name}
                 </span>
 
                 {/* Year & Edutech Badges */}
                 <div className="flex items-center gap-1 mt-1 flex-wrap justify-center">
                   {entry.year && (
-                    <span className="px-1.5 py-0.5 rounded-md sticky-note-yellow text-[9px] font-black border border-ink shadow-[1px_1px_0px_#231f20] uppercase">
+                    <span className="px-1.5 py-0.5 rounded-md sticky-note-yellow text-[#081a2e] text-[9px] font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] uppercase">
                       {entry.year}
                     </span>
                   )}
                   {entry.edutechPartner && (
-                    <span className="px-1.5 py-0.5 rounded-md sticky-note-mint text-[9px] font-black border border-ink shadow-[1px_1px_0px_#231f20] uppercase">
+                    <span className="px-1.5 py-0.5 rounded-md sticky-note-mint text-[#081a2e] text-[9px] font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] uppercase">
                       {entry.edutechPartner}
                     </span>
                   )}
@@ -135,7 +135,7 @@ export function LeaderboardView({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className={`w-full p-3 rounded-xl border-2 border-ink flex items-center justify-between gap-3 overflow-hidden transition-all shadow-[2px_2px_0px_#231f20] cursor-pointer hover:translate-x-1 ${
+                  className={`w-full p-3 rounded-xl border-2 border-[#00d2ff]/40 flex items-center justify-between gap-3 overflow-hidden transition-all shadow-[2px_2px_0px_#04101d] cursor-pointer hover:translate-x-1 ${
                     isSelf
                       ? 'sticky-note-yellow ring-2 ring-[#0284c7]'
                       : 'bg-paper-light hover:bg-note-mint/30'
@@ -145,19 +145,19 @@ export function LeaderboardView({
                     <span className="tnum font-black text-ink text-xs sm:text-base w-6 text-center shrink-0">
                       #{entry.rank}
                     </span>
-                    <ParticipantAvatar seed={entry.avatarSeed} size="sm" className="border border-ink shrink-0" />
+                    <ParticipantAvatar seed={entry.avatarSeed} size="sm" className="border border-[#00d2ff]/40 shrink-0" />
                     <span className="font-extrabold text-ink text-xs sm:text-base truncate min-w-0 flex-1">
                       {entry.name}
                     </span>
 
                     {/* Year & Edutech Badges */}
                     {entry.year && (
-                      <span className="px-2 py-0.5 rounded-md sticky-note-yellow text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] shrink-0 uppercase">
+                      <span className="px-2 py-0.5 rounded-md sticky-note-yellow text-[#081a2e] text-[10px] font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] shrink-0 uppercase">
                         {entry.year}
                       </span>
                     )}
                     {entry.edutechPartner && (
-                      <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[10px] font-black border border-ink shadow-[1px_1px_0px_#231f20] shrink-0 uppercase">
+                      <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[#081a2e] text-[10px] font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] shrink-0 uppercase">
                         {entry.edutechPartner}
                       </span>
                     )}
@@ -183,26 +183,26 @@ export function LeaderboardView({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="w-full max-w-sm sticky-note-yellow p-6 rounded-3xl border-3 border-ink shadow-[8px_8px_0px_#2a2440] flex flex-col items-center gap-4 text-center relative"
+              className="w-full max-w-sm sticky-note-yellow p-6 rounded-3xl border-3 border-[#081a2e] shadow-[8px_8px_0px_#04101d] flex flex-col items-center gap-4 text-center relative"
             >
               <button
                 type="button"
                 onClick={() => setSelectedStudent(null)}
-                className="absolute top-4 right-4 p-1.5 rounded-xl bg-white border-2 border-ink text-ink hover:scale-105 transition-all cursor-pointer"
+                className="absolute top-4 right-4 p-1.5 rounded-xl bg-white border-2 border-[#081a2e] text-[#081a2e] hover:scale-105 transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <ParticipantAvatar seed={selectedStudent.avatarSeed} size="xl" className="border-2 border-ink shadow-[3px_3px_0px_#2a2440]" />
+              <ParticipantAvatar seed={selectedStudent.avatarSeed} size="xl" className="border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d]" />
 
               <div className="space-y-1">
-                <span className="px-3 py-1 rounded-full bg-white text-ink border border-ink font-black text-xs uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-white text-[#081a2e] border border-[#081a2e] font-black text-xs uppercase tracking-wider">
                   Rank #{selectedStudent.rank} • {selectedStudent.score.toLocaleString()} Pts
                 </span>
-                <h3 className="text-xl font-black text-ink">{selectedStudent.name}</h3>
+                <h3 className="text-xl font-black text-[#081a2e]">{selectedStudent.name}</h3>
               </div>
 
-              <div className="w-full bg-white p-4 rounded-2xl border-2 border-ink text-left space-y-3 font-bold text-xs sm:text-sm text-ink shadow-[3px_3px_0px_#2a2440]">
+              <div className="w-full bg-white p-4 rounded-2xl border-2 border-[#081a2e] text-left space-y-3 font-bold text-xs sm:text-sm text-[#081a2e] shadow-[3px_3px_0px_#04101d]">
                 <div className="flex items-center gap-2.5">
                   <User className="w-4 h-4 text-[#0284c7] shrink-0" />
                   <div>
@@ -211,7 +211,7 @@ export function LeaderboardView({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 border-t border-ink/10 pt-2">
+                <div className="flex items-center gap-2.5 border-t border-[#081a2e]/20 pt-2">
                   <GraduationCap className="w-4 h-4 text-[#43a047] shrink-0" />
                   <div>
                     <span className="block text-[10px] text-ink-soft uppercase font-black">Year of Study</span>
@@ -219,7 +219,7 @@ export function LeaderboardView({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 border-t border-ink/10 pt-2">
+                <div className="flex items-center gap-2.5 border-t border-[#081a2e]/20 pt-2">
                   <Building2 className="w-4 h-4 text-[#e53935] shrink-0" />
                   <div>
                     <span className="block text-[10px] text-ink-soft uppercase font-black">Edutech Partner / Program</span>
@@ -234,7 +234,7 @@ export function LeaderboardView({
 
       {/* Footer Branding for Mobile / Participant view */}
       {!displayMode && (
-        <div className="w-full border-t-2 border-ink pt-3 mt-4">
+        <div className="w-full border-t border-[#00d2ff]/30 pt-3 mt-4">
           <YentechFooterCredit className="py-0" />
         </div>
       )}

@@ -43,15 +43,15 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-ink text-white font-bold hover:scale-105 transition-transform cursor-pointer"
+          className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-[#081a2e] text-white font-bold hover:scale-105 transition-transform cursor-pointer"
         >
           <Cross className="w-5 h-5" />
         </button>
 
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-yellow text-ink font-black text-xs uppercase tracking-wider -rotate-1">
-            <PaperClip className="w-4 h-4 text-ink" />
-            <GraduationCap className="w-4 h-4 text-ink" />
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1">
+            <PaperClip className="w-4 h-4 text-[#081a2e]" />
+            <GraduationCap className="w-4 h-4 text-[#081a2e]" />
             <span>Scan QR Code to Join</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-ink">
@@ -63,7 +63,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
         </div>
 
         {/* Big QR Code Frame */}
-        <div className="w-72 h-72 sm:w-80 sm:h-80 mx-auto bg-white p-4 rounded-2xl border-3 border-ink shadow-[4px_4px_0px_#2a2440] flex items-center justify-center relative">
+        <div className="w-72 h-72 sm:w-80 sm:h-80 mx-auto bg-white p-4 rounded-2xl border-3 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex items-center justify-center relative">
           {qrDataUrl ? (
             /* eslint-disable-next-html-element-suppression */
             <img src={qrDataUrl} alt="Scan to Join Quiz" className="w-full h-full object-contain" />
@@ -77,7 +77,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
 
         {/* Join URL Display */}
         {joinUrl && (
-          <div className="p-3.5 rounded-xl sticky-note-mint border-2 border-ink text-ink font-black text-xs sm:text-sm truncate">
+          <div className="p-3.5 rounded-xl sticky-note-mint border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm truncate">
             {joinUrl}
           </div>
         )}

@@ -116,18 +116,18 @@ export function HostControls({ snapshot }: HostControlsProps) {
   return (
     <div className="w-full space-y-4 sm:space-y-6 select-none">
       {/* Top Banner: Quiz Name, System Status & Primary Control Actions */}
-      <div className="notebook-card p-4 sm:p-6 border-2 border-ink space-y-4 shadow-[4px_4px_0px_#2a2440]">
+      <div className="notebook-card p-4 sm:p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full sticky-note-yellow text-ink font-black text-[11px] sm:text-xs -rotate-1">
-                <PaperClip className="w-3.5 h-3.5 text-ink" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-[11px] sm:text-xs -rotate-1">
+                <PaperClip className="w-3.5 h-3.5 text-[#081a2e]" />
                 <GraduationCap className="w-3.5 h-3.5" />
                 <span className="truncate max-w-[200px] sm:max-w-xs">{quiz.name}</span>
               </div>
 
               {/* System Health Check Badge */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-paper-cream border border-ink text-[11px] sm:text-xs font-bold text-ink">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-paper-cream border border-[#00d2ff]/40 text-[11px] sm:text-xs font-bold text-ink">
                 <Activity className="w-3.5 h-3.5 text-[#388e3c] animate-pulse" />
                 <span>System Ready</span>
               </div>
@@ -138,7 +138,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             </h1>
             <div className="hidden sm:flex items-center gap-2 text-[11px] font-extrabold text-ink-soft pt-0.5">
               <Keyboard className="w-3.5 h-3.5 text-[#0284c7]" />
-              <span>Hotkey: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-ink font-mono text-[10px]">Q</kbd> QR Code</span>
+              <span>Hotkey: <kbd className="px-1.5 py-0.5 rounded bg-paper-cream border border-[#00d2ff]/40 font-mono text-[10px]">Q</kbd> QR Code</span>
             </div>
           </div>
 
@@ -147,9 +147,9 @@ export function HostControls({ snapshot }: HostControlsProps) {
             <button
               type="button"
               onClick={() => setShowQr(true)}
-              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2"
+              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2"
             >
-              <QrFrame className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284c7]" />
+              <QrFrame className="w-4 h-4 sm:w-5 sm:h-5 text-[#081a2e]" />
               <span>QR Code</span>
             </button>
 
@@ -165,7 +165,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 }
               }}
               disabled={loadingAction !== null}
-              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-yellow border-2 border-ink text-ink font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
+              className="px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl sm:rounded-2xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm hover:-translate-y-0.5 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] sm:shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
             >
               <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-[#d32f2f]" />
               <span>{loadingAction === 'reset' ? 'Resetting...' : 'Reset'}</span>
@@ -173,14 +173,14 @@ export function HostControls({ snapshot }: HostControlsProps) {
           </div>
         </div>
 
-        <div className="w-full border-t-2 border-ink" />
+        <div className="w-full border-t border-[#00d2ff]/30" />
 
         {/* Responsive 4 Stat Tiles Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {/* Tile 1: Status */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-mint flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
+          <div className="p-3 rounded-xl border-2 border-[#081a2e] sticky-note-mint flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <span
-              className={`w-3.5 h-3.5 rounded-full border border-ink shrink-0 ${
+              className={`w-3.5 h-3.5 rounded-full border border-[#081a2e] shrink-0 ${
                 isLive
                   ? 'bg-emerald-500 animate-ping'
                   : isCompleted
@@ -189,31 +189,31 @@ export function HostControls({ snapshot }: HostControlsProps) {
               }`}
             />
             <div className="min-w-0">
-              <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">Status</span>
-              <span className="text-xs sm:text-sm font-black text-ink uppercase truncate block mt-0.5">{status}</span>
+              <span className="text-[10px] font-black uppercase text-[#081a2e]/70 block leading-none">Status</span>
+              <span className="text-xs sm:text-sm font-black text-[#081a2e] uppercase truncate block mt-0.5">{status}</span>
             </div>
           </div>
 
           {/* Tile 2: Connected Players */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-yellow flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
-            <Users className="w-4 h-4 text-ink shrink-0" />
+          <div className="p-3 rounded-xl border-2 border-[#081a2e] sticky-note-yellow flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
+            <Users className="w-4 h-4 text-[#081a2e] shrink-0" />
             <div className="min-w-0">
-              <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">Joined</span>
-              <span className="text-xs sm:text-sm font-black text-ink tnum truncate block mt-0.5">{players.toLocaleString()} Players</span>
+              <span className="text-[10px] font-black uppercase text-[#081a2e]/70 block leading-none">Joined</span>
+              <span className="text-xs sm:text-sm font-black text-[#081a2e] tnum truncate block mt-0.5">{players.toLocaleString()} Players</span>
             </div>
           </div>
 
           {/* Tile 3: Questions */}
-          <div className="p-3 rounded-xl border-2 border-ink sticky-note-lavender flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
-            <FileText className="w-4 h-4 text-[#0284c7] shrink-0" />
+          <div className="p-3 rounded-xl border-2 border-[#081a2e] sticky-note-lavender flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
+            <FileText className="w-4 h-4 text-[#081a2e] shrink-0" />
             <div className="min-w-0">
-              <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">Questions</span>
-              <span className="text-xs sm:text-sm font-black text-ink tnum truncate block mt-0.5">{totalRounds} Questions</span>
+              <span className="text-[10px] font-black uppercase text-[#081a2e]/70 block leading-none">Questions</span>
+              <span className="text-xs sm:text-sm font-black text-[#081a2e] tnum truncate block mt-0.5">{totalRounds} Questions</span>
             </div>
           </div>
 
           {/* Tile 4: Live Timer or SSE Status */}
-          <div className="p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
+          <div className="p-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream flex items-center gap-2.5 shadow-[2px_2px_0px_#04101d]">
             <Clock className={`w-4 h-4 text-[#d32f2f] shrink-0 ${isLive ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
             <div className="min-w-0">
               <span className="text-[10px] font-black uppercase text-ink-soft block leading-none">
@@ -233,7 +233,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               type="button"
               onClick={() => handleAction('start')}
               disabled={loadingAction !== null}
-              className="w-full py-3.5 px-6 rounded-2xl bg-[#388e3c] text-white font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#388e3c] text-white font-black text-base sm:text-lg border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
             >
               <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
               <span>START QUIZ NOW</span>
@@ -249,7 +249,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 }
               }}
               disabled={loadingAction !== null}
-              className="w-full py-3.5 px-6 rounded-2xl sticky-note-rose text-ink font-black text-base sm:text-lg border-2 border-ink shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-2xl sticky-note-rose text-white font-black text-base sm:text-lg border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <Square className="w-5 h-5" />
               <span>END QUIZ EARLY</span>
@@ -259,8 +259,8 @@ export function HostControls({ snapshot }: HostControlsProps) {
       </div>
 
       {/* 15 Questions Live Submission Progress Card */}
-      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4 border-2 border-ink shadow-[4px_4px_0px_#04101d]">
-        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b-2 border-ink">
+      <div className="notebook-card p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#00d2ff]/30">
           <div className="flex items-center gap-2">
             <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#0284c7]" />
             <h2 className="font-black text-ink text-base sm:text-lg">
@@ -268,7 +268,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             </h2>
           </div>
 
-          <div className="text-[11px] sm:text-xs font-black text-ink tnum sticky-note-mint px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-ink shadow-xs">
+          <div className="text-[11px] sm:text-xs font-black text-[#081a2e] tnum sticky-note-mint px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-[#081a2e] shadow-xs">
             {perQuestion?.length || totalRounds} Questions
           </div>
         </div>
@@ -284,7 +284,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               return (
                 <div
                   key={item.questionId || idx}
-                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-ink space-y-2 shadow-[2px_2px_0px_#04101d] transition-all ${
+                  className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 border-[#00d2ff]/40 space-y-2 shadow-[2px_2px_0px_#04101d] transition-all ${
                     isAllAnswered ? 'sticky-note-mint' : 'bg-paper-cream'
                   }`}
                 >
@@ -292,7 +292,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                     <span className="font-black text-ink text-xs sm:text-sm line-clamp-2 leading-tight">
                       Q{idx + 1}. {item.prompt}
                     </span>
-                    <span className="shrink-0 px-2 py-0.5 rounded-lg bg-paper-warm border border-ink text-[11px] sm:text-xs font-black text-[#0284c7] tnum">
+                    <span className="shrink-0 px-2 py-0.5 rounded-lg bg-paper-warm border border-[#00d2ff]/30 text-[11px] sm:text-xs font-black text-[#0284c7] tnum">
                       {answeredCount} / {players}
                     </span>
                   </div>
@@ -303,7 +303,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                       <span>Submitted</span>
                       <span className="font-black text-ink tnum">{pct}%</span>
                     </div>
-                    <div className="w-full bg-paper-warm rounded-full h-3 border-2 border-ink overflow-hidden relative shadow-inner">
+                    <div className="w-full bg-paper-warm rounded-full h-3 border border-[#00d2ff]/40 overflow-hidden relative shadow-inner">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           isAllAnswered ? 'bg-[#388e3c]' : 'bg-[#0284c7]'
@@ -317,7 +317,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             })}
           </div>
         ) : (
-          <div className="p-4 sm:p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
+          <div className="p-4 sm:p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-[#00d2ff]/30">
             Start the quiz to monitor live submission progress across all {totalRounds} questions!
           </div>
         )}
@@ -331,7 +331,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             <h2 className="font-black text-ink text-base sm:text-lg">
               Members Roster
             </h2>
-            <span className="text-xs font-extrabold sticky-note-yellow text-ink px-2.5 py-0.5 rounded-full border border-ink shadow-xs">
+            <span className="text-xs font-extrabold sticky-note-yellow text-[#081a2e] px-2.5 py-0.5 rounded-full border border-[#081a2e] shadow-xs">
               {allMembers.length}
             </span>
           </div>
@@ -344,13 +344,13 @@ export function HostControls({ snapshot }: HostControlsProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search member by name..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border-2 border-ink bg-paper-cream text-ink text-xs font-bold focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink text-xs font-bold focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30"
             />
           </div>
         </div>
 
         {filteredMembers.length === 0 ? (
-          <div className="p-4 sm:p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
+          <div className="p-4 sm:p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-[#00d2ff]/30">
             {searchQuery.trim() ? 'No matching members found.' : 'No participants joined yet. Display the QR code to let members join!'}
           </div>
         ) : (
@@ -358,11 +358,11 @@ export function HostControls({ snapshot }: HostControlsProps) {
             {filteredMembers.map((member) => {
               const rankColor =
                 member.rank === 1
-                  ? 'sticky-note-yellow text-ink font-black'
+                  ? 'sticky-note-yellow text-[#081a2e] font-black'
                   : member.rank === 2
-                  ? 'sticky-note-mint text-ink font-black'
+                  ? 'sticky-note-mint text-[#081a2e] font-black'
                   : member.rank === 3
-                  ? 'sticky-note-rose text-ink font-black'
+                  ? 'sticky-note-rose text-white font-black'
                   : 'bg-paper-cream text-ink font-extrabold'
 
               const answeredCount = member.answered ?? 0
@@ -371,12 +371,12 @@ export function HostControls({ snapshot }: HostControlsProps) {
               return (
                 <div
                   key={member.id}
-                  className="p-2.5 sm:p-3 rounded-xl border-2 border-ink bg-paper-cream flex items-center justify-between gap-2 sm:gap-3 shadow-[2px_2px_0px_#04101d] hover:-translate-y-0.5 transition-all"
+                  className="p-2.5 sm:p-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream flex items-center justify-between gap-2 sm:gap-3 shadow-[2px_2px_0px_#04101d] hover:-translate-y-0.5 transition-all"
                 >
                   <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     {/* Rank Badge */}
                     <div
-                      className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl border-2 border-ink flex items-center justify-center text-xs tnum ${rankColor}`}
+                      className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl border-2 border-[#081a2e] flex items-center justify-center text-xs tnum ${rankColor}`}
                     >
                       {member.rank === 1 ? (
                         <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#d32f2f]" />
@@ -386,24 +386,24 @@ export function HostControls({ snapshot }: HostControlsProps) {
                     </div>
 
                     {/* Avatar */}
-                    <ParticipantAvatar seed={member.avatarSeed} size="sm" className="shrink-0 border border-ink shadow-xs" />
+                    <ParticipantAvatar seed={member.avatarSeed} size="sm" className="shrink-0 border border-[#00d2ff]/40 shadow-xs" />
 
                     {/* Member Details */}
                     <div className="min-w-0 flex-1">
                       <div className="font-extrabold text-ink text-xs sm:text-sm truncate flex items-center gap-1.5 flex-wrap">
                         <span className="truncate">{member.name}</span>
                         {member.year && (
-                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-yellow border border-ink shrink-0">
+                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-yellow text-[#081a2e] border border-[#081a2e] shrink-0">
                             {member.year}
                           </span>
                         )}
                         {member.edutechPartner && (
-                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-mint border border-ink shrink-0">
+                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded sticky-note-mint text-[#081a2e] border border-[#081a2e] shrink-0">
                             {member.edutechPartner}
                           </span>
                         )}
                         {isCompletedAll && (
-                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded bg-[#388e3c] text-white border border-ink shrink-0 flex items-center gap-0.5">
+                          <span className="text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded bg-[#388e3c] text-white border border-[#081a2e] shrink-0 flex items-center gap-0.5">
                             <CheckCircle2 className="w-2.5 h-2.5 stroke-[3]" />
                             Done
                           </span>
@@ -433,9 +433,9 @@ export function HostControls({ snapshot }: HostControlsProps) {
                       title="Remove participant"
                       onClick={() => handleKickParticipant(member.id, member.name)}
                       disabled={kickingId === member.id}
-                      className="p-1.5 rounded-lg border border-ink sticky-note-rose text-ink hover:bg-rose-tint cursor-pointer transition-all disabled:opacity-50"
+                      className="p-1.5 rounded-lg border border-[#081a2e] sticky-note-rose text-white hover:bg-rose-tint cursor-pointer transition-all disabled:opacity-50"
                     >
-                      <UserX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#d32f2f]" />
+                      <UserX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                     </button>
                   </div>
                 </div>
@@ -446,9 +446,9 @@ export function HostControls({ snapshot }: HostControlsProps) {
       </div>
 
       {/* Floating Sticky Quick-Control Bar on Mobile Screens (lg:hidden) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 p-2.5 bg-paper-warm/95 backdrop-blur-md border-t-3 border-ink shadow-[0_-4px_12px_rgba(0,0,0,0.2)] flex items-center justify-between gap-2">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 p-2.5 bg-paper-warm/95 backdrop-blur-md border-t-3 border-[#00d2ff] shadow-[0_-4px_12px_rgba(0,0,0,0.2)] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="px-2.5 py-1 rounded-lg sticky-note-mint border border-ink text-ink font-black text-xs uppercase flex items-center gap-1.5 shrink-0">
+          <div className="px-2.5 py-1 rounded-lg sticky-note-mint border border-[#081a2e] text-[#081a2e] font-black text-xs uppercase flex items-center gap-1.5 shrink-0">
             <span
               className={`w-2 h-2 rounded-full ${
                 isLive ? 'bg-emerald-500 animate-ping' : 'bg-[#0284c7]'
@@ -466,10 +466,10 @@ export function HostControls({ snapshot }: HostControlsProps) {
           <button
             type="button"
             onClick={() => setShowQr(true)}
-            className="p-2.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
+            className="p-2.5 rounded-xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
             title="Display QR Code"
           >
-            <QrFrame className="w-4 h-4 text-[#0284c7]" />
+            <QrFrame className="w-4 h-4 text-[#081a2e]" />
           </button>
 
           <button
@@ -478,7 +478,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               if (confirm('Reset the quiz session?')) handleAction('reset')
             }}
             disabled={loadingAction !== null}
-            className="p-2.5 rounded-xl sticky-note-yellow border-2 border-ink text-ink font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
+            className="p-2.5 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black hover:-translate-y-0.5 transition-all shadow-[2px_2px_0px_#04101d]"
             title="Reset Quiz"
           >
             <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
@@ -489,7 +489,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
               type="button"
               onClick={() => handleAction('start')}
               disabled={loadingAction !== null}
-              className="px-4 py-2 rounded-xl bg-[#388e3c] text-white font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#04101d] flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#388e3c] text-white font-black text-xs border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] flex items-center gap-1.5"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>START</span>
@@ -503,7 +503,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
                 if (confirm('End the quiz early?')) handleAction('end')
               }}
               disabled={loadingAction !== null}
-              className="px-3.5 py-2 rounded-xl sticky-note-rose text-ink font-black text-xs border-2 border-ink shadow-[2px_2px_0px_#2a2440] flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl sticky-note-rose text-white font-black text-xs border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] flex items-center gap-1.5"
             >
               <Square className="w-3.5 h-3.5" />
               <span>END</span>

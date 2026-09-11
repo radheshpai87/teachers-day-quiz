@@ -14,7 +14,7 @@ export function AdminLiveClient() {
   if (!snapshot) {
     return (
       <div className="flex items-center justify-center min-h-[50vh] p-8 text-ink font-extrabold">
-        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl sticky-note-yellow border-2 border-ink shadow-[3px_3px_0px_#2a2440] animate-pulse">
+        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] shadow-[3px_3px_0px_#04101d] animate-pulse">
           <Trophy className="w-5 h-5 text-[#d32f2f]" />
           <span>Connecting to live host engine...</span>
         </div>
@@ -25,13 +25,13 @@ export function AdminLiveClient() {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6 pb-20 lg:pb-6">
       {/* Mobile Tab Switcher (Visible only on < lg screens) */}
-      <div className="lg:hidden grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-paper-warm border-2 border-ink shadow-[3px_3px_0px_#2a2440]">
+      <div className="lg:hidden grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-paper-warm border-2 border-[#00d2ff]/40 shadow-[3px_3px_0px_#04101d]">
         <button
           type="button"
           onClick={() => setMobileTab('controls')}
-          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-ink transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#00d2ff]/30 transition-all cursor-pointer ${
             mobileTab === 'controls'
-              ? 'sticky-note-yellow text-ink shadow-[2px_2px_0px_#2a2440]'
+              ? 'sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]'
               : 'bg-paper-cream text-ink-soft hover:text-ink'
           }`}
         >
@@ -41,9 +41,9 @@ export function AdminLiveClient() {
         <button
           type="button"
           onClick={() => setMobileTab('leaderboard')}
-          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-ink transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#00d2ff]/30 transition-all cursor-pointer ${
             mobileTab === 'leaderboard'
-              ? 'sticky-note-yellow text-ink shadow-[2px_2px_0px_#2a2440]'
+              ? 'sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]'
               : 'bg-paper-cream text-ink-soft hover:text-ink'
           }`}
         >
@@ -61,10 +61,10 @@ export function AdminLiveClient() {
 
         {/* Right Column: Top 10 Live Leaderboard & Projector View Launcher */}
         <div className={`lg:col-span-5 space-y-4 sm:space-y-6 lg:sticky lg:top-6 ${mobileTab === 'leaderboard' ? 'block' : 'hidden lg:block'}`}>
-          <div className="notebook-card p-4 sm:p-6 space-y-4 sm:space-y-5 border-2 border-ink shadow-[4px_4px_0px_#2a2440]">
+          <div className="notebook-card p-4 sm:p-6 space-y-4 sm:space-y-5">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg sticky-note-yellow border border-ink flex items-center justify-center -rotate-2 shrink-0">
+                <div className="w-7 h-7 rounded-lg sticky-note-yellow border border-[#081a2e] flex items-center justify-center -rotate-2 shrink-0">
                   <Trophy className="w-4 h-4 text-[#d32f2f]" />
                 </div>
                 <div>
@@ -80,21 +80,21 @@ export function AdminLiveClient() {
               <Link
                 href="/leaderboard"
                 target="_blank"
-                className="px-3 py-1.5 rounded-xl sticky-note-lavender border-2 border-ink text-ink font-black text-xs hover:-translate-y-0.5 transition-all flex items-center gap-1.5 shadow-[2px_2px_0px_#2a2440] shrink-0"
+                className="px-3 py-1.5 rounded-xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black text-xs hover:-translate-y-0.5 transition-all flex items-center gap-1.5 shadow-[2px_2px_0px_#04101d] shrink-0"
               >
                 <span className="hidden sm:inline">Full Projector View</span>
                 <span className="sm:hidden">Projector</span>
-                <ExternalLink className="w-3.5 h-3.5 text-ink" />
+                <ExternalLink className="w-3.5 h-3.5 text-[#081a2e]" />
               </Link>
             </div>
 
-            <div className="w-full border-t-2 border-ink" />
+            <div className="w-full border-t border-[#00d2ff]/30" />
 
             {/* Leaderboard Entries List */}
             {snapshot.top && snapshot.top.length > 0 ? (
               <LeaderboardView top={snapshot.top} totalPlayers={snapshot.players} />
             ) : (
-              <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-ink">
+              <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-[#00d2ff]/30">
                 No participants ranked yet. Start the quiz to display live scores!
               </div>
             )}
