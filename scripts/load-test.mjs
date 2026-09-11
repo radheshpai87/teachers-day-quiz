@@ -1,7 +1,7 @@
 // Uses Node.js native global fetch
 
 /**
- * 🧪 Educational Master Load-Test Suite for Teachers' Day Quiz
+ * 🧪 Educational Master Load-Test Suite for Engineers' Day Quiz
  * 
  * Usage:
  *   node scripts/load-test.mjs <target_url> <test_mode> [bot_count]
@@ -17,7 +17,7 @@ const testMode = process.argv[3] || 'rampup';
 const botCount = parseInt(process.argv[4] || '150', 10);
 
 console.log(`\n==================================================`);
-console.log(`🧪 TEACHERS' DAY QUIZ LOAD TESTER`);
+console.log(`🧪 ENGINEERS' DAY QUIZ LOAD TESTER`);
 console.log(`==================================================`);
 console.log(`🌐 Target Server URL : ${targetUrl}`);
 console.log(`🎯 Test Mode         : ${testMode.toUpperCase()}`);

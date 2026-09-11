@@ -1,4 +1,4 @@
-# Multi-stage production Dockerfile for Teachers' Day Quiz (Next.js 15 + node:sqlite)
+# Multi-stage production Dockerfile for Engineers' Day Quiz (Next.js 15 + node:sqlite)
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
