@@ -81,7 +81,6 @@ export type SubmitResult =
     }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __quizEngine: QuizEngine | undefined
 }
 
