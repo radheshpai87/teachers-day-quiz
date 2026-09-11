@@ -95,10 +95,10 @@ export default function JoinPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-center py-1 sm:py-2">
             <Image
-              src="/yenepoya-university-logo.svg?v=2"
-              alt="Yenepoya University Logo"
-              width={360}
-              height={120}
+              src="/yenepoya-school-engineering-and-technology.svg?v=2"
+              alt="Yenepoya School of Engineering and Technology"
+              width={380}
+              height={100}
               priority
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
             />

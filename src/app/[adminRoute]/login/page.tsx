@@ -40,12 +40,12 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md notebook-card p-8 space-y-6">
         <div className="text-center space-y-3 flex flex-col items-center">
           <Image
-            src="/yenepoya-university-logo.svg?v=2"
-            alt="Yenepoya University Logo"
-            width={320}
-            height={110}
+            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            alt="Yenepoya School of Engineering and Technology"
+            width={340}
+            height={90}
             priority
-            className="h-16 sm:h-20 w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-14 sm:h-18 w-auto object-contain drop-shadow-sm brightness-200"
           />
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full sticky-note-lavender text-ink font-black text-xs -rotate-1">
             <PaperClip className="w-4 h-4" />
