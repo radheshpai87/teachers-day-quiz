@@ -95,16 +95,10 @@ export function getQuiz(): Quiz {
           )
           .get(row.id) as unknown as { prompt: string } | undefined
 
-        const largeImg = db
-          .prepare('SELECT COUNT(*) as count FROM images WHERE LENGTH(bytes) > 500000')
-          .get() as unknown as { count: number }
-
         if (
           qCount.count === 0 ||
-          (firstQ && firstQ.prompt.includes('human body temperature')) ||
-          largeImg.count > 0
+          (firstQ && firstQ.prompt.includes('human body temperature'))
         ) {
-          db.prepare('DELETE FROM images').run()
           db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
           seedQuestions(row.id)
         }
@@ -334,14 +328,19 @@ export function getImage(id: string): { mime: string; bytes: Buffer } | null {
 // ---------------------------------------------------------------------------
 
 function loadSeedImage(relativePublicPath: string, mime = 'image/png'): string | null {
-  try {
-    const fullPath = path.join(process.cwd(), 'public', relativePublicPath)
-    if (fs.existsSync(fullPath)) {
-      const bytes = fs.readFileSync(fullPath)
-      return saveImage(mime, bytes)
-    }
-  } catch {
-    // fallback if file not found
+  const candidates = [
+    path.join(process.cwd(), 'public', relativePublicPath),
+    path.join(process.cwd(), relativePublicPath),
+    path.join(__dirname, '..', '..', 'public', relativePublicPath),
+    path.join(__dirname, '..', 'public', relativePublicPath),
+  ]
+  for (const fullPath of candidates) {
+    try {
+      if (fs.existsSync(fullPath)) {
+        const bytes = fs.readFileSync(fullPath)
+        return saveImage(mime, bytes)
+      }
+    } catch {}
   }
   return null
 }
