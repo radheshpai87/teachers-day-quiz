@@ -42,3 +42,6 @@ yarn-error.log*
 pythonscript.py
 __pycache__/
 
+# document files
+*.pdf
+
