@@ -12,7 +12,6 @@ import { DatabaseSync } from 'node:sqlite'
  */
 
 declare global {
-  // eslint-disable-next-line no-var
   var __quizDb: DatabaseSync | undefined
 }
 
