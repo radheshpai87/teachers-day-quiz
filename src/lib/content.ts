@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { getDb, newId } from './db'
 import type { Question, Quiz } from './types'
 
@@ -285,173 +287,208 @@ export function getImage(id: string): { mime: string; bytes: Buffer } | null {
 }
 
 // ---------------------------------------------------------------------------
-// Seed content -- the 15 official questions from the docx file
+// Seed content -- 20 official Engineers' Day questions from INGENIUM QUIZ
 // ---------------------------------------------------------------------------
 
+function loadSeedImage(relativePublicPath: string, mime = 'image/png'): string | null {
+  try {
+    const fullPath = path.join(process.cwd(), 'public', relativePublicPath)
+    if (fs.existsSync(fullPath)) {
+      const bytes = fs.readFileSync(fullPath)
+      return saveImage(mime, bytes)
+    }
+  } catch {
+    // fallback if file not found
+  }
+  return null
+}
+
 function seedQuestions(quizId: string) {
+  const demonCoreImg = loadSeedImage('quiz-images/demon-core.png')
+  const littleBoyImg = loadSeedImage('quiz-images/little-boy.png')
+  const atalTunnelImg = loadSeedImage('quiz-images/atal-tunnel.png')
+  const voyagerImg = loadSeedImage('quiz-images/voyager.png')
+  const maglevImg = loadSeedImage('quiz-images/maglev.png')
+
   const seeds: QuestionInput[] = [
     {
       type: 'MCQ',
-      prompt: 'What is the normal average human body temperature?',
-      options: ['36.0°C', '37.0°C', '38.0°C', '35.0°C'],
-      correctIndex: 1,
-      timerSeconds: 15,
-      explanation:
-        'Fun Fact: 37.0°C (98.6°F) was established as the standard normal human body temperature by German physician Carl Wunderlich in 1851.',
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt: 'Which blood group is known as the "universal donor"?',
-      options: ['AB positive', 'O negative', 'B positive', 'O positive'],
-      correctIndex: 1,
-      timerSeconds: 15,
-      explanation:
-        'Fun Fact: O negative red blood cells can be given to patients of any blood type because they lack A, B, and Rh antigens.',
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt: 'In dental terminology, "caries" refers to:',
-      options: ['Gum inflammation', 'Tooth decay', 'Jaw misalignment', 'Tooth sensitivity'],
-      correctIndex: 1,
-      timerSeconds: 15,
-      explanation:
-        'Fun Fact: Dental caries (cavities) is one of the most common chronic conditions worldwide, caused by bacteria producing acids that break down tooth enamel.',
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt:
-        'In the ABCDE primary survey used in emergency/nursing assessment, what do the first three letters stand for?',
-      options: [
-        'Airway, Breathing, Circulation',
-        'Alertness, Blood pressure, Consciousness',
-        'Appearance, Behavior, Colour',
-        'Assess, Bandage, Call',
-      ],
+      prompt: 'Who is widely regarded as the “Father of Modern Indian Engineering” and was awarded the Bharat Ratna?',
+      options: ['Sir M. Visvesvaraya', 'Sir C. V. Raman', 'Sir M. S. Swaminathan', 'Sir A. P. J. Abdul Kalam'],
       correctIndex: 0,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: ABCDE stands for Airway, Breathing, Circulation, Disability, and Exposure — the systematic protocol for assessing critical emergency patients.',
+      explanation: "Sir M. Visvesvaraya was a pioneer Indian civil engineer, scholar, and statesman. His birthday, September 15, is celebrated as National Engineers' Day in India.",
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'Which planet in our solar system has the shortest day (fastest rotational period)?',
-      options: ['Earth', 'Jupiter', 'Saturn', 'Neptune'],
+      prompt: 'What was the infamous plutonium sphere at the Los Alamos laboratory nicknamed after two scientists died in separate criticality accidents involving it?',
+      options: ['The Black Core', 'The Demon Core', 'The Atomic Core', 'The Death Sphere'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: Jupiter rotates on its axis in just under 10 hours (about 9 hours and 55 minutes), giving it the shortest day of any planet in our solar system.',
+      explanation: 'The Demon Core was a 6.2-kilogram subcritical mass of plutonium that accidentally reached criticality in 1945 and 1946, fatally irradiating scientists Harry Daghlian and Louis Slotin.',
+      imageId: demonCoreImg,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'What was the codename of the atomic bomb dropped on Hiroshima on August 6, 1945?',
+      options: ['Fat Man', 'Little Boy', 'The Gadget', 'Thin Man'],
+      correctIndex: 1,
+      timerSeconds: 15,
+      explanation: 'Little Boy was the gun-type uranium weapon dropped on Hiroshima. Fat Man was the implosion plutonium weapon dropped on Nagasaki three days later.',
+      imageId: littleBoyImg,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which tunnel, inaugurated in 2020, is one of the world’s longest highway tunnels above 10,000 feet and connects Manali with the Lahaul-Spiti region?',
+      options: ['Atal Tunnel', 'Rohtang Tunnel', 'Zojila Tunnel', 'Sela Tunnel'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Atal Tunnel (9.02 km long), built under the Rohtang Pass in Himachal Pradesh, is one of the highest and longest vehicular tunnels in the world, providing year-round all-weather connectivity.',
+      imageId: atalTunnelImg,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which antibiotic was accidentally discovered by Alexander Fleming in 1928 and went on to revolutionize the treatment of bacterial infections?',
+      options: ['Penicillin', 'Streptomycin', 'Tetracycline', 'Amoxicillin'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Sir Alexander Fleming discovered penicillin in 1928 after observing that a Penicillium notatum mould contaminating a petri dish inhibited the growth of surrounding staphylococci.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'The Tropic of Cancer does NOT pass through which of the following Indian states?',
-      options: ['Gujarat', 'Madhya Pradesh', 'Kerala', 'West Bengal'],
+      prompt: 'A futuristic “space elevator” could theoretically use an extremely strong, lightweight material to form a cable extending from Earth toward space. Which material is considered one of the leading candidates for such a cable?',
+      options: ['Carbon Nanotubes', 'Graphene', 'Kevlar', 'Carbon Fiber'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Carbon nanotubes possess exceptional theoretical tensile strength (exceeding 100 GPa) combined with low density, making them a leading theoretical candidate for space elevator tether cables.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which aerospace company successfully demonstrated the routine recovery and reuse of orbital-class rocket boosters with its Falcon 9 program?',
+      options: ['SpaceX', 'Blue Origin', 'Rocket Lab', 'NASA'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'SpaceX pioneered aerospace reuse by achieving the first vertical landing of an orbital-class booster in December 2015 and routinely re-flying Falcon 9 first stages.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: "Which artifact was designed as a time capsule of Earth's life and culture, carrying photographs, music, natural sounds, and greetings in numerous human languages for a hypothetical extraterrestrial audience?",
+      options: ['Pioneer Plaque', 'Arecibo Message', 'Golden Record', 'Earth Archive'],
       correctIndex: 2,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: The Tropic of Cancer passes through 8 Indian states: Gujarat, Rajasthan, Madhya Pradesh, Chhattisgarh, Jharkhand, West Bengal, Tripura, and Mizoram. Kerala is located much further south.',
+      explanation: 'The Voyager Golden Records are gold-plated copper phonograph records carrying sounds and imagery of Earth, placed aboard both Voyager 1 and Voyager 2 spacecraft launched in 1977.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: "Which gas is the most abundant in Earth's atmosphere by volume?",
-      options: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Argon'],
-      correctIndex: 2,
-      timerSeconds: 15,
-      explanation:
-        "Fun Fact: Nitrogen makes up roughly 78% of Earth's atmosphere, followed by Oxygen at approximately 21%.",
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt: 'Which prestigious civilian award did Dr. Radhakrishnan receive in 1954?',
-      options: ['Padma Vibhushan', 'Bharat Ratna', 'Padma Bhushan', 'Param Vir Chakra'],
+      prompt: 'Launched in 1977 as part of NASA’s mission to explore the outer planets, which spacecraft later became the first human-made object to enter interstellar space and continues to transmit scientific data back to Earth?',
+      options: ['Pioneer 10', 'Voyager 1', 'Voyager 2', 'New Horizons'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: Dr. Sarvepalli Radhakrishnan was awarded the Bharat Ratna in 1954, the very year the award was instituted.',
+      explanation: 'Voyager 1 crossed the heliopause into interstellar space in August 2012, becoming humanity\'s farthest active spacecraft from Earth at over 24 billion kilometers away.',
+      imageId: voyagerImg,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'The “black box” in an aircraft is actually painted what colour to make it easier to find after a crash?',
+      options: ['Orange', 'Yellow', 'Red', 'Green'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Aircraft flight recorders ("black boxes") are painted in bright, high-visibility fluorescent orange with reflective strips so search and rescue teams can spot them easily in wreckage and underwater.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt:
-        "Dr. Radhakrishnan's systematic two-volume study of Indian philosophical traditions was published in which years?",
-      options: ['1919 and 1923', '1923 and 1927', '1927 and 1931', '1931 and 1936'],
+      prompt: 'Which railway technology allows trains to travel at very high speeds by eliminating direct contact between the vehicle and the track?',
+      options: ['Maglev', 'Monorail', 'Hyperloop', 'Bullet Train'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Magnetic levitation (Maglev) utilizes electromagnetic repulsion and attraction to suspend, guide, and propel trains above tracks with zero physical mechanical contact, reducing friction dramatically.',
+      imageId: maglevImg,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'Which ancient monument is known for its exceptionally precise alignment with the four cardinal directions?',
+      options: ['Stonehenge', 'Great Pyramid of Giza', 'Petra', 'Colosseum'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        "Fun Fact: Dr. Radhakrishnan's landmark treatise 'Indian Philosophy' was published in two volumes in 1923 and 1927, establishing Indian philosophy in global academic discourse.",
+      explanation: 'The Great Pyramid of Giza in Egypt aligns to true north with astounding engineering precision, having an orientation error of less than four-sixtieths of a single degree.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'During which years did Dr. Radhakrishnan serve as the President of India?',
-      options: ['1950–1957', '1957–1962', '1962–1967', '1967–1972'],
-      correctIndex: 2,
-      timerSeconds: 15,
-      explanation:
-        "Fun Fact: Dr. Radhakrishnan served as the 2nd President of India from 1962 to 1967, after serving as India's 1st Vice President from 1952 to 1962.",
-      imageId: null,
-    },
-    {
-      type: 'MCQ',
-      prompt:
-        "What is the highest NIRF 'University' category ranking Yenepoya (Deemed to be University) has achieved to date?",
-      options: ['97', '85', '65', '15'],
+      prompt: 'Which skyscraper, completed in 2010, currently holds the record as the world’s tallest building?',
+      options: ['Shanghai Tower', 'Burj Khalifa', 'Taipei 101', 'One World Trade Center'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        "Fun Fact: Yenepoya (Deemed to be University) achieved a rank of 85 in the NIRF 'University' category rankings.",
+      explanation: 'Burj Khalifa in Dubai, United Arab Emirates, stands at 828 meters (2,717 feet) tall, engineered with a distinctive Y-shaped tri-axial buttressed core to withstand vortex shedding and high winds.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'Which was the first institution established under the Islamic Academy of Education?',
-      options: [
-        'Yenepoya Medical College',
-        'Yenepoya Dental College',
-        'Yenepoya Nursing College',
-        'Yenepoya Physiotherapy College',
-      ],
+      prompt: 'Which space telescope uses a large segmented primary mirror and operates near the Sun–Earth L2 point to observe some of the universe’s earliest galaxies?',
+      options: ['Hubble Space Telescope', 'James Webb Space Telescope', 'Chandra X-ray Observatory', 'Spitzer Space Telescope'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: Yenepoya Dental College was established in 1992 as the pioneer institution under the Islamic Academy of Education.',
+      explanation: 'The James Webb Space Telescope (JWST) features an 18-segment gold-coated beryllium primary mirror operating at the Second Lagrange Point (L2), approximately 1.5 million km from Earth.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'Which planet is closest to the Sun?',
-      options: ['Venus', 'Mercury', 'Earth', 'Mars'],
+      prompt: 'What was the name of the first known self-replicating program designed to move between computers, created as an early experiment in computer networking?',
+      options: ['Creeper', 'Elk Cloner', 'Brain', 'Reaper'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: "Written by Bob Thomas at BBN in 1971 for the ARPANET on DEC PDP-10 mainframes, Creeper jumped across network nodes displaying: 'I'm the creeper, catch me if you can!'.",
+      imageId: null,
+    },
+    {
+      type: 'TRUE_FALSE',
+      prompt: 'True or False: The footprints left by astronauts on the Moon could remain there for millions of years.',
+      options: ['True', 'False'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Because the Moon possesses no atmosphere, liquid water, or volcanic weather cycles to erode its surface, astronaut footprints in lunar regolith can persist for millions of years.',
+      imageId: null,
+    },
+    {
+      type: 'TRUE_FALSE',
+      prompt: 'True or False: Since sound cannot travel through the vacuum of space, astronauts inside a spacecraft cannot hear anything produced by another astronaut unless the sound is transmitted electronically through a radio system.',
+      options: ['True', 'False'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        'Fun Fact: Mercury is the smallest planet in the Solar System and the closest to the Sun, orbiting it in just 88 days.',
+      explanation: 'Inside a pressurized spacecraft or orbital habitat, air is present to propagate sound waves normally, allowing astronauts to converse and hear sounds without any electronic radios.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt: 'In which year was Dr. Sarvepalli Radhakrishnan born?',
-      options: ['1886', '1888', '1890', '1892'],
-      correctIndex: 1,
-      timerSeconds: 15,
-      explanation:
-        'Fun Fact: Dr. Sarvepalli Radhakrishnan was born on September 5, 1888, in Thiruttani, Tamil Nadu.',
+      prompt: 'A machine accepts a 3-digit access code.\n\nYou know:\n• 682 → One digit is correct and in the correct position.\n• 614 → One digit is correct but in the wrong position.\n• 206 → Two digits are correct but both are in the wrong positions.\n• 738 → None of the digits are correct.\n• 780 → One digit is correct but in the wrong position.\n\nWhat is the code?',
+      options: ['042', '024', '062', '402'],
+      correctIndex: 0,
+      timerSeconds: 20,
+      explanation: 'Step-by-step logic:\n1. 738 has no correct digits → eliminate 7, 3, 8.\n2. In 780, only 0 remains and is in the wrong position (pos 3), so 0 is in pos 1 or 2.\n3. In 682, 8 is eliminated. If 6 were correct at pos 1, clue 614 says 6 is in wrong position (contradiction). Thus 2 is correct at pos 3 (code: _ _ 2).\n4. In 206, 2 is in pos 3 (wrong position here in pos 1, matches!). Since 6 is out, 0 is the second correct digit and must be in pos 1 (code: 0 _ 2).\n5. In 614, 4 is in wrong position (pos 3), so 4 must be in pos 2.\n→ The access code is 042.',
       imageId: null,
     },
     {
       type: 'MCQ',
-      prompt:
-        "As per Outlook India's 2025 rankings, Yenepoya climbed 26 ranks in the 'Deemed To Be University' category to reach which position?",
-      options: ['#5', '#8', '#11', '#14'],
+      prompt: 'In a race, Rahul finishes 7th from the front and 12th from the back. How many people participated in the race?',
+      options: ['18', '19', '20', '21'],
+      correctIndex: 0,
+      timerSeconds: 15,
+      explanation: 'Total participants = (Position from front) + (Position from back) - 1 = 7 + 12 - 1 = 18 participants.',
+      imageId: null,
+    },
+    {
+      type: 'MCQ',
+      prompt: 'A father is 3 times as old as his son. After 10 years, the father will be twice as old as his son. What is the son\'s present age?',
+      options: ['5 years', '10 years', '15 years', '20 years'],
       correctIndex: 1,
       timerSeconds: 15,
-      explanation:
-        "Fun Fact: Yenepoya achieved a remarkable 26-rank jump to secure the #8 rank among Deemed to be Universities in Outlook India's 2025 rankings.",
+      explanation: "Let son's age = S. Father's age F = 3S.\nIn 10 years: (3S + 10) = 2(S + 10)\n3S + 10 = 2S + 20 → S = 10 years old.",
       imageId: null,
     },
   ]
