@@ -238,10 +238,10 @@ export function ExamCard({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -25 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
-          className="w-full sticky-note-blue p-5 sm:p-6 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#2a2440] flex flex-col gap-5"
+          className="w-full notebook-card bg-[#0e2e4e] p-5 sm:p-6 rounded-3xl border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d] flex flex-col gap-5"
         >
           {/* Question Counter Header */}
-          <div className="flex items-center justify-between border-b-2 border-ink/10 pb-3">
+          <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
             <span className="text-xs font-black uppercase text-ink-soft tracking-wider">
               Question {currentIndex + 1} of {totalQ}
             </span>
@@ -259,12 +259,13 @@ export function ExamCard({
 
           {/* Optional Image */}
           {currentQ.imageUrl && (
-            <div className="relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-ink bg-white">
+            <div className="relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-[#00d2ff]/40 bg-[#06192d] flex items-center justify-center p-2">
               <Image
                 src={currentQ.imageUrl}
                 alt="Question diagram"
                 fill
                 className="object-contain p-2"
+                priority
               />
             </div>
           )}
@@ -301,7 +302,7 @@ export function ExamCard({
                       <motion.span
                         initial={{ scale: 0, rotate: -15 }}
                         animate={{ scale: 1, rotate: 0 }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-ink font-black text-xs shadow-lg"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-[#081a2e] font-black text-xs shadow-lg border border-[#081a2e]"
                       >
                         <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
                         Locked In!

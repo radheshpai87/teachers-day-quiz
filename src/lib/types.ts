@@ -178,6 +178,7 @@ export interface ClientState {
   you?: SelfState
   final?: FinalSummary
   exam?: ExamPayload
+  preloadImages?: string[]
 }
 
 /** Lightweight frame used for live participant-count updates in the lobby. */

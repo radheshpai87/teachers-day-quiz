@@ -174,35 +174,42 @@
   /* Technical Spec Cards & Sticky Notes */
   .sticky-note-yellow {
     background-color: #fbbf24;
-    color: #081a2e;
+    color: #081a2e !important;
     border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-mint {
     background-color: #10b981;
-    color: #081a2e;
+    color: #081a2e !important;
     border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-lavender {
     background-color: #00d2ff;
-    color: #081a2e;
+    color: #081a2e !important;
     border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-peach {
     background-color: #38bdf8;
-    color: #081a2e;
+    color: #081a2e !important;
     border: 2px solid #081a2e;
+    box-shadow: 3px 3px 0px #04101d;
+  }
+
+  .sticky-note-blue {
+    background-color: #0e2e4e;
+    color: #f8fafc !important;
+    border: 2px solid #00d2ff;
     box-shadow: 3px 3px 0px #04101d;
   }
 
   .sticky-note-rose {
     background-color: #f43f5e;
-    color: #ffffff;
+    color: #ffffff !important;
     border: 2px solid #081a2e;
     box-shadow: 3px 3px 0px #04101d;
   }

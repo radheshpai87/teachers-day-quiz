@@ -30,19 +30,19 @@ export function Timer({
           <span className="flex items-center gap-1.5">
             <span
               className={`w-2 h-2 rounded-full ${
-                isWarning ? 'bg-rose-ink animate-ping' : 'bg-lav-ink'
+                isWarning ? 'bg-[#f43f5e] animate-ping' : 'bg-[#00d2ff]'
               }`}
             />
             Time Remaining
           </span>
-          <span className={`tnum text-sm font-bold ${isWarning ? 'text-rose-ink' : 'text-ink'}`}>
+          <span className={`tnum text-sm font-bold ${isWarning ? 'text-[#f43f5e]' : 'text-ink'}`}>
             {secondsLeft}s
           </span>
         </div>
-        <div className="h-3 w-full bg-black/5 rounded-full overflow-hidden p-0.5 border border-black/10">
+        <div className="h-3 w-full bg-[#082038] rounded-full overflow-hidden p-0.5 border border-[#00d2ff]/30">
           <div
             className={`h-full rounded-full transition-all duration-100 ease-linear ${
-              isWarning ? 'bg-gradient-to-r from-peach-ink to-rose-ink' : 'bg-gradient-to-r from-blue-ink via-lav-ink to-mint-ink'
+              isWarning ? 'bg-gradient-to-r from-[#fbbf24] to-[#f43f5e]' : 'bg-gradient-to-r from-[#0284c7] via-[#00d2ff] to-[#10b981]'
             }`}
             style={{ width: `${fraction * 100}%` }}
           />
@@ -68,7 +68,7 @@ export function Timer({
           cx={svgSize / 2}
           cy={svgSize / 2}
           r={radius}
-          className="stroke-black/10 fill-none"
+          className="stroke-[#00d2ff]/20 fill-none"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -76,7 +76,7 @@ export function Timer({
           cy={svgSize / 2}
           r={radius}
           className={`fill-none transition-all duration-100 ease-linear ${
-            isWarning ? 'stroke-rose-ink' : 'stroke-lav-ink'
+            isWarning ? 'stroke-[#f43f5e]' : 'stroke-[#00d2ff]'
           }`}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
@@ -88,7 +88,7 @@ export function Timer({
         <span
           className={`tnum font-black leading-none ${
             size === 'lg' ? 'text-3xl' : 'text-xl sm:text-2xl'
-          } ${isWarning ? 'text-rose-ink animate-bounce' : 'text-ink'}`}
+          } ${isWarning ? 'text-[#f43f5e] animate-bounce' : 'text-ink'}`}
         >
           {secondsLeft}
         </span>

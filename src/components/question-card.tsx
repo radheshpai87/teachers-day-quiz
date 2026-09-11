@@ -85,12 +85,12 @@ export function QuestionCard({
       >
         {/* Optional Image */}
         {question.imageUrl && (
-          <div className="w-full max-h-56 overflow-hidden rounded-xl border-2 border-ink bg-white flex items-center justify-center">
+          <div className="w-full max-h-56 overflow-hidden rounded-xl border-2 border-[#00d2ff]/40 bg-[#06192d] flex items-center justify-center p-2">
             {/* eslint-disable-next-html-element-suppression */}
             <img
               src={question.imageUrl}
               alt="Question illustration"
-              className="max-h-56 object-contain rounded-xl"
+              className="max-h-52 object-contain rounded-lg"
             />
           </div>
         )}
@@ -121,14 +121,14 @@ export function QuestionCard({
       {/* Bottom Status bar */}
       <div className="w-full flex items-center justify-between text-xs font-black text-ink-soft px-1 pt-1">
         <div className="flex items-center gap-1.5">
-          <Target className="w-4 h-4 text-[#388e3c]" />
-          <span className={isLocked ? 'text-[#388e3c] font-black' : ''}>
+          <Target className="w-4 h-4 text-[#10b981]" />
+          <span className={isLocked ? 'text-[#10b981] font-black' : 'text-ink-soft font-bold'}>
             {isLocked ? 'Answer locked in! Evaluating result...' : 'Tap an answer to submit'}
           </span>
         </div>
         {self && (
           <div className="flex items-center gap-1.5">
-            <ParticipantAvatar seed={self.avatarSeed} size="sm" className="border border-ink" />
+            <ParticipantAvatar seed={self.avatarSeed} size="sm" className="border border-[#00d2ff]/40" />
             <span className="font-extrabold text-ink">{self.name}</span>
           </div>
         )}

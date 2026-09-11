@@ -95,10 +95,16 @@ export function getQuiz(): Quiz {
           )
           .get(row.id) as unknown as { prompt: string } | undefined
 
+        const largeImg = db
+          .prepare('SELECT COUNT(*) as count FROM images WHERE LENGTH(bytes) > 500000')
+          .get() as unknown as { count: number }
+
         if (
           qCount.count === 0 ||
-          (firstQ && firstQ.prompt.includes('human body temperature'))
+          (firstQ && firstQ.prompt.includes('human body temperature')) ||
+          largeImg.count > 0
         ) {
+          db.prepare('DELETE FROM images').run()
           db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
           seedQuestions(row.id)
         }
@@ -341,11 +347,11 @@ function loadSeedImage(relativePublicPath: string, mime = 'image/png'): string |
 }
 
 function seedQuestions(quizId: string) {
-  const demonCoreImg = loadSeedImage('quiz-images/demon-core.png')
-  const littleBoyImg = loadSeedImage('quiz-images/little-boy.png')
-  const atalTunnelImg = loadSeedImage('quiz-images/atal-tunnel.png')
-  const voyagerImg = loadSeedImage('quiz-images/voyager.png')
-  const maglevImg = loadSeedImage('quiz-images/maglev.png')
+  const demonCoreImg = loadSeedImage('quiz-images/demon-core.png', 'image/png')
+  const littleBoyImg = loadSeedImage('quiz-images/little-boy.png', 'image/png')
+  const atalTunnelImg = loadSeedImage('quiz-images/atal-tunnel.jpg', 'image/jpeg')
+  const voyagerImg = loadSeedImage('quiz-images/voyager.jpg', 'image/jpeg')
+  const maglevImg = loadSeedImage('quiz-images/maglev.jpg', 'image/jpeg')
 
   const seeds: QuestionInput[] = [
     {

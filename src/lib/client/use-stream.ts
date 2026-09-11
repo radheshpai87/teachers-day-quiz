@@ -11,6 +11,19 @@ interface Options {
   display?: boolean
 }
 
+const preloadedUrls = new Set<string>()
+
+function preloadImages(urls?: string[]) {
+  if (typeof window === 'undefined' || !urls || !Array.isArray(urls)) return
+  for (const url of urls) {
+    if (url && !preloadedUrls.has(url)) {
+      preloadedUrls.add(url)
+      const img = new Image()
+      img.src = url
+    }
+  }
+}
+
 export function useQuizStream({ participantId, display }: Options) {
   const [state, setState] = useState<ClientState | null>(null)
   const [status, setStatus] = useState<StreamStatus>('connecting')
@@ -48,6 +61,7 @@ export function useQuizStream({ participantId, display }: Options) {
         if (res.ok && !cancelled) {
           const data = await res.json()
           if (data?.state) {
+            preloadImages(data.state.preloadImages)
             clockOffset.current = data.state.serverNow - Date.now()
             setPlayers(data.state.players || 0)
             setState((prev) => {
@@ -108,6 +122,7 @@ export function useQuizStream({ participantId, display }: Options) {
       }
 
       if (frame.t === 'state') {
+        preloadImages(frame.preloadImages)
         clockOffset.current = frame.serverNow - Date.now()
         setPlayers(frame.players)
         setState((prev) => {

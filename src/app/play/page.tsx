@@ -156,7 +156,7 @@ export default function PlayPage() {
         {/* Status Indicator & Sound Toggle */}
         <div className="flex items-center gap-2">
           {showReconnecting && status === 'reconnecting' && (
-            <span className="px-3 py-1 rounded-full sticky-note-rose text-ink font-black text-xs border border-ink shadow-[2px_2px_0px_#2a2440] animate-pulse">
+            <span className="px-3 py-1 rounded-full sticky-note-rose text-white font-black text-xs border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] animate-pulse">
               Reconnecting...
             </span>
           )}
@@ -227,13 +227,13 @@ export default function PlayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full sticky-note-yellow p-8 rounded-3xl border-3 border-ink shadow-[6px_6px_0px_#2a2440] flex flex-col items-center justify-center gap-4 text-center"
+              className="w-full sticky-note-yellow p-8 rounded-3xl border-3 border-[#081a2e] shadow-[6px_6px_0px_#04101d] flex flex-col items-center justify-center gap-4 text-center"
             >
-              <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-ink flex items-center justify-center shadow-[3px_3px_0px_#2a2440]">
-                <Pause className="w-8 h-8 text-ink fill-current animate-pulse" />
+              <div className="w-16 h-16 rounded-2xl bg-[#081a2e] text-[#fbbf24] border-2 border-[#081a2e] flex items-center justify-center shadow-[3px_3px_0px_#04101d]">
+                <Pause className="w-8 h-8 fill-current animate-pulse" />
               </div>
-              <h2 className="text-2xl font-black text-ink">Quiz Paused by Host</h2>
-              <p className="text-sm font-bold text-ink-soft max-w-md">
+              <h2 className="text-2xl font-black text-[#081a2e]">Quiz Paused by Host</h2>
+              <p className="text-sm font-bold text-[#081a2e]/90 max-w-md">
                 The event host has temporarily paused the quiz session. Take a quick breather — your progress is saved and answering will resume shortly!
               </p>
             </motion.div>

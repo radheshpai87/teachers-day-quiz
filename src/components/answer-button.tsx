@@ -57,14 +57,14 @@ export function AnswerButton({
 
   if (revealed) {
     if (correct) {
-      variantStyles = 'bg-[#2e7d32] text-white ring-4 ring-emerald-300 scale-[1.02] shadow-lg'
+      variantStyles = 'bg-[#10b981] text-white ring-4 ring-emerald-300 scale-[1.02] shadow-lg border-b-[#059669]'
     } else if (selected) {
-      variantStyles = 'bg-[#c62828] text-white opacity-80 ring-2 ring-rose-400'
+      variantStyles = 'bg-[#e53935] text-white opacity-85 ring-4 ring-rose-400 border-b-[#b71c1c]'
     } else {
-      variantStyles = 'bg-gray-200 text-gray-400 opacity-40 border-gray-300'
+      variantStyles = 'bg-[#0a2239]/80 text-[#64748b] opacity-40 border-[#1e3a5f]'
     }
   } else if (selected) {
-    variantStyles = `${theme.bg} ring-4 ring-[#0284c7] scale-[1.02] shadow-xl`
+    variantStyles = `${theme.bg} ring-4 ring-[#00d2ff] scale-[1.02] shadow-xl`
   }
 
   return (

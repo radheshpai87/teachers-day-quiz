@@ -23,7 +23,7 @@ export function EventImageCarousel() {
   }, [])
 
   return (
-    <div className="w-full overflow-hidden rounded-xl border-2 border-ink bg-white relative aspect-[16/10] max-h-52 sm:max-h-64 shadow-[2px_2px_0px_#231f20] select-none">
+    <div className="w-full overflow-hidden rounded-xl border-2 border-[#00d2ff] bg-[#06192d] relative aspect-[16/10] max-h-52 sm:max-h-64 shadow-[2px_2px_0px_#04101d] select-none">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}

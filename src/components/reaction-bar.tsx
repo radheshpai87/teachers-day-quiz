@@ -95,7 +95,7 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
             >
               {renderReactionIcon(item.emoji)}
               {item.senderName && (
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full sticky-note-yellow text-ink border border-ink shadow-xs mt-1">
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full sticky-note-yellow text-[#081a2e] border border-[#081a2e] shadow-xs mt-1">
                   {item.senderName}
                 </span>
               )}
@@ -106,7 +106,7 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
 
       {/* Interactive Bottom Reaction Bar (Only when participantId is present) */}
       {participantId && (
-        <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 sm:bottom-4 sm:right-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-paper-cream/90 backdrop-blur-xs border-2 border-ink shadow-[3px_3px_0px_#2a2440]">
+        <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 sm:bottom-4 sm:right-4 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#0e2e4e]/95 backdrop-blur-md border-2 border-[#00d2ff] shadow-[3px_3px_0px_#04101d]">
           {REACTIONS.map((item) => (
             <button
               key={item.id}
@@ -114,7 +114,7 @@ export function ReactionOverlayAndBar({ participantId, lastReaction }: ReactionB
               onClick={() => handleSendReaction(item.id)}
               disabled={cooldown}
               aria-label={item.label}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl hover:bg-note-yellow/60 active:scale-90 transition-all flex items-center justify-center cursor-pointer disabled:opacity-60"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl hover:bg-[#00d2ff]/20 active:scale-90 transition-all flex items-center justify-center cursor-pointer disabled:opacity-60"
             >
               {item.icon}
             </button>

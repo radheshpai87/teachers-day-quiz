@@ -212,12 +212,12 @@ export default function ResultsPage() {
             </div>
 
             {/* Correct */}
-            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-[#00d2ff] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
-              <div className="flex items-center gap-1 text-xs uppercase font-black text-white">
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
+            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#081a2e]">
+                <Check className="w-3.5 h-3.5 stroke-[3] text-[#081a2e]" />
                 <span>Correct</span>
               </div>
-              <span className="tnum font-black text-2xl text-white mt-1">
+              <span className="tnum font-black text-2xl text-[#081a2e] mt-1">
                 {results?.correct ?? 0} / {results?.totalQuestions ?? 0}
               </span>
             </div>
@@ -242,7 +242,7 @@ export default function ResultsPage() {
                 <span>Avg. Response Speed</span>
               </div>
               <span className="tnum font-black text-[#00d2ff] text-sm">
-                {results.averageResponseSeconds.toFixed(1)}s
+                {(results.averageResponseSeconds ?? 0).toFixed(1)}s
               </span>
             </div>
           )}

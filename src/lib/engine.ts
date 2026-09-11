@@ -927,6 +927,9 @@ class QuizEngine {
       phaseEndsAt: this.phaseEndsAt,
       answersOpenAt: this.phase === 'QUESTION' ? this.answersOpenAt : undefined,
       players: this.participants.size,
+      preloadImages: Array.from(this.questions.values())
+        .filter((q) => q.imageId)
+        .map((q) => `/api/image/${q.imageId}`),
     }
   }
 
