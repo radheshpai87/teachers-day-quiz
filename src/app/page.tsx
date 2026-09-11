@@ -50,7 +50,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <main className="min-h-dvh notebook-paper flex flex-col items-center justify-center pl-6 pr-3 sm:px-6 py-3 sm:py-6 pb-safe text-center select-none relative overflow-hidden">
+    <main className="min-h-dvh notebook-paper flex flex-col items-center justify-center px-4 sm:px-6 py-3 sm:py-6 pb-safe text-center select-none relative overflow-hidden">
       {/* Consistent Blueprint Background Geometry */}
       <NotebookBackgroundDecor />
 
@@ -98,7 +98,7 @@ export default function HomePage() {
         </div>
 
         {/* Engineers' Day Quote Sticky Note Card */}
-        <div className="w-full sticky-note-lavender p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] sm:shadow-[4px_4px_0px_#04101d] space-y-2 sm:space-y-3 text-left relative -rotate-1">
+        <div className="w-full sticky-note-lavender p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] sm:shadow-[4px_4px_0px_#04101d] space-y-2 sm:space-y-3 text-left relative rotate-0 sm:-rotate-1">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-black text-[#081a2e] uppercase tracking-wider">
               <Book className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#081a2e]" />
