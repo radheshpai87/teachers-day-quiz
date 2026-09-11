@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { loadSession, clearSession, type StoredSession } from '@/lib/client/idb'
+import { loadSession, type StoredSession } from '@/lib/client/idb'
 import { apiGet } from '@/lib/client/api'
 import type { FinalSummary } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import Image from 'next/image'
-import { Trophy, Target, Bolt, GraduationCap, Check, ArrowUp, PaperClip, Star } from '@/components/icons'
+import { Trophy, Target, Bolt, GraduationCap, Check, PaperClip, Star } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
@@ -98,16 +98,6 @@ export default function ResultsPage() {
       requestAnimationFrame(frameFunc)
     }
   }, [loading, results])
-
-  const handlePlayAgain = async () => {
-    try {
-      sessionStorage.removeItem('exam_tab_switched')
-    } catch {
-      /* storage fallback */
-    }
-    await clearSession()
-    router.replace('/join')
-  }
 
   if (loading || !session) {
     return (
@@ -256,15 +246,6 @@ export default function ResultsPage() {
               Thank you for celebrating innovation, engineering, and the minds shaping our future.
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={handlePlayAgain}
-            className="w-full py-3.5 px-6 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] hover:-translate-y-0.5 transition-all cursor-pointer shadow-[3px_3px_0px_#04101d] flex items-center justify-center gap-2"
-          >
-            <ArrowUp className="w-4 h-4 rotate-180 text-[#081a2e]" />
-            <span>Join Another Session</span>
-          </button>
         </div>
 
         {/* Consistent YENTECH & YSET Branding Footer */}
