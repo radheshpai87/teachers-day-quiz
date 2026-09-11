@@ -146,8 +146,8 @@ export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean
         </g>
       </svg>
 
-      {/* 4. Left Ruler Measurement Scale */}
-      <div className="absolute top-0 bottom-0 left-1 sm:left-3 flex flex-col justify-around py-6 pointer-events-none opacity-60 z-0">
+      {/* 4. Left Ruler Measurement Scale (Tablets & Desktop only to prevent mobile clutter) */}
+      <div className="hidden sm:flex absolute top-0 bottom-0 left-1 sm:left-3 flex-col justify-around py-6 pointer-events-none opacity-60 z-0">
         {[...Array(12)].map((_, i) => (
           <div key={i} className="flex items-center gap-1.5">
             <div className="w-3 h-0.5 sm:w-5 sm:h-0.5 bg-[#00d2ff]" />
@@ -164,17 +164,17 @@ export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-            className="absolute top-3 right-3 sm:top-10 sm:right-12 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
+            className="absolute top-3 right-3 sm:top-10 sm:right-12 opacity-30 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
           >
             <Gear className="w-12 h-12 sm:w-20 sm:h-20 stroke-[2]" />
           </motion.div>
 
           {/* 6. Mid-Page Interlocking Gear Train & Caliper */}
-          <div className="absolute top-[14%] left-8 opacity-40 sm:opacity-90 text-[#10b981] pointer-events-none z-0">
+          <div className="absolute top-[14%] left-8 opacity-15 sm:opacity-80 text-[#10b981] pointer-events-none z-0">
             <GearsSet className="w-16 h-16 sm:w-28 sm:h-28 stroke-[1.8]" />
           </div>
 
-          <div className="absolute top-1/3 right-5 opacity-50 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0">
+          <div className="absolute top-1/3 right-5 opacity-20 sm:opacity-80 text-[#00d2ff] pointer-events-none z-0">
             <CircuitBoard className="w-12 h-12 sm:w-18 sm:h-18 stroke-[1.8]" />
           </div>
 
@@ -182,7 +182,7 @@ export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean
           <motion.div
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-4 left-6 sm:bottom-10 sm:left-12 opacity-70 sm:opacity-90 text-[#fbbf24] pointer-events-none flex items-center gap-2 sm:gap-3 z-0"
+            className="absolute bottom-4 left-6 sm:bottom-10 sm:left-12 opacity-25 sm:opacity-80 text-[#fbbf24] pointer-events-none flex items-center gap-2 sm:gap-3 z-0"
           >
             <Compass className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2]" />
             <Caliper className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2] -rotate-12" />
@@ -192,7 +192,7 @@ export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean
           <motion.div
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 opacity-70 sm:opacity-90 text-[#38bdf8] pointer-events-none z-0"
+            className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 opacity-25 sm:opacity-80 text-[#38bdf8] pointer-events-none z-0"
           >
             <HardHat className="w-8 h-8 sm:w-14 sm:h-14 stroke-[2.2]" />
           </motion.div>
