@@ -95,7 +95,7 @@ export function QuestionCard({
           </div>
         )}
 
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-ink leading-snug">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-ink leading-snug whitespace-pre-line">
           {question.prompt}
         </h2>
       </motion.div>

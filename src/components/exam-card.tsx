@@ -253,7 +253,7 @@ export function ExamCard({
           </div>
 
           {/* Question Prompt */}
-          <h2 className="text-lg sm:text-xl font-black text-ink leading-snug">
+          <h2 className="text-lg sm:text-xl font-black text-ink leading-snug whitespace-pre-line">
             {currentQ.prompt}
           </h2>
 
