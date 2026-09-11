@@ -46,7 +46,7 @@ export function AdminDashboardClient() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={adminPath('live')}
-              className="px-6 py-3 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Open Live Control</span>
@@ -68,7 +68,7 @@ export function AdminDashboardClient() {
                   }
                 }
               }}
-              className="px-5 py-3 rounded-xl sticky-note-yellow text-ink font-extrabold text-sm border-2 border-ink shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
               <span>Reset Event</span>
@@ -130,7 +130,7 @@ export function AdminDashboardClient() {
           href={adminPath('live')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#00d2ff] text-[#081a2e] flex items-center justify-center font-bold border-2 border-ink">
+          <div className="w-10 h-10 rounded-xl bg-[#00d2ff] text-[#081a2e] flex items-center justify-center font-bold border-2 border-[#081a2e]">
             <Play className="w-5 h-5 fill-current" />
           </div>
           <div className="flex items-center justify-between">
@@ -146,7 +146,7 @@ export function AdminDashboardClient() {
           href={adminPath('questions')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#1976d2] text-white flex items-center justify-center font-bold border-2 border-ink">
+          <div className="w-10 h-10 rounded-xl bg-[#1976d2] text-white flex items-center justify-center font-bold border-2 border-[#081a2e]">
             <Edit className="w-5 h-5" />
           </div>
           <div className="flex items-center justify-between">
@@ -162,7 +162,7 @@ export function AdminDashboardClient() {
           href={adminPath('results')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#388e3c] text-white flex items-center justify-center font-bold border-2 border-ink">
+          <div className="w-10 h-10 rounded-xl bg-[#388e3c] text-white flex items-center justify-center font-bold border-2 border-[#081a2e]">
             <FileText className="w-5 h-5" />
           </div>
           <div className="flex items-center justify-between">

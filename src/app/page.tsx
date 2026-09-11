@@ -60,15 +60,15 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md flex flex-col items-center space-y-3.5 sm:space-y-5 z-10"
       >
-        {/* Yenepoya University Logo */}
+        {/* Yenepoya School of Engineering and Technology Logo */}
         <div className="flex items-center justify-center py-1 sm:py-2">
           <Image
-            src="/yenepoya-university-logo.svg?v=2"
-            alt="Yenepoya University Logo"
-            width={360}
-            height={120}
+            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            alt="Yenepoya School of Engineering and Technology"
+            width={380}
+            height={100}
             priority
-            className="h-14 sm:h-24 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
+            className="h-14 sm:h-22 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
           />
         </div>
 

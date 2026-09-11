@@ -70,12 +70,12 @@ export default function HiddenQuestionsPage() {
       <header className="w-full max-w-4xl flex items-center justify-between gap-3 text-ink border-b-2 border-ink pb-3.5 z-10">
         <div className="flex items-center gap-3">
           <Image
-            src="/yenepoya-university-logo.svg"
-            alt="Yenepoya University Logo"
+            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            alt="Yenepoya School of Engineering and Technology"
             width={240}
-            height={70}
+            height={60}
             priority
-            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs"
+            className="h-10 sm:h-12 w-auto object-contain drop-shadow-xs brightness-200"
           />
           <div className="hidden sm:block border-l-2 border-ink/20 pl-3.5 py-0.5">
             <h1 className="text-xl sm:text-2xl font-black text-ink">

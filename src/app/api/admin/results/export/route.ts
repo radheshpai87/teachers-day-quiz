@@ -51,7 +51,7 @@ export async function GET() {
     )
   }
 
-  const filename = `teachers-day-quiz-results-${results.runId}.csv`
+  const filename = `engineers-day-quiz-results-${results.runId}.csv`
 
   return new Response(lines.join('\r\n'), {
     headers: {

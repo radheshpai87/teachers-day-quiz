@@ -1,5 +1,5 @@
 /**
- * Shared types for the Teachers' Day quiz.
+ * Shared types for the Engineers' Day quiz.
  *
  * These types are used on both the server (game engine, API routes) and the
  * client (participant + host screens), so keep them free of Node-only imports.

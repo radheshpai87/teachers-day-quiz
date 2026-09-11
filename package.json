@@ -2,7 +2,7 @@
   "name": "teachers-day-quiz",
   "version": "1.0.0",
   "private": true,
-  "description": "A Kahoot-inspired live quiz for a college Teachers' Day event.",
+  "description": "A Kahoot-inspired live quiz for a college Engineers' Day event.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

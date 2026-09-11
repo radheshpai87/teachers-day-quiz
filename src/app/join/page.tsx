@@ -95,10 +95,10 @@ export default function JoinPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-center py-1 sm:py-2">
             <Image
-              src="/yenepoya-university-logo.svg?v=2"
-              alt="Yenepoya University Logo"
-              width={360}
-              height={120}
+              src="/yenepoya-school-engineering-and-technology.svg?v=2"
+              alt="Yenepoya School of Engineering and Technology"
+              width={380}
+              height={100}
               priority
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain drop-shadow-sm brightness-200"
             />
@@ -115,7 +115,7 @@ export default function JoinPage() {
         <div className="w-full notebook-card p-6 sm:p-8 space-y-5 bg-[#0e2e4e]">
           {/* Avatar Preview */}
           <div className="flex flex-col items-center space-y-1.5">
-            <ParticipantAvatar seed={previewSeed} size="xl" className="shadow-[3px_3px_0px_#231f20] border-2 border-ink" />
+            <ParticipantAvatar seed={previewSeed} size="xl" className="shadow-[3px_3px_0px_#04101d] border-2 border-[#00d2ff]" />
             <span className="text-xs font-black text-ink-soft">
               Your Avatar
             </span>
@@ -140,7 +140,7 @@ export default function JoinPage() {
                 placeholder="Enter your full name"
                 maxLength={32}
                 autoFocus
-                className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all placeholder:text-ink-faint shadow-[2px_2px_0px_#231f20]"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all placeholder:text-ink-faint shadow-[2px_2px_0px_#04101d]"
               />
             </div>
 
@@ -158,7 +158,7 @@ export default function JoinPage() {
                   setYear(e.target.value)
                   if (error) setError(null)
                 }}
-                className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all shadow-[2px_2px_0px_#231f20] cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all shadow-[2px_2px_0px_#04101d] cursor-pointer"
               >
                 <option value="">-- Choose Year of Study --</option>
                 {YEAR_OPTIONS.map((y) => (
@@ -183,7 +183,7 @@ export default function JoinPage() {
                   setEdutechPartner(e.target.value)
                   if (error) setError(null)
                 }}
-                className="w-full px-4 py-3 rounded-xl border-2 border-ink bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:ring-3 focus:ring-[#6bc4e8] transition-all shadow-[2px_2px_0px_#231f20] cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all shadow-[2px_2px_0px_#04101d] cursor-pointer"
               >
                 <option value="">-- Choose Edutech Partner / Program --</option>
                 {EDUTECH_OPTIONS.map((opt) => (
