@@ -11,11 +11,12 @@
  * the redundancy.
  */
 
-const DB_NAME = 'teachers-day-quiz'
+const DB_NAME = 'engineers-day-quiz'
 const STORE = 'session'
 const KEY = 'current'
 const VERSION = 1
-const MIRROR_KEY = 'tdq.session'
+const MIRROR_KEY = 'edq.session'
+const LEGACY_MIRROR_KEY = 'tdq.session'
 
 export interface StoredSession {
   participantId: string
@@ -44,7 +45,7 @@ function openDb(): Promise<IDBDatabase> {
 
 function readMirror(): StoredSession | null {
   try {
-    const raw = localStorage.getItem(MIRROR_KEY)
+    const raw = localStorage.getItem(MIRROR_KEY) || localStorage.getItem(LEGACY_MIRROR_KEY)
     return raw ? (JSON.parse(raw) as StoredSession) : null
   } catch {
     return null

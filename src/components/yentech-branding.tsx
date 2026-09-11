@@ -10,11 +10,11 @@ export function YentechBranding({ className = '' }: { className?: string }) {
       <div className="flex items-center gap-1.5">
         <span className="text-[11px] font-extrabold text-ink-soft">Powered by</span>
         <Image
-          src="/yentech.png"
+          src="/yentech.png?v=3"
           alt="YENTECH Logo"
           width={110}
           height={30}
-          className="h-5 sm:h-6 w-auto object-contain brightness-0 invert"
+          className="h-5 sm:h-6 w-auto object-contain"
         />
       </div>
       <div className="flex items-center gap-1.5 text-[10px] font-bold text-ink-soft">
@@ -40,12 +40,12 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
       <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-extrabold text-ink-soft shrink-0">
         <span>Powered by</span>
         <Image
-          src="/yentech.png"
+          src="/yentech.png?v=3"
           alt="YENTECH Logo"
           width={160}
           height={44}
           priority
-          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs brightness-0 invert"
+          className="h-5 sm:h-6 w-auto object-contain shrink-0 drop-shadow-xs"
         />
       </div>
 

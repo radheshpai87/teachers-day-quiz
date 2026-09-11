@@ -15,7 +15,7 @@ import {
 
 export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean } = {}) {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none w-full h-full min-h-full">
       {/* 1. Authentic Blueprint Cyan Radial Backdrop Gradient */}
       <div 
         className="absolute inset-0"
