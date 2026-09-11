@@ -69,21 +69,21 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="w-full sticky-note-rose p-5 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#2a2440] text-left space-y-2"
+        className="w-full sticky-note-rose p-5 rounded-2xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] text-left space-y-3"
       >
-        <div className="flex items-center gap-2 text-[#b71c1c] font-black text-sm uppercase tracking-wider">
-          <ShieldAlert className="w-5 h-5 shrink-0 animate-pulse" />
+        <div className="flex items-center gap-2 text-white font-black text-sm sm:text-base uppercase tracking-wider border-b border-white/25 pb-2">
+          <ShieldAlert className="w-5 h-5 shrink-0 text-yellow-300 animate-pulse" />
           <span>Important Rules & Anti-Cheat Notice</span>
         </div>
-        <ul className="text-xs font-bold text-ink space-y-1.5 list-disc list-inside">
+        <ul className="text-xs sm:text-sm font-semibold text-white/95 space-y-2 list-disc list-inside">
           <li>
-            <strong className="text-[#b71c1c]">Strict Window Lock:</strong> Once the quiz starts, do <strong>NOT</strong> switch tabs, leave the browser, or minimize the window. Leaving the quiz tab will <strong>auto-submit your test immediately</strong>.
+            <strong className="text-yellow-300 font-black">Strict Window Lock:</strong> Once the quiz starts, do <strong className="text-white font-black underline">NOT</strong> switch tabs, leave the browser, or minimize the window. Leaving the quiz tab will <strong className="text-yellow-200 font-black">auto-submit your test immediately</strong>.
           </li>
           <li>
-            <strong className="text-ink">Copy Protection:</strong> Text selection, right-clicking, and copy keyboard shortcuts are strictly disabled during the exam.
+            <strong className="text-yellow-300 font-black">Copy Protection:</strong> Text selection, right-clicking, and copy keyboard shortcuts are strictly disabled during the exam.
           </li>
           <li>
-            <strong className="text-ink">Auto-Save:</strong> Your answers are recorded live as you tap each option.
+            <strong className="text-yellow-300 font-black">Auto-Save:</strong> Your answers are recorded live as you tap each option.
           </li>
         </ul>
       </motion.div>

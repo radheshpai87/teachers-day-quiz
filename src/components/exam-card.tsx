@@ -186,16 +186,16 @@ export function ExamCard({
   return (
     <div className="w-full flex flex-col gap-4 select-none">
       {/* Sticky Header with 10-Minute Global Timer & Progress */}
-      <div className="w-full flex items-center justify-between sticky-note-yellow p-4 rounded-2xl border-3 border-ink shadow-[4px_4px_0px_#2a2440]">
+      <div className="w-full flex items-center justify-between sticky-note-yellow p-3.5 sm:p-4 rounded-2xl border-2 sm:border-3 border-[#081a2e] shadow-[4px_4px_0px_#04101d]">
         <div className="flex items-center gap-2">
-          <Clock className="w-5 h-5 text-ink animate-pulse" />
-          <span className="font-black text-lg sm:text-xl tracking-wider text-ink tnum">
+          <Clock className="w-5 h-5 text-[#081a2e] animate-pulse" />
+          <span className="font-black text-lg sm:text-xl tracking-wider text-[#081a2e] tnum">
             {timeFormatted}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-ink-soft uppercase tracking-wider">
+        <div className="flex items-center gap-2 bg-[#081a2e]/10 px-3 py-1 rounded-lg border border-[#081a2e]/20">
+          <span className="text-xs sm:text-sm font-black text-[#081a2e] uppercase tracking-wider">
             Answered: {answeredCount} / {totalQ}
           </span>
         </div>
@@ -215,16 +215,16 @@ export function ExamCard({
                 sound.tap()
                 setCurrentIndex(idx)
               }}
-              className={`px-3.5 py-2 rounded-xl font-black text-xs border-2 border-ink transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+              className={`px-3.5 py-2 rounded-xl font-black text-xs border-2 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 isCurrent
-                  ? 'sticky-note-lavender shadow-[3px_3px_0px_#2a2440] scale-105'
+                  ? 'bg-[#00d2ff] text-[#081a2e] border-[#081a2e] shadow-[3px_3px_0px_#04101d] scale-105'
                   : isAnswered
-                  ? 'sticky-note-green text-ink shadow-[2px_2px_0px_#2a2440]'
-                  : 'bg-white text-ink-soft opacity-70'
+                  ? 'bg-[#10b981] text-[#081a2e] border-[#081a2e] shadow-[2px_2px_0px_#04101d]'
+                  : 'bg-[#0e2e4e] text-[#f8fafc] border-[#00d2ff]/50 hover:border-[#00d2ff]'
               }`}
             >
               Q{idx + 1}
-              {isAnswered && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 inline" />}
+              {isAnswered && <CheckCircle2 className="w-3.5 h-3.5 text-[#081a2e] inline" />}
             </button>
           )
         })}
