@@ -80,7 +80,25 @@ export function getQuiz(): Quiz {
     .prepare('SELECT * FROM quizzes ORDER BY created_at ASC LIMIT 1')
     .get() as unknown as QuizRow | undefined
 
-  if (row) return mapQuiz(row)
+  if (row) {
+    const qCount = db
+      .prepare('SELECT COUNT(*) as count FROM questions WHERE quiz_id = ?')
+      .get(row.id) as unknown as { count: number }
+    const firstQ = db
+      .prepare(
+        'SELECT prompt FROM questions WHERE quiz_id = ? ORDER BY position ASC LIMIT 1',
+      )
+      .get(row.id) as unknown as { prompt: string } | undefined
+
+    if (
+      qCount.count === 0 ||
+      (firstQ && firstQ.prompt.includes('human body temperature'))
+    ) {
+      db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
+      seedQuestions(row.id)
+    }
+    return mapQuiz(row)
+  }
 
   const now = Date.now()
   const id = newId('quiz')
@@ -88,7 +106,7 @@ export function getQuiz(): Quiz {
     `INSERT INTO quizzes
        (id, name, description, default_timer, reveal_seconds,
         leaderboard_seconds, ready_seconds, created_at, updated_at)
-     VALUES (?, ?, ?, 5, 3, 3, 3, ?, ?)`,
+     VALUES (?, ?, ?, 15, 3, 3, 3, ?, ?)`,
   ).run(
     id,
     "Engineers' Day Quiz",

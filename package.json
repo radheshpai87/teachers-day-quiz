@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "seed": "node scripts/seed-db.mjs",
     "hash-password": "node scripts/hash-password.mjs",
     "loadtest": "node scripts/loadtest.mjs"
   },
