@@ -7,7 +7,7 @@ import { apiGet } from '@/lib/client/api'
 import type { FinalSummary } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import Image from 'next/image'
-import { Trophy, Target, Bolt, GraduationCap, Check, PaperClip, Star } from '@/components/icons'
+import { Trophy, Target, Bolt, HardHat, Check, PaperClip, Star } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
@@ -104,7 +104,7 @@ export default function ResultsPage() {
       <main className="min-h-dvh notebook-paper flex items-center justify-center px-4 py-4 pb-safe select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
-          <GraduationCap className="w-10 h-10 text-[#00d2ff] animate-bounce" />
+          <HardHat className="w-10 h-10 text-[#00d2ff] animate-bounce" />
           <span className="text-sm font-black">Loading your final results...</span>
         </div>
       </main>
@@ -128,7 +128,7 @@ export default function ResultsPage() {
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute top-12 right-10 text-[#0284c7] opacity-80 pointer-events-none hidden sm:block"
       >
-        <GraduationCap className="w-14 h-14" />
+        <HardHat className="w-14 h-14" />
       </motion.div>
 
       <motion.div

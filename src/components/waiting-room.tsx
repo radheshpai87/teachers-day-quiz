@@ -1,7 +1,7 @@
 'use client'
 
 import { ParticipantAvatar } from '@/components/participant-avatar'
-import { GraduationCap, Book, Pencil, Chalkboard, Star, Users, PaperClip } from '@/components/icons'
+import { HardHat, Book, Pencil, Chalkboard, Star, Users, PaperClip } from '@/components/icons'
 import { motion } from 'framer-motion'
 import { ShieldAlert } from 'lucide-react'
 
@@ -13,6 +13,10 @@ interface WaitingRoomProps {
 }
 
 export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engineers' Day Quiz" }: WaitingRoomProps) {
+  const displayTitle = (quizName || "Engineers' Day Quiz")
+    .replace(/Teachers'?\s*Day/gi, "Engineers' Day")
+    .replace(/Teachers?/gi, "Engineers")
+
   return (
     <div className="w-full max-w-xl mx-auto flex flex-col items-center justify-center py-4 px-3 space-y-6 select-none">
       {/* Decorative Header Banner */}
@@ -23,8 +27,8 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
       >
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e]">
           <PaperClip className="w-4 h-4 text-[#081a2e]" />
-          <GraduationCap className="w-4 h-4 text-[#081a2e]" />
-          <span>{quizName}</span>
+          <HardHat className="w-4 h-4 text-[#081a2e]" />
+          <span>{displayTitle}</span>
         </div>
 
         <h1 className="text-3xl font-black text-ink">

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { QrFrame, GraduationCap, Cross, PaperClip } from '@/components/icons'
+import { QrFrame, HardHat, Cross, PaperClip } from '@/components/icons'
 import { apiGet } from '@/lib/client/api'
 
 interface QrModalProps {
@@ -51,7 +51,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1">
             <PaperClip className="w-4 h-4 text-[#081a2e]" />
-            <GraduationCap className="w-4 h-4 text-[#081a2e]" />
+            <HardHat className="w-4 h-4 text-[#081a2e]" />
             <span>Scan QR Code to Join</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-ink">

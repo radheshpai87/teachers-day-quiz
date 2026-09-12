@@ -11,7 +11,7 @@ import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
 import { ExamCard } from '@/components/exam-card'
 import Image from 'next/image'
-import { GraduationCap, PaperClip } from '@/components/icons'
+import { HardHat, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { sound } from '@/lib/client/sound'
@@ -126,7 +126,7 @@ export default function PlayPage() {
       <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
-          <GraduationCap className="w-10 h-10 text-[#0284c7] animate-bounce" />
+          <HardHat className="w-10 h-10 text-[#00d2ff] animate-bounce" />
           <span className="text-sm font-black">Loading your session...</span>
         </div>
       </main>

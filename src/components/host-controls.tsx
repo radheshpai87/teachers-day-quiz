@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import type { HostFrame } from '@/lib/types'
 import { apiPost } from '@/lib/client/api'
-import { Users, QrFrame, GraduationCap, PaperClip } from '@/components/icons'
+import { Users, QrFrame, HardHat, PaperClip } from '@/components/icons'
 import {
   Play,
   Square,
@@ -122,7 +122,7 @@ export function HostControls({ snapshot }: HostControlsProps) {
             <div className="flex items-center gap-2 flex-wrap">
               <div className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-[11px] sm:text-xs -rotate-1">
                 <PaperClip className="w-3.5 h-3.5 text-[#081a2e]" />
-                <GraduationCap className="w-3.5 h-3.5" />
+                <HardHat className="w-3.5 h-3.5" />
                 <span className="truncate max-w-[200px] sm:max-w-xs">{quiz.name}</span>
               </div>
 

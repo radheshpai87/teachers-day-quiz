@@ -83,6 +83,17 @@ export function getQuiz(): Quiz {
     .get() as unknown as QuizRow | undefined
 
   if (row) {
+    if (row.name.includes("Teachers'") || row.name.includes('Teachers')) {
+      db.prepare('UPDATE quizzes SET name = ?, description = ? WHERE id = ?').run(
+        "Engineers' Day Quiz",
+        'A celebration of innovation, engineering, and the minds shaping our future.',
+        row.id,
+      )
+      row.name = "Engineers' Day Quiz"
+      row.description =
+        'A celebration of innovation, engineering, and the minds shaping our future.'
+    }
+
     if (!isSeeding) {
       isSeeding = true
       try {
