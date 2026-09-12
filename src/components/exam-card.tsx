@@ -141,7 +141,7 @@ export function ExamCard({
     }
   }, [])
 
-  // Live 8-minute countdown timer calculation
+  // Live 5-minute countdown timer calculation
   useEffect(() => {
     const updateTimer = () => {
       const serverNow = Date.now() + clockOffsetMs
@@ -185,7 +185,7 @@ export function ExamCard({
 
   return (
     <div className="w-full flex flex-col gap-4 select-none">
-      {/* Sticky Header with 10-Minute Global Timer & Progress */}
+      {/* Sticky Header with 5-Minute Global Timer & Progress */}
       <div className="w-full flex items-center justify-between sticky-note-yellow p-3.5 sm:p-4 rounded-2xl border-2 sm:border-3 border-[#081a2e] shadow-[4px_4px_0px_#04101d]">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-[#081a2e] animate-pulse" />
