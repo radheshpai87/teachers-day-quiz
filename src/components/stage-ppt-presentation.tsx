@@ -880,12 +880,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               </div>
             )}
 
-            {/* SLIDE TYPE: Round 1 MCQ (Clean Question Card & Kahoot Answer Tiles) */}
+            {/* SLIDE TYPE: Round 1 MCQ (Clean Centered Question Card & Kahoot Answer Tiles) */}
             {slide.type === 'r1_mcq' && (
-              <div className="w-full max-w-4xl mx-auto flex flex-col space-y-4 px-2 select-none justify-between h-full py-2">
-                <div>
+              <div className="w-full max-w-5xl mx-auto flex flex-col items-center justify-center my-auto px-4 select-none h-full py-4">
+                <div className="w-full flex flex-col items-center justify-center space-y-4 my-auto">
                   {/* Header bar: Round badge, Score pill */}
-                  <div className="w-full flex items-center justify-between gap-3 mb-3">
+                  <div className="w-full flex items-center justify-between gap-3">
                     <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d] shrink-0">
                       <PaperClip className="w-4 h-4 text-[#081a2e]" />
                       <span>Round 1 • Question</span>
@@ -896,41 +896,32 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d]">
                       <Trophy className="w-4 h-4 text-[#081a2e]" />
-                      <span>+5 Points</span>
+                      <span>+10 Points</span>
                     </div>
                   </div>
 
                   {/* Question Prompt Card */}
-                  <div className="w-full notebook-card p-6 md:p-8 text-center space-y-3 mb-4">
+                  <div className="w-full notebook-card p-6 md:p-8 text-center space-y-3">
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-ink leading-snug whitespace-pre-line">
                       {slide.data.question}
                     </h2>
                   </div>
 
                   {/* 4 Kahoot-Style Vibrant Options Grid (Revealed One by One with Next) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4">
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {slide.data.options.map((opt: string, idx: number) => {
                       const isOptionRevealed = idx < mcqOptionStep || isRevealed
                       const isCorrect = idx === slide.data.correctIndex
                       const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
                       const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
-                      const optionLetter = ['A', 'B', 'C', 'D'][idx]
 
                       if (!isOptionRevealed) {
                         return (
                           <div
                             key={idx}
-                            className="w-full min-h-[4.25rem] p-4 rounded-2xl border-2 border-dashed border-[#00d2ff]/25 bg-[#081a2e]/50 flex items-center justify-between transition-all duration-300 select-none text-left"
-                          >
-                            <div className="flex items-center gap-3.5 opacity-35">
-                              <div className="shrink-0 w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-sm text-[#7dd3fc]">
-                                {optionLetter}
-                              </div>
-                              <span className="font-bold text-sm text-slate-400 italic">
-                                Option {optionLetter}
-                              </span>
-                            </div>
-                          </div>
+                            className="w-full min-h-[4.25rem] invisible pointer-events-none"
+                            aria-hidden="true"
+                          />
                         )
                       }
 
@@ -979,7 +970,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: 8, height: 0 }}
                         animate={{ opacity: 1, y: 0, height: 'auto' }}
                         exit={{ opacity: 0, y: 8, height: 0 }}
-                        className="p-4 rounded-2xl sticky-note-yellow text-[#081a2e] text-xs sm:text-sm leading-relaxed mb-2 shadow-[4px_4px_0px_#04101d] flex items-start gap-3"
+                        className="w-full p-4 rounded-2xl sticky-note-yellow text-[#081a2e] text-xs sm:text-sm leading-relaxed shadow-[4px_4px_0px_#04101d] flex items-start gap-3"
                       >
                         <Lightbulb className="w-5 h-5 text-[#081a2e] flex-shrink-0 mt-0.5" />
                         <div>
@@ -991,25 +982,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
-
-                {/* Clean Bottom Bar: Reveal Trigger & Next */}
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
-                  <button
-                    onClick={toggleReveal}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105 active:scale-95 ${
-                      isRevealed
-                        ? 'bg-[#0e2e4e] text-white'
-                        : 'bg-[#fbbf24] text-[#081a2e]'
-                    }`}
-                  >
-                    {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    {isRevealed ? 'Hide Answer' : 'Reveal Answer & Fact'} (R)
-                  </button>
-
-                  <span className="text-xs text-[#7dd3fc] font-bold">
-                    Quizmaster scoring controlled via <strong className="text-white">Host Controls</strong>
-                  </span>
                 </div>
               </div>
             )}
