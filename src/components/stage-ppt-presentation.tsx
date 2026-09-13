@@ -197,6 +197,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
+          setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
         } else if (type === 'UPDATE_FINALISTS') {
           setFinalists(payload.finalists)
         } else if (type === 'TOGGLE_REVEAL') {
@@ -204,6 +205,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         } else if (type === 'MCQ_OPTION_STEP') {
           if (typeof payload.step === 'number') {
             setMcqOptionStep(payload.step)
+          }
+        } else if (type === 'RAPID_QUESTION_STEP') {
+          if (typeof payload.rapidQuestionIdx === 'number') {
+            setRapidQuestionIdx(payload.rapidQuestionIdx)
           }
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
@@ -244,6 +249,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           }
           if (typeof state.mcqOptionStep === 'number') {
             setMcqOptionStep(state.mcqOptionStep)
+          }
+          if (typeof state.rapidQuestionIdx === 'number') {
+            setRapidQuestionIdx(state.rapidQuestionIdx)
           }
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
@@ -437,6 +445,18 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     }
   }, [slide?.type])
 
+  // Jump directly to a rapid question
+  const jumpToRapidQuestion = useCallback(
+    (idx: number) => {
+      setRapidQuestionIdx(idx)
+      setIsRevealed(false)
+      broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: idx } })
+      sendStageNetworkSync({ rapidQuestionIdx: idx, isRevealed: false })
+      sound.tap()
+    },
+    [broadcast],
+  )
+
   // Navigation handlers
   const nextSlide = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
@@ -449,16 +469,37 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       return
     }
 
+    if (currentSlideObj?.type === 'r3_rapid') {
+      const qCount = currentSlideObj.data?.questions?.length || 5
+      if (!isRevealed) {
+        if (rapidQuestionIdx < qCount - 1) {
+          const nextQ = rapidQuestionIdx + 1
+          setRapidQuestionIdx(nextQ)
+          broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: nextQ } })
+          sendStageNetworkSync({ rapidQuestionIdx: nextQ })
+          sound.tap()
+          return
+        } else {
+          setIsRevealed(true)
+          broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: true } })
+          sendStageNetworkSync({ isRevealed: true })
+          sound.correct()
+          return
+        }
+      }
+    }
+
     if (currentSlide < slides.length - 1) {
       const nextIdx = currentSlide + 1
       setCurrentSlide(nextIdx)
       setIsRevealed(false)
       setMcqOptionStep(0)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx, mcqOptionStep: 0 } })
-      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0 })
+      setRapidQuestionIdx(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
+      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0, rapidQuestionIdx: 0 })
       sound.tap()
     }
-  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
+  }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
 
   const prevSlide = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
@@ -471,6 +512,23 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       return
     }
 
+    if (currentSlideObj?.type === 'r3_rapid') {
+      if (isRevealed) {
+        setIsRevealed(false)
+        broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: false } })
+        sendStageNetworkSync({ isRevealed: false })
+        sound.tap()
+        return
+      } else if (rapidQuestionIdx > 0) {
+        const prevQ = rapidQuestionIdx - 1
+        setRapidQuestionIdx(prevQ)
+        broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: prevQ } })
+        sendStageNetworkSync({ rapidQuestionIdx: prevQ })
+        sound.tap()
+        return
+      }
+    }
+
     if (currentSlide > 0) {
       const prevIdx = currentSlide - 1
       const prevSlideObj = slides[prevIdx]
@@ -478,11 +536,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
       setMcqOptionStep(targetStep)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep } })
-      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep })
+      setRapidQuestionIdx(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep, rapidQuestionIdx: 0 } })
+      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep, rapidQuestionIdx: 0 })
       sound.tap()
     }
-  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
+  }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
 
   // Toggle reveal
   const toggleReveal = useCallback(() => {
@@ -1236,6 +1295,30 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       </span>
                     </div>
 
+                    {/* Step progress pills */}
+                    <div className="flex items-center gap-1.5 bg-[#081a2e]/90 p-1.5 rounded-2xl border border-[#00d2ff]/30">
+                      {slide.data.questions.map((_: any, qIdx: number) => {
+                        const isCurrent = rapidQuestionIdx === qIdx && !isRevealed
+                        const isPast = qIdx < rapidQuestionIdx || isRevealed
+                        return (
+                          <button
+                            key={qIdx}
+                            onClick={() => jumpToRapidQuestion(qIdx)}
+                            className={`w-7 h-7 rounded-xl font-mono font-black text-xs transition flex items-center justify-center border-2 ${
+                              isCurrent
+                                ? 'bg-[#fbbf24] text-[#081a2e] border-[#081a2e] shadow-[2px_2px_0px_#04101d] scale-110'
+                                : isPast
+                                ? 'bg-[#00d2ff]/30 text-[#00d2ff] border-[#00d2ff]/60'
+                                : 'bg-[#0e2e4e] text-slate-400 border-transparent'
+                            }`}
+                            title={`Jump to Question ${qIdx + 1}`}
+                          >
+                            {qIdx + 1}
+                          </button>
+                        )
+                      })}
+                    </div>
+
                     {/* 40s Acoustic Timer Pill */}
                     <div className="flex items-center gap-2.5">
                       <div
@@ -1256,6 +1339,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           setTimerRunning((prev) => {
                             const next = !prev
                             broadcast({ type: 'TIMER_ACTION', payload: { running: next, seconds: rapidSeconds } })
+                            sendStageNetworkSync({ timerRunning: next, rapidSeconds })
                             return next
                           })
                         }}
@@ -1273,6 +1357,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           setRapidSeconds(40)
                           setRapidQuestionIdx(0)
                           broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 40 } })
+                          sendStageNetworkSync({ timerRunning: false, rapidSeconds: 40, rapidQuestionIdx: 0 })
                         }}
                         className="p-2 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] transition"
                         title="Reset 40s Timer"
@@ -1282,42 +1367,48 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </div>
                   </div>
 
-                  {/* If NOT in reveal mode: Live 5 questions run (NO ANSWERS SHOWN) */}
-                  {!rapidRevealMode[slide.data.setNumber] ? (
-                    <div className="space-y-2.5 mb-4">
-                      <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-bold mb-1">
-                        <span>Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong></span>
-                        <span>5 Questions • 40s Total</span>
-                      </div>
+                  {/* Mode 1: STEP-BY-STEP QUESTION (Only Active Question Shown, NO ANSWERS) */}
+                  {!isRevealed ? (
+                    (() => {
+                      const currentQ = slide.data.questions[rapidQuestionIdx] || slide.data.questions[0]
+                      return (
+                        <div className="flex flex-col items-center justify-center py-6 sm:py-10 text-center">
+                          <div className="w-full max-w-4xl p-6 sm:p-10 rounded-3xl notebook-card relative overflow-hidden flex flex-col items-center justify-center min-h-[300px] border-2 border-[#fbbf24]/50 shadow-[6px_6px_0px_#04101d]">
+                            <div className="flex items-center gap-2.5 mb-4">
+                              <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/50">
+                                Question {currentQ?.number || rapidQuestionIdx + 1} of {slide.data.questions.length}
+                              </span>
+                              {currentQ?.category && (
+                                <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50">
+                                  {currentQ.category}
+                                </span>
+                              )}
+                            </div>
 
-                      {slide.data.questions.map((q: any, qIdx: number) => (
-                        <div
-                          key={qIdx}
-                          onClick={() => setRapidQuestionIdx(qIdx)}
-                          className={`p-3.5 rounded-2xl border-2 transition flex items-center justify-between cursor-pointer ${
-                            rapidQuestionIdx === qIdx
-                              ? 'bg-[#0e2e4e] border-[#fbbf24] shadow-[4px_4px_0px_#04101d]'
-                              : 'bg-[#081a2e]/80 border-[#00d2ff]/30 hover:border-[#00d2ff]'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="w-6 h-6 rounded-lg bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
-                              {q.number}
-                            </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40">
-                              {q.category}
-                            </span>
-                            <span className="text-sm md:text-base font-bold text-white">{q.prompt}</span>
+                            <motion.h3
+                              key={rapidQuestionIdx}
+                              initial={{ opacity: 0, scale: 0.96 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ duration: 0.2 }}
+                              className="text-2xl sm:text-4xl md:text-5xl font-black text-white leading-relaxed sm:leading-snug tracking-tight max-w-3xl my-3"
+                            >
+                              {currentQ?.prompt}
+                            </motion.h3>
+
+                            <div className="mt-8 flex items-center justify-between w-full pt-4 border-t border-[#00d2ff]/20 text-xs text-[#7dd3fc] font-bold">
+                              <span>Target Finalist: <strong className="text-white text-sm">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong></span>
+                              <span>40 Seconds Total • +10 Pts per Correct</span>
+                            </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      )
+                    })()
                   ) : (
-                    /* REVEAL ALL ANSWERS MODE: After questions are done, reveal each question with answers! */
-                    <div className="space-y-2.5 mb-4 max-h-[60vh] overflow-y-auto pr-1">
-                      <div className="flex items-center justify-between text-xs font-black text-[#10b981] uppercase tracking-wider mb-1">
-                        <span>✓ Verification & Scoring Review</span>
-                        <span>Participant: {finalists[slide.data.participantIndex]?.name}</span>
+                    /* Mode 2: REVEAL ALL ANSWERS MODE (Verification & Scoring Review) */
+                    <div className="space-y-2.5 mb-4 max-h-[58vh] overflow-y-auto pr-1">
+                      <div className="flex items-center justify-between text-xs font-black text-[#10b981] uppercase tracking-wider mb-1 px-1">
+                        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-[#10b981]" /> Verification & Scoring Review</span>
+                        <span>Participant: {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</span>
                       </div>
 
                       {slide.data.questions.map((q: any, qIdx: number) => (
@@ -1326,21 +1417,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: qIdx * 0.04 }}
-                          className="p-3.5 rounded-2xl notebook-card flex items-center justify-between gap-2.5"
+                          className="p-3.5 rounded-2xl notebook-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-2 border-[#10b981]/40"
                         >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="w-5 h-5 rounded bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
-                                {q.number}
-                              </span>
-                              <span className="px-2 py-0.2 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff]">
-                                {q.category}
-                              </span>
-                              <span className="text-xs md:text-sm font-bold text-white">{q.prompt}</span>
-                            </div>
-                            <div className="ml-7 text-[#10b981] font-black text-xs md:text-sm flex items-center gap-1">
-                              <CheckCircle2 className="w-4 h-4 text-[#10b981]" /> Ans: {q.answer}
-                            </div>
+                          <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-lg bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e] shrink-0">
+                              {q.number}
+                            </span>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] shrink-0">
+                              {q.category}
+                            </span>
+                            <span className="text-xs sm:text-sm font-bold text-white">{q.prompt}</span>
+                          </div>
+                          <div className="text-[#10b981] font-black text-xs sm:text-sm flex items-center gap-1 shrink-0 bg-[#10b981]/15 px-3 py-1.5 rounded-xl border border-[#10b981]/30">
+                            <CheckCircle2 className="w-4 h-4 text-[#10b981]" /> Ans: {q.answer}
                           </div>
                         </motion.div>
                       ))}
@@ -1351,28 +1440,22 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 {/* Bottom Bar: Mode Switcher */}
                 <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
                   <button
-                    onClick={() => {
-                      setRapidRevealMode((prev) => ({
-                        ...prev,
-                        [slide.data.setNumber]: !prev[slide.data.setNumber],
-                      }))
-                      sound.tap()
-                    }}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
+                    onClick={toggleReveal}
+                    className="flex items-center gap-2 px-6 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition cursor-pointer"
                   >
-                    {rapidRevealMode[slide.data.setNumber] ? (
+                    {isRevealed ? (
                       <>
-                        <RotateCcw className="w-4 h-4" /> Back to Questions Mode
+                        <RotateCcw className="w-4 h-4" /> Back to Questions Mode (R)
                       </>
                     ) : (
                       <>
-                        <Eye className="w-4 h-4" /> Reveal All Answers
+                        <Eye className="w-4 h-4" /> Reveal All Answers (R)
                       </>
                     )}
                   </button>
 
                   <div className="text-xs text-[#7dd3fc] font-bold">
-                    Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name}</strong>
+                    Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong>
                   </div>
                 </div>
               </div>

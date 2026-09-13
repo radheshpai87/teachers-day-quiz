@@ -37,6 +37,7 @@ import {
 export function StageControlClient({ stageData }: { stageData: StageData | null }) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isRevealed, setIsRevealed] = useState(false)
+  const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
   const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
@@ -53,6 +54,23 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     return DEFAULT_STAGE_FINALISTS
   })
 
+  // Local timer countdown when timer is running
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (timerRunning && rapidSeconds > 0) {
+      interval = setInterval(() => {
+        setRapidSeconds((prev) => {
+          if (prev <= 1) {
+            setTimerRunning(false)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [timerRunning, rapidSeconds])
+
   // Broadcast channel instance
   const channelRef = useRef<BroadcastChannel | null>(null)
 
@@ -68,6 +86,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           setIsRevealed(false)
           setPlayingAudioId(null)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
+          setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
         } else if (type === 'UPDATE_FINALISTS') {
           setFinalists(payload.finalists)
         } else if (type === 'TOGGLE_REVEAL') {
@@ -75,6 +94,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         } else if (type === 'MCQ_OPTION_STEP') {
           if (typeof payload.step === 'number') {
             setMcqOptionStep(payload.step)
+          }
+        } else if (type === 'RAPID_QUESTION_STEP') {
+          if (typeof payload.rapidQuestionIdx === 'number') {
+            setRapidQuestionIdx(payload.rapidQuestionIdx)
           }
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
@@ -110,6 +133,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           }
           if (typeof state.mcqOptionStep === 'number') {
             setMcqOptionStep(state.mcqOptionStep)
+          }
+          if (typeof state.rapidQuestionIdx === 'number') {
+            setRapidQuestionIdx(state.rapidQuestionIdx)
           }
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
@@ -249,11 +275,13 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setIsRevealed(false)
       setPlayingAudioId(null)
       setMcqOptionStep(0)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped, mcqOptionStep: 0 } })
+      setRapidQuestionIdx(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
       sendStageNetworkSync({
         slideIndex: clamped,
         isRevealed: false,
         mcqOptionStep: 0,
+        rapidQuestionIdx: 0,
         audioState: { playing: false, audioId: null, timestamp: Date.now() },
       })
       sound.tap()
@@ -261,7 +289,19 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     [broadcast, slides.length],
   )
 
-  // Step-by-step navigation helper (Reveals MCQ options one-by-one or advances slide)
+  // Direct rapid question jump helper
+  const jumpToRapidQuestion = useCallback(
+    (idx: number) => {
+      setRapidQuestionIdx(idx)
+      setIsRevealed(false)
+      broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: idx } })
+      sendStageNetworkSync({ rapidQuestionIdx: idx, isRevealed: false })
+      sound.tap()
+    },
+    [broadcast],
+  )
+
+  // Step-by-step navigation helper (Reveals MCQ options / Rapid questions one-by-one or advances slide)
   const handleNext = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
     if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed) {
@@ -273,10 +313,30 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       return
     }
 
+    if (currentSlideObj?.type === 'r3_rapid') {
+      const questionsCount = currentSlideObj.data?.questions?.length || 5
+      if (!isRevealed) {
+        if (rapidQuestionIdx < questionsCount - 1) {
+          const nextQ = rapidQuestionIdx + 1
+          setRapidQuestionIdx(nextQ)
+          broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: nextQ } })
+          sendStageNetworkSync({ rapidQuestionIdx: nextQ })
+          sound.tap()
+          return
+        } else {
+          setIsRevealed(true)
+          broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: true } })
+          sendStageNetworkSync({ isRevealed: true })
+          sound.correct()
+          return
+        }
+      }
+    }
+
     if (currentSlide < slides.length - 1) {
       setSlide(currentSlide + 1)
     }
-  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast, setSlide])
+  }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast, setSlide])
 
   const handlePrev = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
@@ -289,6 +349,23 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       return
     }
 
+    if (currentSlideObj?.type === 'r3_rapid') {
+      if (isRevealed) {
+        setIsRevealed(false)
+        broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: false } })
+        sendStageNetworkSync({ isRevealed: false })
+        sound.tap()
+        return
+      } else if (rapidQuestionIdx > 0) {
+        const prevQ = rapidQuestionIdx - 1
+        setRapidQuestionIdx(prevQ)
+        broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: prevQ } })
+        sendStageNetworkSync({ rapidQuestionIdx: prevQ })
+        sound.tap()
+        return
+      }
+    }
+
     if (currentSlide > 0) {
       const prevIdx = currentSlide - 1
       const prevSlideObj = slides[prevIdx]
@@ -297,16 +374,18 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setIsRevealed(false)
       setPlayingAudioId(null)
       setMcqOptionStep(targetStep)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep } })
+      setRapidQuestionIdx(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep, rapidQuestionIdx: 0 } })
       sendStageNetworkSync({
         slideIndex: prevIdx,
         isRevealed: false,
         mcqOptionStep: targetStep,
+        rapidQuestionIdx: 0,
         audioState: { playing: false, audioId: null, timestamp: Date.now() },
       })
       sound.tap()
     }
-  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
+  }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
 
   // Toggle stage audio playback
   const toggleStageAudio = useCallback(
@@ -688,36 +767,113 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
                 {/* Round 3 Rapid Fire */}
                 {currentSlideObj.type === 'r3_rapid' && (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-xs text-[#fbbf24] font-black">
-                      <span>Rapid Fire: {currentSlideObj.data.participantLabel} (Set {currentSlideObj.data.setNumber})</span>
-                      <div className="flex items-center gap-1.5">
+                      <span className="truncate">
+                        Rapid Fire: {currentSlideObj.data.participantLabel} (Set {currentSlideObj.data.setNumber})
+                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <div
+                          className={`px-2.5 py-1 rounded-lg font-mono font-black text-xs border ${
+                            rapidSeconds <= 10
+                              ? 'bg-rose-600 text-white animate-pulse border-rose-400'
+                              : timerRunning
+                              ? 'bg-[#fbbf24] text-[#081a2e] border-[#fbbf24]'
+                              : 'bg-[#0e2e4e] text-[#00d2ff] border-[#00d2ff]/40'
+                          }`}
+                        >
+                          {rapidSeconds}s
+                        </div>
                         <button
                           onClick={toggleTimer}
-                          className={`px-3 py-1 rounded-lg text-xs font-black shadow-sm ${
-                            timerRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
+                          className={`px-3 py-1 rounded-lg text-xs font-black shadow-sm transition active:scale-95 ${
+                            timerRunning ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                           }`}
                         >
                           {timerRunning ? 'Pause' : 'Start 40s'}
                         </button>
                         <button
                           onClick={resetTimer}
-                          className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300 border border-[#00d2ff]/40"
+                          className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300 border border-[#00d2ff]/40 hover:text-white"
                           title="Reset Timer"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-1.5 pt-1 max-h-48 overflow-y-auto">
-                      {currentSlideObj.data.questions.map((q: any, i: number) => (
-                        <div key={i} className="p-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/30 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                          <span className="text-slate-200 font-bold">
-                            #{i + 1} [{q.category}] {q.prompt}
-                          </span>
-                          <strong className="text-emerald-300 shrink-0 sm:ml-2">✓ {q.answer}</strong>
-                        </div>
-                      ))}
+
+                    {/* Step selector pills: Q1, Q2, Q3, Q4, Q5 */}
+                    <div className="flex items-center gap-1.5 bg-[#081a2e] p-1.5 rounded-xl border border-[#00d2ff]/30">
+                      <span className="text-[10px] font-black uppercase text-[#7dd3fc] mr-1">Stage Q:</span>
+                      {currentSlideObj.data.questions.map((_: any, i: number) => {
+                        const isCurrent = rapidQuestionIdx === i && !isRevealed
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => jumpToRapidQuestion(i)}
+                            className={`flex-1 py-1 rounded-lg font-mono font-black text-xs transition border ${
+                              isCurrent
+                                ? 'bg-[#fbbf24] text-[#081a2e] border-[#fbbf24] shadow-sm font-black'
+                                : i < rapidQuestionIdx || isRevealed
+                                ? 'bg-[#0e2e4e] text-[#00d2ff] border-[#00d2ff]/40'
+                                : 'bg-[#0e2e4e]/50 text-slate-400 border-transparent hover:text-white'
+                            }`}
+                          >
+                            Q{i + 1}
+                          </button>
+                        )
+                      })}
+                      <button
+                        onClick={toggleReveal}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition ${
+                          isRevealed
+                            ? 'bg-emerald-600 text-white border-emerald-400'
+                            : 'bg-[#0e2e4e] text-slate-300 border-[#00d2ff]/40'
+                        }`}
+                      >
+                        {isRevealed ? 'All Revealed' : 'Reveal'}
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-1.5 pt-0.5 max-h-52 overflow-y-auto">
+                      {currentSlideObj.data.questions.map((q: any, i: number) => {
+                        const isLiveOnStage = rapidQuestionIdx === i && !isRevealed
+                        return (
+                          <div
+                            key={i}
+                            onClick={() => jumpToRapidQuestion(i)}
+                            className={`p-2 rounded-xl border transition text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1 cursor-pointer ${
+                              isLiveOnStage
+                                ? 'bg-[#0e2e4e] border-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.2)]'
+                                : isRevealed
+                                ? 'bg-[#081a2e] border-emerald-500/40'
+                                : 'bg-[#081a2e]/80 border-[#00d2ff]/20 hover:border-[#00d2ff]/50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span
+                                className={`w-5 h-5 rounded font-mono font-black text-[11px] flex items-center justify-center shrink-0 ${
+                                  isLiveOnStage ? 'bg-[#fbbf24] text-[#081a2e]' : 'bg-[#00d2ff]/20 text-[#00d2ff]'
+                                }`}
+                              >
+                                {i + 1}
+                              </span>
+                              <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-white/10 text-slate-300 shrink-0">
+                                {q.category}
+                              </span>
+                              <span className="text-slate-200 font-bold truncate">
+                                {q.prompt}
+                              </span>
+                              {isLiveOnStage && (
+                                <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-[#fbbf24] text-[#081a2e] shrink-0">
+                                  Live on Stage
+                                </span>
+                              )}
+                            </div>
+                            <strong className="text-emerald-300 shrink-0 sm:ml-2">✓ {q.answer}</strong>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
@@ -728,7 +884,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             <div className="hidden lg:flex items-center justify-between gap-3 pt-1">
               <button
                 onClick={handlePrev}
-                disabled={currentSlide === 0 && mcqOptionStep === 0}
+                disabled={currentSlide === 0 && mcqOptionStep === 0 && rapidQuestionIdx === 0}
                 className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-xs sm:text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d] active:scale-95 cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Previous
@@ -736,7 +892,11 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
               <button
                 onClick={handleNext}
-                disabled={currentSlide === slides.length - 1 && (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4)}
+                disabled={
+                  currentSlide === slides.length - 1 &&
+                  (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
+                  (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
+                }
                 className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs sm:text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
                 {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
@@ -744,6 +904,18 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     <span>Reveal Option {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4)</span>
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </>
+                ) : currentSlideObj?.type === 'r3_rapid' && !isRevealed ? (
+                  rapidQuestionIdx < (currentSlideObj.data?.questions?.length || 5) - 1 ? (
+                    <>
+                      <span>Next Question ({rapidQuestionIdx + 2}/{currentSlideObj.data?.questions?.length || 5})</span>
+                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Reveal All Answers</span>
+                      <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </>
+                  )
                 ) : (
                   <>
                     <span>Next Slide</span>
@@ -912,7 +1084,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       <div className="fixed bottom-2 left-2 right-2 z-40 lg:hidden flex items-center justify-between gap-2 p-2 rounded-2xl bg-[#081a2e]/95 backdrop-blur-md border-2 border-[#00d2ff]/60 shadow-[0_4px_16px_rgba(0,0,0,0.7)]">
         <button
           onClick={handlePrev}
-          disabled={currentSlide === 0 && mcqOptionStep === 0}
+          disabled={currentSlide === 0 && mcqOptionStep === 0 && rapidQuestionIdx === 0}
           className="px-3 py-2.5 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/50 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
           <ChevronLeft className="w-4 h-4" /> Prev
@@ -932,13 +1104,27 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
         <button
           onClick={handleNext}
-          disabled={currentSlide === slides.length - 1 && (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4)}
+          disabled={
+            currentSlide === slides.length - 1 &&
+            (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
+            (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
+          }
           className="px-3 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
           {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
             <>
               Opt {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4) <ChevronRight className="w-4 h-4" />
             </>
+          ) : currentSlideObj?.type === 'r3_rapid' && !isRevealed ? (
+            rapidQuestionIdx < (currentSlideObj.data?.questions?.length || 5) - 1 ? (
+              <>
+                Next Q ({rapidQuestionIdx + 2}/5) <ChevronRight className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                Reveal All <Eye className="w-4 h-4" />
+              </>
+            )
           ) : (
             <>
               Next <ChevronRight className="w-4 h-4" />

@@ -4,6 +4,7 @@ export interface StageServerState {
   slideIndex: number
   isRevealed: boolean
   mcqOptionStep: number
+  rapidQuestionIdx: number
   rapidSeconds: number
   timerRunning: boolean
   finalists: StageFinalist[]
@@ -30,6 +31,7 @@ if (!global.__stageState) {
     slideIndex: 0,
     isRevealed: false,
     mcqOptionStep: 0,
+    rapidQuestionIdx: 0,
     rapidSeconds: 40,
     timerRunning: false,
     finalists: [
