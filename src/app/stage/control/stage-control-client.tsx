@@ -28,8 +28,6 @@ import {
   AlertTriangle,
   Lightbulb,
   CheckCircle2,
-  Edit3,
-  X,
   Volume2,
   Timer as TimerIcon,
   Zap,
@@ -40,7 +38,6 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [isRevealed, setIsRevealed] = useState(false)
   const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
-  const [mobileTab, setMobileTab] = useState<'control' | 'standings'>('control')
 
   // Stage Scoreboard State (Persisted in localStorage & BroadcastChannel)
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
@@ -296,99 +293,86 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
   return (
     <div className="notebook-paper min-h-screen text-slate-100 flex flex-col font-sans select-none">
-      {/* 1. TOP HEADER (Responsive for both Mobile & Desktop) */}
+      {/* 1. TOP APP HEADER (Clean, uncrowded on mobile & desktop) */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Image
             src="/yenepoya-school-engineering-and-technology.svg"
             alt="YSET"
             width={120}
             height={30}
-            className="h-6 sm:h-7 w-auto object-contain brightness-110"
+            className="h-6 sm:h-7 w-auto object-contain brightness-110 shrink-0"
             priority
           />
-          <div className="h-4 sm:h-5 w-px bg-[#00d2ff]/40" />
-          <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-            🎮 Quizmaster Deck
+          <div className="h-4 sm:h-5 w-px bg-[#00d2ff]/40 shrink-0" />
+          <span className="text-xs sm:text-sm font-black text-white truncate">
+            Quizmaster Deck
           </span>
         </div>
 
-        {/* Mobile Tab Switcher (Visible only on phone) */}
-        <div className="flex lg:hidden items-center bg-[#081a2e] p-0.5 rounded-xl border border-[#00d2ff]/40">
-          <button
-            onClick={() => setMobileTab('control')}
-            className={`px-3 py-1 rounded-lg text-xs font-black transition ${
-              mobileTab === 'control' ? 'bg-[#00d2ff] text-[#081a2e]' : 'text-[#7dd3fc]'
-            }`}
-          >
-            Scorer
-          </button>
-          <button
-            onClick={() => setMobileTab('standings')}
-            className={`px-3 py-1 rounded-lg text-xs font-black transition ${
-              mobileTab === 'standings' ? 'bg-[#00d2ff] text-[#081a2e]' : 'text-[#7dd3fc]'
-            }`}
-          >
-            Rankings
-          </button>
-        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="hidden md:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[1px_1px_0px_#04101d]">
+            ⚡ Live Stage Host
+          </span>
 
-        <div className="flex items-center gap-2">
           <Link
             href="/stage"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition"
-            title="Open Projector View"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition active:scale-95"
+            title="Open Projector Presentation in another tab/window"
           >
-            <span className="hidden sm:inline">Projector View</span> <ExternalLink className="w-3.5 h-3.5" />
+            <span>Stage View</span> <ExternalLink className="w-3.5 h-3.5" />
           </Link>
         </div>
       </header>
 
-      {/* ========================================================================= */}
-      {/* 2. DESKTOP / PC VIEW (WIDESCREEN 3-COLUMN RICH DASHBOARD) */}
-      {/* ========================================================================= */}
-      <main className="hidden lg:grid max-w-7xl w-full mx-auto p-6 grid-cols-3 gap-6 flex-1">
-        {/* LEFT 2 COLUMNS: Slide Controller & Live Questions & Matrix */}
-        <div className="col-span-2 space-y-6">
-          {/* Active Projector Slide Card */}
-          <div className="notebook-card p-6 space-y-4">
+      {/* 2. MAIN RESPONSIVE CONTENT GRID (3 cols on PC, natural 1-col on Phone) */}
+      <main className="max-w-7xl w-full mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 pb-28 lg:pb-8 flex-1">
+        {/* LEFT 2 COLUMNS: Slide Controller & Quick Scoring Matrix */}
+        <div className="lg:col-span-2 space-y-5">
+          {/* CARD 1: ACTIVE PROJECTOR SLIDE & LIVE Q&A */}
+          <div className="notebook-card p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-[#7dd3fc]">
                 Active Projector Slide ({currentSlide + 1} / {slides.length})
               </span>
-              <span className="px-3 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
                 {currentSlideObj?.round ? `Round ${currentSlideObj.round}` : currentSlideObj?.type}
               </span>
             </div>
 
             {/* Slide Title & Reveal Button */}
-            <div className="p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex items-center justify-between gap-4">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-xs text-[#7dd3fc] font-bold block mb-0.5">Current Title</span>
-                <h3 className="text-lg font-black text-white">{currentSlideObj?.title}</h3>
+                <span className="text-[11px] text-[#7dd3fc] font-bold block">Current Screen</span>
+                <h3 className="text-base sm:text-lg font-black text-white">{currentSlideObj?.title}</h3>
               </div>
 
               <button
                 onClick={toggleReveal}
-                className={`px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 ${
+                className={`px-5 py-2.5 rounded-xl sm:rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 text-center ${
                   isRevealed
-                    ? 'bg-[#0e2e4e] text-white'
+                    ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
                     : 'bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e]'
                 }`}
               >
                 {isRevealed ? <EyeOff className="w-4 h-4 inline mr-1.5" /> : <Eye className="w-4 h-4 inline mr-1.5" />}
-                {isRevealed ? 'Hide Answer (R)' : 'Reveal Answer (R)'}
+                {isRevealed ? 'Hide Answer on Stage (R)' : 'Reveal Answer on Stage (R)'}
               </button>
             </div>
 
             {/* Live Question & Verified Answer Peek */}
             {currentSlideObj?.data && (
-              <div className="p-4 rounded-2xl bg-[#081a2e]/90 border border-[#00d2ff]/30 space-y-2 text-left">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e]/90 border border-[#00d2ff]/30 space-y-2 text-left">
+                {/* Round 1 MCQ */}
                 {currentSlideObj.type === 'r1_mcq' && (
                   <>
-                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-mono">
+                      <span>Question #{currentSlideObj.qIndex! + 1} of 12</span>
+                      <span className="text-[#fbbf24] font-bold">+5 Correct</span>
+                    </div>
+                    <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
                     <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
@@ -404,9 +388,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   </>
                 )}
 
+                {/* Round 2 Image */}
                 {currentSlideObj.type === 'r2_image' && (
                   <>
-                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-mono">
+                      <span>Image #{currentSlideObj.qIndex! + 1} of 6</span>
+                      <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
+                    </div>
+                    <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
                     <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
@@ -420,9 +409,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   </>
                 )}
 
+                {/* Round 2 Audio */}
                 {currentSlideObj.type === 'r2_audio' && (
                   <>
-                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-mono">
+                      <span>Audio #{currentSlideObj.qIndex! + 1} of 6</span>
+                      <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
+                    </div>
+                    <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
                     <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
                       <Volume2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
@@ -436,67 +430,80 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   </>
                 )}
 
+                {/* Round 3 Rapid Fire */}
                 {currentSlideObj.type === 'r3_rapid' && (
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs text-[#fbbf24] font-black">
-                      <span>Rapid Fire: {currentSlideObj.data.participantLabel} (40s)</span>
-                      <div className="flex items-center gap-1">
+                      <span>Rapid Fire: {currentSlideObj.data.participantLabel} (Set {currentSlideObj.data.setNumber})</span>
+                      <div className="flex items-center gap-1.5">
                         <button
                           onClick={toggleTimer}
-                          className={`px-3 py-1 rounded-lg text-xs font-black ${
+                          className={`px-3 py-1 rounded-lg text-xs font-black shadow-sm ${
                             timerRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
                           }`}
                         >
                           {timerRunning ? 'Pause' : 'Start 40s'}
                         </button>
-                        <button onClick={resetTimer} className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300">
+                        <button
+                          onClick={resetTimer}
+                          className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300 border border-[#00d2ff]/40"
+                          title="Reset Timer"
+                        >
                           <RotateCcw className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-1.5 pt-1">
+                    <div className="grid grid-cols-1 gap-1.5 pt-1 max-h-48 overflow-y-auto">
                       {currentSlideObj.data.questions.map((q: any, i: number) => (
-                        <div key={i} className="p-2 rounded-lg bg-[#0e2e4e] border border-[#00d2ff]/30 text-xs flex items-center justify-between">
+                        <div key={i} className="p-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/30 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                           <span className="text-slate-200 font-bold">
                             #{i + 1} [{q.category}] {q.prompt}
                           </span>
-                          <strong className="text-emerald-300 shrink-0 ml-2">✓ {q.answer}</strong>
+                          <strong className="text-emerald-300 shrink-0 sm:ml-2">✓ {q.answer}</strong>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
+
+                {/* Round 4 Buzzer */}
+                {currentSlideObj.type === 'r4_buzzer' && (
+                  <div className="p-2 text-xs text-slate-200 font-bold space-y-1">
+                    <span className="text-[#fbbf24] font-black block">⚡ Fastest Fingers First Arena</span>
+                    <p>Award scores immediately after buzzer: <span className="text-emerald-400">+15 Correct</span> | <span className="text-rose-400">−5 Wrong</span>.</p>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Slide Navigation Buttons */}
-            <div className="flex items-center justify-between gap-4 pt-1">
+            {/* Slide Navigation Buttons (Visible in Card) */}
+            <div className="flex items-center justify-between gap-3 pt-1">
               <button
                 onClick={() => setSlide(currentSlide - 1)}
                 disabled={currentSlide === 0}
-                className="flex-1 py-3 rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#04101d]"
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-xs sm:text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d] active:scale-95"
               >
-                <ChevronLeft className="w-5 h-5" /> Previous Slide
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Previous Slide
               </button>
 
               <button
                 onClick={() => setSlide(currentSlide + 1)}
                 disabled={currentSlide === slides.length - 1}
-                className="flex-1 py-3 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs sm:text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95"
               >
-                Next Slide <ChevronRight className="w-5 h-5" />
+                Next Slide <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Quick Slide Jump Dropdown */}
             <div className="pt-1">
-              <label className="text-xs font-black uppercase text-[#7dd3fc] block mb-1.5">
+              <label className="text-[11px] font-black uppercase text-[#7dd3fc] block mb-1">
                 Jump Direct to Slide
               </label>
               <select
                 value={currentSlide}
                 onChange={(e) => setSlide(Number(e.target.value))}
-                className="w-full bg-[#081a2e] border-2 border-[#00d2ff]/40 text-white font-bold rounded-xl p-2.5 text-xs outline-none focus:border-[#00d2ff]"
+                className="w-full bg-[#081a2e] border-2 border-[#00d2ff]/40 text-white font-bold rounded-xl p-2 sm:p-2.5 text-xs outline-none focus:border-[#00d2ff]"
               >
                 {slides.map((s) => (
                   <option key={s.index} value={s.index}>
@@ -507,22 +514,23 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             </div>
           </div>
 
-          {/* Quick Score Assigner Matrix (PC 2-Column Grid) */}
-          <div className="notebook-card p-6 space-y-4">
+          {/* CARD 2: QUICK SCORE ASSIGNER (6 FINALISTS) */}
+          <div className="notebook-card p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
               <div className="flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-[#fbbf24]" />
                 <h3 className="font-black text-white text-base">Quick Score Assigner (6 Finalists)</h3>
               </div>
-              <span className="text-xs text-[#7dd3fc] font-bold">Instant Projector Sync</span>
+              <span className="text-xs text-[#7dd3fc] font-bold">Instant Sync</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Finalist Cards Grid (2 cols on desktop/tablet, 1 col on phone) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
               {finalists.map((f, i) => (
-                <div key={f.id} className="p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-3 shadow-[2px_2px_0px_#04101d]">
+                <div key={f.id} className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-2.5 sm:space-y-3 shadow-[2px_2px_0px_#04101d]">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0">
                         #{i + 1}
                       </span>
                       <ParticipantAvatar seed={f.avatarSeed} size="sm" />
@@ -530,55 +538,56 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                         type="text"
                         defaultValue={f.name}
                         onBlur={(e) => handleRename(f.id, e.target.value)}
-                        className="bg-transparent font-black text-white text-sm focus:bg-[#0e2e4e] rounded px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[130px]"
+                        className="bg-transparent font-black text-white text-sm focus:bg-[#0e2e4e] rounded px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[120px] sm:max-w-[140px]"
                         title="Click to rename"
                       />
                     </div>
-                    <span className="font-mono font-black text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                    <span className="font-mono font-black text-base sm:text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
                   </div>
 
-                  {/* Cohesive, Clean Scoring Buttons */}
+                  {/* Cohesive Point Awarding Buttons */}
                   <div className="grid grid-cols-4 gap-1.5 text-xs font-black">
                     <button
                       onClick={() => adjustScore(f.id, 10, 'r2')}
-                      className="py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
                       title="Direct Correct / Rapid Fire (+10)"
                     >
-                      +10 (Dir)
+                      +10
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, 5, 'r1')}
-                      className="py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
                       title="MCQ / Passed (+5)"
                     >
-                      +5 (Pass)
+                      +5
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, -5, 'r2')}
-                      className="py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
                       title="Wrong Penalty (-5)"
                     >
-                      −5 (Wr)
+                      −5
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, 15, 'r4')}
-                      className="py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
                       title="Fastest Fingers First (+15)"
                     >
-                      +15 (FFF)
+                      +15
                     </button>
                   </div>
 
+                  {/* Fine Adjustment Buttons */}
                   <div className="flex items-center gap-2 text-xs font-bold pt-0.5">
                     <button
                       onClick={() => adjustScore(f.id, 1)}
-                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition"
+                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition active:scale-95"
                     >
                       +1 Fine
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, -1)}
-                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-rose-300 border border-rose-500/40 hover:bg-rose-600 hover:text-white transition"
+                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-rose-300 border border-rose-500/40 hover:bg-rose-600 hover:text-white transition active:scale-95"
                     >
                       −1 Fine
                     </button>
@@ -589,24 +598,24 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           </div>
         </div>
 
-        {/* RIGHT 1 COLUMN: Live Standings (PC) */}
-        <div className="space-y-6">
-          <div className="notebook-card p-6 space-y-4">
+        {/* RIGHT 1 COLUMN: LIVE STAGE STANDINGS (Always visible on PC, stacks below on phone) */}
+        <div className="lg:col-span-1 space-y-5">
+          <div className="notebook-card p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
               <div className="flex items-center gap-2">
                 <Crown className="w-5 h-5 text-[#fbbf24]" />
                 <h3 className="font-black text-white text-base">Live Stage Standings</h3>
               </div>
               <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] px-2 py-0.5 rounded-full">
-                2 Prizes (1st & 2nd)
+                2 Prizes
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5 sm:space-y-3">
               {rankedFinalists.map((f, rank) => (
                 <div
                   key={f.id}
-                  className={`p-3.5 rounded-2xl flex items-center justify-between border-2 transition ${
+                  className={`p-3 sm:p-3.5 rounded-2xl flex items-center justify-between border-2 transition ${
                     rank === 0
                       ? 'bg-[#fbbf24]/10 border-[#fbbf24] shadow-[3px_3px_0px_#04101d]'
                       : rank === 1
@@ -614,9 +623,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                       : 'bg-[#081a2e] border-[#00d2ff]/30'
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <span
-                      className={`font-black text-sm w-6 text-center ${
+                      className={`font-black text-sm w-5 sm:w-6 text-center ${
                         rank === 0 ? 'text-[#fbbf24]' : rank === 1 ? 'text-slate-200' : 'text-slate-400'
                       }`}
                     >
@@ -626,12 +635,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     <div className="min-w-0">
                       <span className="font-black text-white text-sm block truncate">{f.name}</span>
                       <span className="text-[10px] text-[#7dd3fc] font-bold">
-                        {rank === 0 ? '🥇 1st Prize Leader' : rank === 1 ? '🥈 2nd Prize Runner-Up' : `Qualifier #${rank + 1}`}
+                        {rank === 0 ? '🥇 1st Place (Champion)' : rank === 1 ? '🥈 2nd Place (Runner-Up)' : `Qualifier #${rank + 1}`}
                       </span>
                     </div>
                   </div>
 
-                  <span className="font-mono font-black text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                  <span className="font-mono font-black text-base sm:text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
                 </div>
               ))}
             </div>
@@ -648,217 +657,35 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         </div>
       </main>
 
-      {/* ========================================================================= */}
-      {/* 3. MOBILE / PHONE VIEW (ZERO-SCROLL SMARTPHONE DECK) */}
-      {/* ========================================================================= */}
-      <div className="lg:hidden flex-1 flex flex-col justify-between p-3 max-w-lg mx-auto w-full overflow-y-auto">
-        {mobileTab === 'control' ? (
-          <div className="space-y-2.5 flex-1 flex flex-col justify-between">
-            {/* Top Row: Slide Jump Dropdown & Prev/Next */}
-            <div className="space-y-2 shrink-0">
-              <div className="flex items-center gap-2">
-                <select
-                  value={currentSlide}
-                  onChange={(e) => setSlide(Number(e.target.value))}
-                  className="flex-1 bg-[#081a2e] border border-[#00d2ff]/50 text-white font-bold rounded-xl px-2.5 py-2 text-xs outline-none truncate focus:border-[#00d2ff]"
-                >
-                  {slides.map((s) => (
-                    <option key={s.index} value={s.index}>
-                      Slide {s.index + 1}: {s.title}
-                    </option>
-                  ))}
-                </select>
+      {/* 3. ERGONOMIC FLOATING THUMB CONTROLS ON PHONE (Solves the scroll issue!) */}
+      <div className="fixed bottom-2 left-2 right-2 z-40 lg:hidden flex items-center justify-between gap-2 p-2 rounded-2xl bg-[#081a2e]/95 backdrop-blur-md border-2 border-[#00d2ff]/60 shadow-[0_4px_16px_rgba(0,0,0,0.7)]">
+        <button
+          onClick={() => setSlide(currentSlide - 1)}
+          disabled={currentSlide === 0}
+          className="px-3.5 py-2.5 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/50 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm"
+        >
+          <ChevronLeft className="w-4 h-4" /> Prev
+        </button>
 
-                <button
-                  onClick={() => setSlide(currentSlide - 1)}
-                  disabled={currentSlide === 0}
-                  className="px-3 py-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 shrink-0"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setSlide(currentSlide + 1)}
-                  disabled={currentSlide === slides.length - 1}
-                  className="px-3 py-2 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs disabled:opacity-30 active:scale-95 shrink-0"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+        <button
+          onClick={toggleReveal}
+          className={`flex-1 py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-sm transition flex items-center justify-center gap-1 active:scale-95 text-center ${
+            isRevealed
+              ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
+              : 'bg-[#fbbf24] text-[#081a2e]'
+          }`}
+        >
+          {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {isRevealed ? 'Hide (R)' : 'Reveal (R)'}
+        </button>
 
-              {/* Reveal Toggle Banner */}
-              <button
-                onClick={toggleReveal}
-                className={`w-full py-2 px-3 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center justify-center gap-1.5 active:scale-95 ${
-                  isRevealed
-                    ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
-                    : 'bg-[#fbbf24] text-[#081a2e] hover:bg-[#f59e0b]'
-                }`}
-              >
-                {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                {isRevealed ? 'Hide Answer on Stage (R)' : 'Reveal Answer on Stage (R)'}
-              </button>
-
-              {/* Live Question & Verified Answer Box */}
-              <div className="p-3 rounded-2xl bg-[#081a2e] border border-[#00d2ff]/40 text-left space-y-1.5 shadow-[2px_2px_0px_#04101d]">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
-                  <span>{currentSlideObj?.round ? `Round ${currentSlideObj.round}` : 'Stage Slide'}</span>
-                  {isRapidFire && (
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={toggleTimer}
-                        className={`px-2 py-0.5 rounded text-[10px] font-black ${
-                          timerRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
-                        }`}
-                      >
-                        {timerRunning ? 'Pause' : 'Start 40s'}
-                      </button>
-                      <button onClick={resetTimer} className="p-0.5 rounded bg-[#0e2e4e] text-slate-300">
-                        <RotateCcw className="w-3 h-3" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <h4 className="text-xs font-black text-white leading-snug">
-                  {currentSlideObj?.data?.question || currentSlideObj?.title}
-                </h4>
-
-                {/* Verified Answer Display */}
-                {currentSlideObj?.type === 'r1_mcq' && currentSlideObj.data && (
-                  <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">
-                        Answer ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}):
-                      </span>
-                      <strong className="text-white">{currentSlideObj.data.options[currentSlideObj.data.correctIndex]}</strong>
-                    </div>
-                  </div>
-                )}
-
-                {(currentSlideObj?.type === 'r2_image' || currentSlideObj?.type === 'r2_audio') && currentSlideObj.data && (
-                  <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">Verified Answer:</span>
-                      <strong className="text-white">{currentSlideObj.data.answer}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Bottom: 6 Finalist Touch Strips (Compact Zero Scroll) */}
-            <div className="space-y-1.5 mt-2 shrink-0">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#7dd3fc]">
-                  Instant Point Awarder
-                </span>
-                <span className="text-[10px] font-bold text-slate-300">
-                  Top 2: 🥇 #{rankedFinalists[0]?.name?.split(' ')[0]} ({rankedFinalists[0]?.score}) • 🥈 #{rankedFinalists[1]?.name?.split(' ')[0]} ({rankedFinalists[1]?.score})
-                </span>
-              </div>
-
-              <div className="space-y-1.5">
-                {finalists.map((f, i) => (
-                  <div
-                    key={f.id}
-                    className="px-2.5 py-1.5 rounded-xl bg-[#081a2e] border border-[#00d2ff]/40 flex items-center justify-between gap-1.5 shadow-[2px_2px_0px_#04101d]"
-                  >
-                    <div className="flex items-center gap-1.5 min-w-0 max-w-[110px]">
-                      <span className="w-4 h-4 rounded bg-[#00d2ff]/20 text-[#00d2ff] font-mono font-black text-[10px] flex items-center justify-center shrink-0">
-                        {i + 1}
-                      </span>
-                      <span className="font-black text-xs text-white truncate">{f.name}</span>
-                    </div>
-
-                    <div className="font-mono font-black text-xs text-[#00d2ff] shrink-0 text-center min-w-[36px]">
-                      {f.score} <span className="text-[9px] font-normal text-slate-400">pts</span>
-                    </div>
-
-                    {/* Cohesive Point Buttons */}
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        onClick={() => adjustScore(f.id, 10, 'r2')}
-                        className="px-2 py-1 rounded-lg bg-emerald-600 active:bg-emerald-700 text-white font-black text-xs shadow-sm active:scale-95"
-                      >
-                        +10
-                      </button>
-                      <button
-                        onClick={() => adjustScore(f.id, 5, 'r1')}
-                        className="px-2 py-1 rounded-lg bg-sky-600 active:bg-sky-700 text-white font-black text-xs shadow-sm active:scale-95"
-                      >
-                        +5
-                      </button>
-                      <button
-                        onClick={() => adjustScore(f.id, -5, 'r2')}
-                        className="px-2 py-1 rounded-lg bg-rose-600 active:bg-rose-700 text-white font-black text-xs shadow-sm active:scale-95"
-                      >
-                        −5
-                      </button>
-                      <button
-                        onClick={() => adjustScore(f.id, 15, 'r4')}
-                        className="px-1.5 py-1 rounded-lg bg-amber-500 active:bg-amber-600 text-slate-950 font-black text-xs shadow-sm active:scale-95"
-                      >
-                        +15
-                      </button>
-                      <button
-                        onClick={() => adjustScore(f.id, 1)}
-                        className="px-1.5 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 text-[11px] font-bold border border-[#00d2ff]/30 active:scale-95"
-                      >
-                        +1
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Mobile Standings Tab */
-          <div className="space-y-4 notebook-card p-4 rounded-3xl">
-            <div className="flex items-center justify-between border-b border-[#00d2ff]/30 pb-2.5">
-              <div className="flex items-center gap-2">
-                <Crown className="w-5 h-5 text-[#fbbf24]" />
-                <h3 className="font-black text-white text-base">Stage Standings</h3>
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] px-2 py-0.5 rounded-full">
-                2 Prizes
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {rankedFinalists.map((f, rank) => (
-                <div
-                  key={f.id}
-                  className={`p-3 rounded-xl flex items-center justify-between border ${
-                    rank === 0
-                      ? 'bg-[#fbbf24]/10 border-[#fbbf24]'
-                      : rank === 1
-                      ? 'bg-slate-800/60 border-slate-300'
-                      : 'bg-[#081a2e] border-[#00d2ff]/30'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="font-black text-sm w-5 text-center text-[#7dd3fc]">#{rank + 1}</span>
-                    <ParticipantAvatar seed={f.avatarSeed} size="sm" />
-                    <span className="font-black text-white text-xs truncate">{f.name}</span>
-                  </div>
-                  <span className="font-mono font-black text-sm text-[#00d2ff]">{f.score} pts</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-2 border-t border-[#00d2ff]/30 flex items-center justify-between">
-              <button
-                onClick={handleResetScores}
-                className="text-xs text-[#f43f5e] flex items-center gap-1 font-black"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Reset All Scores
-              </button>
-            </div>
-          </div>
-        )}
+        <button
+          onClick={() => setSlide(currentSlide + 1)}
+          disabled={currentSlide === slides.length - 1}
+          className="px-3.5 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm"
+        >
+          Next <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   )
