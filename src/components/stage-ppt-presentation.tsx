@@ -463,7 +463,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   if (!stageData) {
     return (
       <div className="notebook-paper min-h-screen text-white flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
-        <NotebookBackgroundDecor />
+        <NotebookBackgroundDecor minimal />
         <div className="relative z-10 p-6 rounded-3xl notebook-card max-w-md">
           <AlertTriangle className="w-16 h-16 text-[#fbbf24] mx-auto mb-4 animate-bounce" />
           <h1 className="text-2xl font-black mb-2 text-white">Stage Data Encrypted / Key Required</h1>
@@ -484,7 +484,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   return (
     <div className="notebook-paper relative w-screen h-screen text-slate-100 flex flex-col overflow-hidden font-sans select-none">
       {/* 100% Authentic Blueprint Vector Schematics Background Matching Rest of Site */}
-      <NotebookBackgroundDecor />
+      <NotebookBackgroundDecor minimal />
 
       {/* Clean Presentation Top Bar (Projector Ready) */}
       <header className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/90 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
