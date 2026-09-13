@@ -314,7 +314,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
   // Toggle stage audio playback
   const toggleStageAudio = useCallback(
-    (audioUrl: string, audioId: string) => {
+    (rawAudioUrl: string, audioId: string) => {
+      if (!rawAudioUrl) return
+      const audioUrl = rawAudioUrl.startsWith('http') || rawAudioUrl.startsWith('/') ? rawAudioUrl : '/' + rawAudioUrl
       const isCurrentlyPlaying = playingAudioId === audioId
       const nextPlaying = !isCurrentlyPlaying
       setPlayingAudioId(nextPlaying ? audioId : null)

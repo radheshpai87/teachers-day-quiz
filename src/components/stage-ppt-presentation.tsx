@@ -145,15 +145,21 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   const pauseAudio = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause()
+      audioRef.current.currentTime = 0
     }
     setPlayingAudioId(null)
   }, [])
 
-  const playAudio = useCallback((url: string, id: string) => {
+  const playAudio = useCallback((rawUrl: string, id: string) => {
+    if (!rawUrl) return
+    const url = rawUrl.startsWith('http') || rawUrl.startsWith('/') ? rawUrl : '/' + rawUrl
+
     if (audioRef.current) {
       audioRef.current.pause()
+      audioRef.current.currentTime = 0
     }
     const audio = new Audio(url)
+    audio.preload = 'auto'
     audioRef.current = audio
     setPlayingAudioId(id)
 
@@ -175,7 +181,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     }
 
     audio.play().catch((err) => {
-      console.error('Audio play error:', err)
+      console.warn('Stage audio playback auto-play notice:', err)
       setPlayingAudioId(null)
     })
   }, [])
