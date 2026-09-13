@@ -377,10 +377,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       roundName: 'Round 3 (Rapid Fire)',
     })
 
-    // Round 4: Fastest Fingers First
-    list.push({ type: 'r4_intro', title: stageData.round4.name, roundNum: 4, data: stageData.round4 })
-    list.push({ type: 'r4_buzzer', title: 'Round 4 — Live Buzzer Arena', roundNum: 4, data: stageData.round4 })
-
     // Tie Breaker & Podium
     list.push({ type: 'tie_breaker', title: 'Tie-Breaker Arena' })
     list.push({ type: 'podium', title: 'Grand Finale — Victory Ceremony (Top 2 Prizes)' })
@@ -681,7 +677,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   {stageData.subtitle}
                 </p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 w-full max-w-4xl mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full max-w-4xl mb-8">
                   <div className="p-4 rounded-2xl notebook-card text-center">
                     <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 1</div>
                     <div className="text-lg font-black text-[#00d2ff]">MCQ Arena</div>
@@ -695,12 +691,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <div className="p-4 rounded-2xl notebook-card text-center">
                     <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 3</div>
                     <div className="text-lg font-black text-[#fbbf24]">Rapid Fire</div>
-                    <div className="text-xs text-slate-300 font-semibold">40s • 5 Qs • +10 pts</div>
-                  </div>
-                  <div className="p-4 rounded-2xl notebook-card text-center">
-                    <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 4</div>
-                    <div className="text-lg font-black text-[#f43f5e]">Fastest Fingers</div>
-                    <div className="text-xs text-slate-300 font-semibold">+15 / −5 on Buzz</div>
+                    <div className="text-xs text-slate-300 font-semibold">40s • Step-by-Step • +10 pts</div>
                   </div>
                 </div>
 
@@ -763,7 +754,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     <Crown className="w-4 h-4 text-[#081a2e]" /> Stage Qualifiers
                   </div>
                   <h2 className="text-3xl md:text-5xl font-black text-white">Meet the Top 6 Finalists</h2>
-                  <p className="text-[#7dd3fc] text-xs font-bold mt-1">6 Stage Competitors • 4 Live Rounds</p>
+                  <p className="text-[#7dd3fc] text-xs font-bold mt-1">6 Stage Competitors • 3 Live Rounds</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 mb-6">
@@ -1383,72 +1374,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <div className="text-xs text-[#7dd3fc] font-bold">
                     Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name}</strong>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* SLIDE TYPE: Round 4 Intro */}
-            {slide.type === 'r4_intro' && (
-              <div className="text-center flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#f43f5e]">
-                  <Zap className="w-8 h-8" />
-                </div>
-                <span className="text-xs font-black uppercase tracking-widest text-[#f43f5e] mb-1">Final Round</span>
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3">Fastest Fingers First</h2>
-                <p className="text-base md:text-lg text-[#7dd3fc] max-w-xl mb-4 font-bold leading-relaxed">
-                  Correct answer = <strong className="text-[#10b981]">+15 Points</strong> • Wrong answer after buzzing = <strong className="text-[#f43f5e]">−5 Points</strong>
-                </p>
-                <p className="text-xs text-slate-300 font-bold max-w-md mb-6">
-                  Buzz only after the question is completely read. Early buzzes will not be considered.
-                </p>
-                <button
-                  onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#f43f5e] hover:bg-[#e11d48] text-white font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
-                >
-                  Enter Buzzer Arena <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-
-            {/* SLIDE TYPE: Round 4 Live Buzzer Arena (Clean Projector Showcase) */}
-            {slide.type === 'r4_buzzer' && (
-              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#f43f5e]/20 text-[#f43f5e] border-2 border-[#f43f5e]/50">
-                      Round 4 — Fastest Fingers First • Live Arena
-                    </span>
-                    <span className="text-xs text-[#fbbf24] font-black">Correct +15 | Wrong −5</span>
-                  </div>
-
-                  <h2 className="text-xl md:text-3xl font-black text-white mb-5 text-center">
-                    Fastest Fingers Live Buzzer Arena
-                  </h2>
-
-                  {/* 6 Finalists Buzzer Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 mb-4">
-                    {finalists.map((f, i) => (
-                      <div
-                        key={f.id}
-                        className="p-4 rounded-2xl notebook-card flex flex-col items-center text-center group"
-                      >
-                        <ParticipantAvatar seed={f.avatarSeed} size="md" className="mb-2 ring-2 ring-[#00d2ff]" />
-                        <span className="font-black text-white text-xs truncate w-full">{f.name}</span>
-                        <span className="font-mono font-black text-lg text-[#00d2ff] my-1.5">{f.score} pts</span>
-                        <span className="text-[10px] text-[#7dd3fc] font-bold">Qualifier #{i + 1}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
-                  <span className="text-xs text-[#7dd3fc] font-bold">Buzzer points are awarded from Quizmaster Host Deck</span>
-                  <button
-                    onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#fbbf24] hover:bg-[#f59e0b] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
-                  >
-                    Proceed to Finale <ArrowRight className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             )}

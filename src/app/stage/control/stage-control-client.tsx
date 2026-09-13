@@ -234,10 +234,6 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     })
     list.push({ index: idx++, title: 'Round 3 Standings & Leaderboard', round: 'R3', type: 'round_leaderboard', data: { roundName: 'Round 3 (Rapid Fire)' } })
 
-    // Round 4
-    list.push({ index: idx++, title: 'Round 4: Fastest Fingers Intro', round: 'R4', type: 'r4_intro', data: stageData.round4 })
-    list.push({ index: idx++, title: 'Round 4: Live Buzzer Arena', round: 'R4', type: 'r4_buzzer', data: stageData.round4 })
-
     // Tie breaker & Podium
     list.push({ index: idx++, title: 'Tie-Breaker Arena', type: 'tie_breaker' })
     list.push({ index: idx++, title: 'Grand Victory Podium (Top 2 Prizes)', type: 'podium' })
@@ -725,14 +721,6 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     </div>
                   </div>
                 )}
-
-                {/* Round 4 Buzzer */}
-                {currentSlideObj.type === 'r4_buzzer' && (
-                  <div className="p-2 text-xs text-slate-200 font-bold space-y-1">
-                    <span className="text-[#fbbf24] font-black block">Fastest Fingers First Arena</span>
-                    <p>Award scores immediately after buzzer: <span className="text-emerald-400">+15 Correct</span> | <span className="text-rose-400">−5 Wrong</span>.</p>
-                  </div>
-                )}
               </div>
             )}
 
@@ -815,35 +803,28 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     <span className="font-mono font-black text-sm sm:text-lg text-[#00d2ff] shrink-0">{f.score}</span>
                   </div>
 
-                  {/* Cohesive Point Awarding Buttons */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-1.5 text-xs font-black">
+                  {/* Cohesive Point Awarding Buttons (3 Live Rounds: +10, +5, −5) */}
+                  <div className="grid grid-cols-3 gap-1 sm:gap-1.5 text-xs font-black">
                     <button
                       onClick={() => adjustScore(f.id, 10, 'r2')}
-                      className="py-1 sm:py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95 cursor-pointer"
                       title="Direct Correct / Rapid Fire (+10)"
                     >
                       +10
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, 5, 'r1')}
-                      className="py-1 sm:py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95 cursor-pointer"
                       title="MCQ / Passed (+5)"
                     >
                       +5
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, -5, 'r2')}
-                      className="py-1 sm:py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
+                      className="py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95 cursor-pointer"
                       title="Wrong Penalty (-5)"
                     >
                       −5
-                    </button>
-                    <button
-                      onClick={() => adjustScore(f.id, 15, 'r4')}
-                      className="py-1 sm:py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
-                      title="Fastest Fingers First (+15)"
-                    >
-                      +15
                     </button>
                   </div>
 
