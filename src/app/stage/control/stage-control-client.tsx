@@ -32,6 +32,7 @@ import {
   Volume2,
   Timer as TimerIcon,
   Zap,
+  Sparkles,
 } from 'lucide-react'
 
 export function StageControlClient({ stageData }: { stageData: StageData | null }) {
@@ -465,6 +466,31 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     updateFinalists(updated)
     if (delta > 0) sound.ting()
     else sound.wrong()
+  }
+
+  const [isImporting, setIsImporting] = useState(false)
+  const [importNotice, setImportNotice] = useState<string | null>(null)
+
+  // Import Top 6 Qualifiers from Live Audience Quiz
+  const handleImportQualifiers = async () => {
+    setIsImporting(true)
+    setImportNotice(null)
+    try {
+      const res = await fetch('/api/stage/qualifiers', { method: 'POST' })
+      const data = await res.json()
+      if (data.ok && Array.isArray(data.finalists)) {
+        updateFinalists(data.finalists)
+        sound.ting()
+        setImportNotice('✓ Top 6 Imported!')
+        setTimeout(() => setImportNotice(null), 4000)
+      } else {
+        alert('Could not import qualifiers: ' + (data.error || 'No participants found'))
+      }
+    } catch (err: any) {
+      alert('Failed to import qualifiers: ' + (err.message || 'Network error'))
+    } finally {
+      setIsImporting(false)
+    }
   }
 
   // Rename finalist
@@ -946,12 +972,28 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
           {/* CARD 2: QUICK SCORE ASSIGNER (6 FINALISTS) */}
           <div className="notebook-card p-3 sm:p-6 space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-2 sm:pb-3">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#fbbf24]" />
-                <h3 className="font-black text-white text-sm sm:text-base">Score Assigner</h3>
+            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-2 sm:pb-3 gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#fbbf24] shrink-0" />
+                <h3 className="font-black text-white text-sm sm:text-base truncate">Score Assigner</h3>
               </div>
-              <span className="text-xs text-[#7dd3fc] font-bold">Instant Sync</span>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                {importNotice && (
+                  <span className="text-[10px] sm:text-xs font-black text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-lg border border-emerald-500/40">
+                    {importNotice}
+                  </span>
+                )}
+                <button
+                  onClick={handleImportQualifiers}
+                  disabled={isImporting}
+                  className="px-2.5 sm:px-3 py-1 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-[11px] sm:text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
+                  title="Import Top 6 ranked participants from the live audience round"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{isImporting ? 'Importing...' : 'Import Top 6'}</span>
+                </button>
+              </div>
             </div>
 
             {/* Finalist Cards Grid (Always 2 cols — compact on phone) */}

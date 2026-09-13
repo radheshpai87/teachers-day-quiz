@@ -1263,7 +1263,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] flex items-center gap-1 shadow-[2px_2px_0px_#04101d]">
-                        <FlameKindling className="w-3.5 h-3.5" /> Rapid Fire • {slide.data.participantLabel} (Set {slide.data.setNumber})
+                        <FlameKindling className="w-3.5 h-3.5" /> Rapid Fire • {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel} (Set {slide.data.setNumber})
                       </span>
                     </div>
 
