@@ -824,60 +824,106 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round Leaderboard (Shown after each round!) */}
             {slide.type === 'round_leaderboard' && (
-              <div className="flex flex-col h-full justify-center p-2 sm:p-4">
-                <div className="text-center mb-6">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full">
+                <div className="text-center mb-3">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] text-xs font-black uppercase tracking-wider mb-2 -rotate-1 shadow-[2px_2px_0px_#04101d]">
-                    <Trophy className="w-4 h-4 text-[#081a2e]" /> {slide.roundName} Results
+                    <Trophy className="w-4 h-4 text-[#081a2e]" /> {slide.roundName || 'Cumulative Standings'}
                   </div>
-                  <h2 className="text-3xl md:text-5xl font-black text-white">{slide.title}</h2>
-                  <p className="text-[#7dd3fc] text-xs font-bold mt-1">Official Stage Leaderboard Standings</p>
+                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white">{slide.title}</h2>
+                  <p className="text-[#7dd3fc] text-xs sm:text-sm font-bold mt-1">Official Stage Leaderboard Standings</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 max-w-4xl mx-auto w-full mb-6">
-                  {rankedFinalists.map((f, rank) => (
-                    <motion.div
-                      key={f.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: rank * 0.05 }}
-                      className={`p-4 rounded-2xl notebook-card flex items-center justify-between border-2 ${
-                        rank === 0
-                          ? 'border-[#fbbf24] shadow-[4px_4px_0px_#04101d]'
-                          : rank === 1
-                          ? 'border-slate-300 shadow-[3px_3px_0px_#04101d]'
-                          : 'border-[#00d2ff]/40 shadow-[2px_2px_0px_#04101d]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div
-                          className={`w-8 h-8 rounded-full font-black text-sm flex items-center justify-center border border-[#081a2e] shrink-0 ${
-                            rank === 0
-                              ? 'bg-[#fbbf24] text-[#081a2e]'
-                              : rank === 1
-                              ? 'bg-slate-300 text-[#081a2e]'
-                              : 'bg-[#00d2ff] text-[#081a2e]'
-                          }`}
-                        >
-                          #{rank + 1}
+                <div className="flex flex-col space-y-4 w-full my-auto">
+                  {/* TOP 2 SHOWCASE (Clear Highlight) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* #1 Leader */}
+                    {rankedFinalists[0] && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-5 rounded-3xl bg-gradient-to-br from-[#1b3d63] to-[#0a1e33] border-2 border-[#fbbf24] shadow-[0_0_25px_rgba(251,191,36,0.35)] flex items-center justify-between gap-4"
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <div className="relative shrink-0">
+                            <ParticipantAvatar seed={rankedFinalists[0].avatarSeed} size="lg" className="ring-2 ring-[#fbbf24]" />
+                            <Crown className="w-6 h-6 text-[#fbbf24] absolute -top-3 -right-2 rotate-12" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fbbf24] text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
+                              🥇 1st Place • Leader
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[0].name}</h3>
+                          </div>
                         </div>
-                        <ParticipantAvatar seed={f.avatarSeed} size="md" />
-                        <div className="min-w-0">
-                          <span className="font-black text-white text-sm block truncate">{f.name}</span>
-                          <span className="text-[10px] text-[#7dd3fc] font-bold">
-                            R1:{f.roundScores.r1} • R2:{f.roundScores.r2} • R3:{f.roundScores.r3} • R4:{f.roundScores.r4}
+                        <div className="text-right shrink-0">
+                          <span className="font-mono font-black text-2xl sm:text-3xl text-[#fbbf24] block leading-none">
+                            {rankedFinalists[0].score}
                           </span>
+                          <span className="text-[10px] uppercase font-bold text-[#7dd3fc]">Total Points</span>
                         </div>
-                      </div>
+                      </motion.div>
+                    )}
 
-                      <span className="font-mono font-black text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
-                    </motion.div>
-                  ))}
+                    {/* #2 Runner-Up */}
+                    {rankedFinalists[1] && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.05 }}
+                        className="p-5 rounded-3xl bg-gradient-to-br from-[#173557] to-[#091b2e] border-2 border-slate-300 shadow-[0_0_20px_rgba(226,232,240,0.25)] flex items-center justify-between gap-4"
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <div className="relative shrink-0">
+                            <ParticipantAvatar seed={rankedFinalists[1].avatarSeed} size="lg" className="ring-2 ring-slate-300" />
+                            <Medal className="w-6 h-6 text-slate-300 absolute -top-3 -right-2 rotate-12" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-300 text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
+                              🥈 2nd Place • Runner-Up
+                            </div>
+                            <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[1].name}</h3>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="font-mono font-black text-2xl sm:text-3xl text-slate-100 block leading-none">
+                            {rankedFinalists[1].score}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold text-[#7dd3fc]">Total Points</span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* RANKS 3 TO 6 (Clean Compact Grid) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {rankedFinalists.slice(2, 6).map((f, idx) => (
+                      <motion.div
+                        key={f.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 + idx * 0.05 }}
+                        className="p-3.5 rounded-2xl notebook-card flex items-center justify-between gap-2 border-2 border-[#00d2ff]/30 shadow-[2px_2px_0px_#04101d]"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-6 h-6 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] font-mono font-black text-xs flex items-center justify-center border border-[#00d2ff]/40 shrink-0">
+                            #{idx + 3}
+                          </div>
+                          <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                          <span className="font-bold text-white text-xs sm:text-sm truncate">{f.name}</span>
+                        </div>
+                        <span className="font-mono font-black text-base text-[#00d2ff] shrink-0">
+                          {f.score} <span className="text-[10px] font-sans font-normal text-[#7dd3fc]">pts</span>
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-center">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between w-full">
+                  <span className="text-xs text-[#7dd3fc] font-bold">Scores update in real-time from Host Deck</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105"
                   >
                     Proceed to Next Round <ArrowRight className="w-4 h-4" />
                   </button>
