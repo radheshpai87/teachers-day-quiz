@@ -887,63 +887,61 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 2 Image Question */}
             {slide.type === 'r2_image' && (
-              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border-2 border-[#00d2ff]/50">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-4xl mx-auto w-full">
+                <div className="flex flex-col w-full">
+                  <div className="w-full flex items-center justify-between mb-2">
+                    <span className="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
                       Round 2 — Image {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
                     </span>
-                    <span className="text-xs text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
+                    <span className="text-xs sm:text-sm text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
                   </div>
 
-                  <h2 className="text-lg md:text-2xl font-black text-white mb-3 leading-snug">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white mb-3 leading-snug">
                     {slide.data.question}
                   </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-3">
-                    {/* Image Box */}
-                    <div className="relative w-full h-56 md:h-72 rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-2">
-                      <Image
-                        src={slide.data.imageUrl}
-                        alt="Clue Image"
-                        fill
-                        className="object-contain p-2"
-                        priority
-                      />
-                    </div>
-
-                    {/* Answer Reveal Box */}
-                    <div className="flex flex-col justify-center">
-                      <AnimatePresence>
-                        {isRevealed ? (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d]"
-                          >
-                            <span className="text-[11px] font-black uppercase tracking-wider block mb-1">
-                              ✓ Verified Technical Answer
-                            </span>
-                            <h3 className="text-xl md:text-2xl font-black mb-2">{slide.data.answer}</h3>
-                            <p className="text-xs md:text-sm font-bold leading-relaxed">{slide.data.explanation}</p>
-                          </motion.div>
-                        ) : (
-                          <div className="p-6 rounded-2xl notebook-card text-center text-[#7dd3fc]">
-                            <ImageIcon className="w-8 h-8 mx-auto text-[#00d2ff] mb-2" />
-                            <p className="text-sm font-black text-white">Direct Answer Round (No Options)</p>
-                            <p className="text-xs text-[#7dd3fc] mt-1 font-bold">Press Reveal Answer or Key R</p>
-                          </div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                  {/* Large Center Clue Image */}
+                  <div className="relative w-full h-[42vh] sm:h-[48vh] max-h-[440px] rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-3 mb-3 border-2 border-[#00d2ff]/40 shadow-[4px_4px_0px_#04101d]">
+                    <Image
+                      src={slide.data.imageUrl}
+                      alt="Clue Image"
+                      fill
+                      className="object-contain p-2"
+                      priority
+                    />
                   </div>
+
+                  {/* Answer Revealed Below Image */}
+                  <AnimatePresence>
+                    {isRevealed && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="w-full p-4 sm:p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d] text-left border-2 border-[#081a2e]"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-800" />
+                          <span className="text-xs font-black uppercase tracking-wider text-emerald-900">
+                            Verified Answer
+                          </span>
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-black text-[#081a2e] mb-1">{slide.data.answer}</h3>
+                        {slide.data.explanation && (
+                          <p className="text-xs sm:text-sm font-bold text-[#081a2e]/90 leading-relaxed">{slide.data.explanation}</p>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Clean Bottom Bar */}
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between w-full">
                   <button
                     onClick={toggleReveal}
-                    className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
+                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105 active:scale-95 ${
+                      isRevealed ? 'bg-[#0e2e4e] text-white' : 'bg-[#fbbf24] text-[#081a2e]'
+                    }`}
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
