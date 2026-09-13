@@ -67,65 +67,53 @@ export function AdminDashboardClient() {
                     alert('Failed to reset quiz.')
                   }
                 }
-              }}
-              className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
-              <span>Reset Event</span>
-            </button>
-          </div>
+              }
+            }}
+            className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
+            <span>Reset Event</span>
+          </button>
         </div>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {/* Participants */}
-        <div className="sticky-note-lavender p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Users className="w-4 h-4 text-[#081a2e]" />
-            <span>Participants</span>
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="notebook-card p-4 space-y-1">
+          <div className="flex items-center justify-between text-ink-soft">
+            <span className="text-xs font-bold uppercase tracking-wider">Players</span>
+            <Users className="w-4 h-4 text-[#0284c7]" />
           </div>
-          <div className="tnum text-3xl font-black text-ink">
-            {playersCount.toLocaleString()}
-          </div>
+          <div className="text-2xl font-black text-ink tnum">{playersCount}</div>
         </div>
 
-        {/* Questions */}
-        <div className="sticky-note-mint p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <HelpCircle className="w-4 h-4 text-[#081a2e]" />
-            <span>Questions</span>
+        <div className="notebook-card p-4 space-y-1">
+          <div className="flex items-center justify-between text-ink-soft">
+            <span className="text-xs font-bold uppercase tracking-wider">Questions</span>
+            <HelpCircle className="w-4 h-4 text-[#388e3c]" />
           </div>
-          <div className="tnum text-3xl font-black text-ink">
-            {totalQuestions}
-          </div>
+          <div className="text-2xl font-black text-ink tnum">{totalQuestions}</div>
         </div>
 
-        {/* Average Score */}
-        <div className="sticky-note-yellow p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-ink text-xs font-black uppercase">
-            <Trophy className="w-4 h-4 text-[#081a2e]" />
-            <span>Avg. Score</span>
+        <div className="notebook-card p-4 space-y-1">
+          <div className="flex items-center justify-between text-ink-soft">
+            <span className="text-xs font-bold uppercase tracking-wider">Avg Score</span>
+            <Target className="w-4 h-4 text-[#fb8c00]" />
           </div>
-          <div className="tnum text-3xl font-black text-ink">
-            {avgScore.toLocaleString()}
-          </div>
+          <div className="text-2xl font-black text-ink tnum">{avgScore}</div>
         </div>
 
-        {/* Average Accuracy */}
-        <div className="sticky-note-rose p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-white text-xs font-black uppercase">
-            <Target className="w-4 h-4 text-white" />
-            <span>Avg. Accuracy</span>
+        <div className="notebook-card p-4 space-y-1">
+          <div className="flex items-center justify-between text-ink-soft">
+            <span className="text-xs font-bold uppercase tracking-wider">Status</span>
+            <Trophy className="w-4 h-4 text-[#d32f2f]" />
           </div>
-          <div className="tnum text-3xl font-black text-white">
-            {avgAccuracy}%
-          </div>
+          <div className="text-xl font-black text-ink uppercase">{status}</div>
         </div>
       </div>
 
-      {/* Quick Action Navigation Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Quick Launch Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link
           href={adminPath('live')}
           className="notebook-card-interactive p-5 space-y-2 group"
@@ -154,7 +142,7 @@ export function AdminDashboardClient() {
             <ArrowRight className="w-4 h-4 text-ink-soft group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-ink-soft font-medium">
-            Add, reorder via drag-and-drop, set timers and upload images.
+            Review and manage Round 1 question content.
           </p>
         </Link>
 

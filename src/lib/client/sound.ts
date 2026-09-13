@@ -136,6 +136,50 @@ class SoundFX {
     } catch {}
   }
 
+  /** Buzzer sound for Fastest Fingers First / Rapid fire time-out */
+  buzzer() {
+    if (!this.enabled) return
+    const ctx = this.init()
+    if (!ctx) return
+
+    try {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sawtooth'
+      osc.frequency.setValueAtTime(150, ctx.currentTime)
+      osc.frequency.setValueAtTime(130, ctx.currentTime + 0.15)
+
+      gain.gain.setValueAtTime(0.3, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.35)
+    } catch {}
+  }
+
+  /** Quick high chime for point additions */
+  ting() {
+    if (!this.enabled) return
+    const ctx = this.init()
+    if (!ctx) return
+
+    try {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(1318.51, ctx.currentTime) // E6
+      gain.gain.setValueAtTime(0.25, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.18)
+    } catch {}
+  }
+
   /** Celebratory fanfare for final leaderboard & podium */
   celebrate() {
     if (!this.enabled) return
@@ -163,3 +207,4 @@ class SoundFX {
 }
 
 export const sound = new SoundFX()
+
