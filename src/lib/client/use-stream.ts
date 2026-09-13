@@ -24,6 +24,46 @@ function preloadImages(urls?: string[]) {
   }
 }
 
+function isStateEqual(a: ClientState | null, b: ClientState | null): boolean {
+  if (a === b) return true
+  if (!a || !b) return false
+  if (
+    a.phase !== b.phase ||
+    a.roundIndex !== b.roundIndex ||
+    a.players !== b.players ||
+    a.question?.question.id !== b.question?.question.id ||
+    a.question?.yourChoice !== b.question?.yourChoice ||
+    a.reveal?.yourChoice !== b.reveal?.yourChoice ||
+    a.you?.score !== b.you?.score ||
+    a.you?.rank !== b.you?.rank ||
+    a.final?.rank !== b.final?.rank ||
+    a.final?.score !== b.final?.score
+  ) {
+    return false
+  }
+
+  // Deep compare leaderboard entries for live scores
+  if (Boolean(a.leaderboard) !== Boolean(b.leaderboard)) return false
+  if (a.leaderboard && b.leaderboard) {
+    if (a.leaderboard.totalPlayers !== b.leaderboard.totalPlayers) return false
+    const aTop = a.leaderboard.top || []
+    const bTop = b.leaderboard.top || []
+    if (aTop.length !== bTop.length) return false
+    for (let i = 0; i < aTop.length; i++) {
+      if (
+        aTop[i].id !== bTop[i].id ||
+        aTop[i].score !== bTop[i].score ||
+        aTop[i].rank !== bTop[i].rank ||
+        aTop[i].name !== bTop[i].name
+      ) {
+        return false
+      }
+    }
+  }
+
+  return true
+}
+
 export function useQuizStream({ participantId, display }: Options) {
   const [state, setState] = useState<ClientState | null>(null)
   const [status, setStatus] = useState<StreamStatus>('connecting')
@@ -64,20 +104,7 @@ export function useQuizStream({ participantId, display }: Options) {
             preloadImages(data.state.preloadImages)
             clockOffset.current = data.state.serverNow - Date.now()
             setPlayers(data.state.players || 0)
-            setState((prev) => {
-              if (
-                prev &&
-                prev.phase === data.state.phase &&
-                prev.roundIndex === data.state.roundIndex &&
-                prev.players === data.state.players &&
-                prev.question?.question.id === data.state.question?.question.id &&
-                prev.question?.yourChoice === data.state.question?.yourChoice &&
-                prev.reveal?.yourChoice === data.state.reveal?.yourChoice
-              ) {
-                return prev
-              }
-              return data.state
-            })
+            setState((prev) => (isStateEqual(prev, data.state) ? prev : data.state))
           }
         }
       } catch {
@@ -125,20 +152,8 @@ export function useQuizStream({ participantId, display }: Options) {
         preloadImages(frame.preloadImages)
         clockOffset.current = frame.serverNow - Date.now()
         setPlayers(frame.players)
-        setState((prev) => {
-          if (
-            prev &&
-            prev.phase === frame.phase &&
-            prev.roundIndex === frame.roundIndex &&
-            prev.players === frame.players &&
-            prev.question?.question.id === frame.question?.question.id &&
-            prev.question?.yourChoice === frame.question?.yourChoice &&
-            prev.reveal?.yourChoice === frame.reveal?.yourChoice
-          ) {
-            return prev
-          }
-          return frame
-        })
+        const nextState = frame
+        setState((prev) => (isStateEqual(prev, nextState) ? prev : nextState))
       }
     }
 

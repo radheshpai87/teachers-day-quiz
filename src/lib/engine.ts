@@ -115,6 +115,8 @@ class QuizEngine {
   private tallyTimer: ReturnType<typeof setInterval> | null = null
   private playersTimer: ReturnType<typeof setTimeout> | null = null
   private playersDirty = false
+  private displayTimer: ReturnType<typeof setTimeout> | null = null
+  private displayDirty = false
 
   private writeQueue: { participantId: string; answer: StoredAnswer }[] = []
   private flushTimer: ReturnType<typeof setTimeout> | null = null
@@ -781,6 +783,7 @@ class QuizEngine {
 
     this.bumpDistribution(question.id, choice)
     this.queueWrite(participantId, answer)
+    this.scheduleDisplayBroadcast()
     return { ok: true }
   }
 
@@ -1261,6 +1264,43 @@ class QuizEngine {
 
   private emitPlayerCount() {
     this.broadcastState()
+  }
+
+  /** Throttle live display and host updates during active gameplay to 1 update per second max */
+  private scheduleDisplayBroadcast() {
+    if (this.displayTimer) {
+      this.displayDirty = true
+      return
+    }
+    this.broadcastDisplayAndHost()
+    this.displayTimer = setTimeout(() => {
+      this.displayTimer = null
+      if (this.displayDirty) {
+        this.displayDirty = false
+        this.scheduleDisplayBroadcast()
+      }
+    }, 1000)
+    this.displayTimer.unref?.()
+  }
+
+  private broadcastDisplayAndHost() {
+    const hub = getHub()
+    if (!hub.hasRole('display') && !hub.hasRole('admin')) return
+    this.recomputeRanks()
+    const memoTop = this.topEntries()
+    let displayChunk: string | null = null
+    let hostChunk: string | null = null
+    hub.broadcast((client) => {
+      if (client.role === 'display') {
+        displayChunk ??= frame(this.stateForDisplay(memoTop))
+        return displayChunk
+      }
+      if (client.role === 'admin') {
+        hostChunk ??= frame({ t: 'host', ...this.hostSnapshot() })
+        return hostChunk
+      }
+      return null
+    })
   }
 
   /** While a question runs, host screens get live tallies once a second. */
