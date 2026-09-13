@@ -35,3 +35,16 @@ export function getStageBroadcastChannel(): BroadcastChannel | null {
   }
   return null
 }
+
+export async function sendStageNetworkSync(patch: Record<string, any>) {
+  if (typeof window === 'undefined') return
+  try {
+    await fetch('/api/stage/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    })
+  } catch (err) {
+    console.error('Failed to sync over network:', err)
+  }
+}

@@ -9,6 +9,7 @@ import {
   DEFAULT_STAGE_FINALISTS,
   getStageBroadcastChannel,
   type StageSyncMessage,
+  sendStageNetworkSync,
 } from '@/lib/stage-sync'
 import { sound } from '@/lib/client/sound'
 import { ParticipantAvatar } from '@/components/participant-avatar'
@@ -83,8 +84,36 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     }
     window.addEventListener('storage', handleStorage)
 
+    // Cross-device network SSE stream listener
+    let es: EventSource | null = null
+    try {
+      es = new EventSource('/api/stage/stream')
+      es.onmessage = (event) => {
+        try {
+          const state = JSON.parse(event.data)
+          if (!state) return
+          if (typeof state.slideIndex === 'number') {
+            setCurrentSlide(state.slideIndex)
+          }
+          if (typeof state.isRevealed === 'boolean') {
+            setIsRevealed(state.isRevealed)
+          }
+          if (Array.isArray(state.finalists)) {
+            setFinalists(state.finalists)
+          }
+          if (typeof state.rapidSeconds === 'number') {
+            setRapidSeconds(state.rapidSeconds)
+          }
+          if (typeof state.timerRunning === 'boolean') {
+            setTimerRunning(state.timerRunning)
+          }
+        } catch {}
+      }
+    } catch {}
+
     return () => {
       if (channel) channel.close()
+      if (es) es.close()
       window.removeEventListener('storage', handleStorage)
     }
   }, [])
@@ -96,7 +125,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     }
   }, [])
 
-  // Save finalists to localStorage & broadcast
+  // Save finalists to localStorage, broadcast & network sync
   const updateFinalists = useCallback(
     (newFinalists: StageFinalist[]) => {
       setFinalists(newFinalists)
@@ -106,6 +135,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         } catch {}
       }
       broadcast({ type: 'UPDATE_FINALISTS', payload: { finalists: newFinalists } })
+      sendStageNetworkSync({ finalists: newFinalists })
     },
     [broadcast],
   )
@@ -206,6 +236,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setCurrentSlide(clamped)
       setIsRevealed(false)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped } })
+      sendStageNetworkSync({ slideIndex: clamped, isRevealed: false })
       sound.tap()
     },
     [broadcast, slides.length],
@@ -216,6 +247,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     setIsRevealed((prev) => {
       const next = !prev
       broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: next } })
+      sendStageNetworkSync({ isRevealed: next })
       if (next) sound.correct()
       return next
     })
@@ -226,6 +258,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     setTimerRunning((prev) => {
       const next = !prev
       broadcast({ type: 'TIMER_ACTION', payload: { running: next, seconds: rapidSeconds } })
+      sendStageNetworkSync({ timerRunning: next, rapidSeconds })
       return next
     })
   }, [broadcast, rapidSeconds])
@@ -234,6 +267,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     setRapidSeconds(40)
     setTimerRunning(false)
     broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 40 } })
+    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 40 })
   }, [broadcast])
 
   // Score adjustment helper

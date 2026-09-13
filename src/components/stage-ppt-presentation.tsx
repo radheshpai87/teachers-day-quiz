@@ -17,6 +17,7 @@ import {
   DEFAULT_STAGE_FINALISTS,
   getStageBroadcastChannel,
   type StageSyncMessage,
+  sendStageNetworkSync,
 } from '@/lib/stage-sync'
 import { sound } from '@/lib/client/sound'
 import { ParticipantAvatar } from '@/components/participant-avatar'
@@ -169,8 +170,36 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     }
     window.addEventListener('storage', handleStorage)
 
+    // Cross-device network SSE stream listener
+    let es: EventSource | null = null
+    try {
+      es = new EventSource('/api/stage/stream')
+      es.onmessage = (event) => {
+        try {
+          const state = JSON.parse(event.data)
+          if (!state) return
+          if (typeof state.slideIndex === 'number') {
+            setCurrentSlide(state.slideIndex)
+          }
+          if (typeof state.isRevealed === 'boolean') {
+            setIsRevealed(state.isRevealed)
+          }
+          if (Array.isArray(state.finalists)) {
+            setFinalists(state.finalists)
+          }
+          if (typeof state.rapidSeconds === 'number') {
+            setRapidSeconds(state.rapidSeconds)
+          }
+          if (typeof state.timerRunning === 'boolean') {
+            setTimerRunning(state.timerRunning)
+          }
+        } catch {}
+      }
+    } catch {}
+
     return () => {
       if (channel) channel.close()
+      if (es) es.close()
       window.removeEventListener('storage', handleStorage)
     }
   }, [])
@@ -347,6 +376,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       setCurrentSlide(nextIdx)
       setIsRevealed(false)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx } })
+      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false })
       sound.tap()
     }
   }, [currentSlide, slides.length, broadcast])
@@ -357,6 +387,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx } })
+      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false })
       sound.tap()
     }
   }, [currentSlide, broadcast])
@@ -366,6 +397,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     setIsRevealed((prev) => {
       const next = !prev
       broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: next } })
+      sendStageNetworkSync({ isRevealed: next })
       if (next) sound.correct()
       return next
     })
