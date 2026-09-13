@@ -144,7 +144,7 @@ export default function PlayPage() {
       <header className="w-full max-w-2xl flex items-center justify-between py-2 px-3 mb-2 z-10">
         <div className="flex items-center gap-2 sm:gap-3">
           <Image
-            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            src="/yenepoya-school-engineering-and-technology.svg"
             alt="Yenepoya School of Engineering and Technology"
             width={200}
             height={60}

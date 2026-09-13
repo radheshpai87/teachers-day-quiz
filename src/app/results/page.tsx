@@ -140,7 +140,7 @@ export default function ResultsPage() {
         <div className="space-y-3 flex flex-col items-center">
           <div className="flex items-center justify-center py-1 sm:py-2">
             <Image
-              src="/yenepoya-school-engineering-and-technology.svg?v=2"
+              src="/yenepoya-school-engineering-and-technology.svg"
               alt="Yenepoya School of Engineering and Technology"
               width={380}
               height={100}

@@ -42,7 +42,7 @@ export function AdminNav() {
           className="flex items-center gap-2 group shrink-0"
         >
           <Image
-            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            src="/yenepoya-school-engineering-and-technology.svg"
             alt="Yenepoya School of Engineering and Technology"
             width={180}
             height={50}

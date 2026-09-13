@@ -9,7 +9,7 @@ export function YentechBranding({ className = '' }: { className?: string }) {
     >
       <span className="text-xs font-black text-ink-soft tracking-wide uppercase">Powered by</span>
       <Image
-        src="/yentech.png?v=4"
+        src="/yentech.png"
         alt="YENTECH Logo"
         width={140}
         height={40}
@@ -29,7 +29,7 @@ export function YentechFooterCredit({ className = '' }: { className?: string }) 
           Powered by
         </span>
         <Image
-          src="/yentech.png?v=4"
+          src="/yentech.png"
           alt="YENTECH Logo"
           width={280}
           height={75}

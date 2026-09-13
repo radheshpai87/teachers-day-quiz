@@ -360,7 +360,7 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
         {/* Left: Branding & Event Title */}
         <div className="flex items-center gap-4">
           <Image
-            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            src="/yenepoya-school-engineering-and-technology.svg"
             alt="Yenepoya School of Engineering and Technology"
             width={180}
             height={40}

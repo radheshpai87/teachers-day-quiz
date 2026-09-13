@@ -67,9 +67,8 @@ export function AdminDashboardClient() {
                     alert('Failed to reset quiz.')
                   }
                 }
-              }
-            }}
-            className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+              }}
+              className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
           >
             <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
             <span>Reset Event</span>

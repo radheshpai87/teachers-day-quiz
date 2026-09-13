@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md notebook-card p-8 space-y-6">
         <div className="text-center space-y-3 flex flex-col items-center">
           <Image
-            src="/yenepoya-school-engineering-and-technology.svg?v=2"
+            src="/yenepoya-school-engineering-and-technology.svg"
             alt="Yenepoya School of Engineering and Technology"
             width={340}
             height={90}
