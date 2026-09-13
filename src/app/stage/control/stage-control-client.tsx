@@ -191,7 +191,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         totalInRound: stageData.round1.questions.length,
       })
     })
-    list.push({ index: idx++, title: '🏆 Round 1 Standings & Leaderboard', round: 'R1', type: 'round_leaderboard', data: { roundName: 'Round 1 (MCQ)' } })
+    list.push({ index: idx++, title: 'Round 1 Standings & Leaderboard', round: 'R1', type: 'round_leaderboard', data: { roundName: 'Round 1 (MCQ)' } })
 
     // Round 2
     list.push({ index: idx++, title: 'Round 2: Audio & Image Intro', round: 'R2', type: 'round_intro', data: stageData.round2 })
@@ -217,7 +217,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         totalInRound: stageData.round2.audios.length,
       })
     })
-    list.push({ index: idx++, title: '🏆 Round 2 Standings & Leaderboard', round: 'R2', type: 'round_leaderboard', data: { roundName: 'Round 2 (Audio & Image)' } })
+    list.push({ index: idx++, title: 'Round 2 Standings & Leaderboard', round: 'R2', type: 'round_leaderboard', data: { roundName: 'Round 2 (Audio & Image)' } })
 
     // Round 3
     list.push({ index: idx++, title: 'Round 3: Rapid Fire Intro', round: 'R3', type: 'round_intro', data: stageData.round3 })
@@ -232,7 +232,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         totalInRound: stageData.round3.sets.length,
       })
     })
-    list.push({ index: idx++, title: '🏆 Round 3 Standings & Leaderboard', round: 'R3', type: 'round_leaderboard', data: { roundName: 'Round 3 (Rapid Fire)' } })
+    list.push({ index: idx++, title: 'Round 3 Standings & Leaderboard', round: 'R3', type: 'round_leaderboard', data: { roundName: 'Round 3 (Rapid Fire)' } })
 
     // Round 4
     list.push({ index: idx++, title: 'Round 4: Fastest Fingers Intro', round: 'R4', type: 'r4_intro', data: stageData.round4 })
@@ -240,7 +240,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
     // Tie breaker & Podium
     list.push({ index: idx++, title: 'Tie-Breaker Arena', type: 'tie_breaker' })
-    list.push({ index: idx++, title: '🎉 Grand Victory Podium (Top 2 Prizes)', type: 'podium' })
+    list.push({ index: idx++, title: 'Grand Victory Podium (Top 2 Prizes)', type: 'podium' })
 
     return list
   }, [stageData])
@@ -452,7 +452,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
         <div className="flex items-center gap-2 shrink-0">
           <span className="hidden md:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[1px_1px_0px_#04101d]">
-            ⚡ Live Stage Host
+            Live Stage Host
           </span>
 
           <Link
@@ -648,7 +648,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                           </span>
                           <span className="text-xs font-black text-white truncate block">
                             {playingAudioId === currentSlideObj.data.id
-                              ? '🔊 Playing on Stage...'
+                              ? 'Playing on Stage...'
                               : 'Ready to Play on Stage'}
                           </span>
                         </div>
@@ -729,7 +729,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                 {/* Round 4 Buzzer */}
                 {currentSlideObj.type === 'r4_buzzer' && (
                   <div className="p-2 text-xs text-slate-200 font-bold space-y-1">
-                    <span className="text-[#fbbf24] font-black block">⚡ Fastest Fingers First Arena</span>
+                    <span className="text-[#fbbf24] font-black block">Fastest Fingers First Arena</span>
                     <p>Award scores immediately after buzzer: <span className="text-emerald-400">+15 Correct</span> | <span className="text-rose-400">−5 Wrong</span>.</p>
                   </div>
                 )}
@@ -905,7 +905,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     <div className="min-w-0">
                       <span className="font-black text-white text-sm block truncate">{f.name}</span>
                       <span className="text-[10px] text-[#7dd3fc] font-bold">
-                        {rank === 0 ? '🥇 1st Place (Champion)' : rank === 1 ? '🥈 2nd Place (Runner-Up)' : `Qualifier #${rank + 1}`}
+                        {rank === 0 ? '1st Place (Champion)' : rank === 1 ? '2nd Place (Runner-Up)' : `Qualifier #${rank + 1}`}
                       </span>
                     </div>
                   </div>

@@ -618,8 +618,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           />
           <div className="h-5 w-px bg-[#00d2ff]/40" />
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-              ⚡ Live Stage Quiz
+            <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+              Live Stage Quiz
             </span>
             <span className="text-xs text-[#7dd3fc] font-bold hidden md:inline">
               Slide {currentSlide + 1} / {slides.length}
@@ -934,7 +934,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         <Lightbulb className="w-5 h-5 text-[#081a2e] flex-shrink-0 mt-0.5" />
                         <div>
                           <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5 text-[#081a2e]">
-                            💡 Engineering Backstory & Fact
+                            Engineering Backstory & Fact
                           </span>
                           <p className="font-bold">{slide.data.explanation}</p>
                         </div>
@@ -992,7 +992,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           </div>
                           <div className="min-w-0">
                             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fbbf24] text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
-                              🥇 1st Place • Leader
+                              1st Place • Leader
                             </div>
                             <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[0].name}</h3>
                           </div>
@@ -1021,7 +1021,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           </div>
                           <div className="min-w-0">
                             <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-300 text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
-                              🥈 2nd Place • Runner-Up
+                              2nd Place • Runner-Up
                             </div>
                             <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[1].name}</h3>
                           </div>
