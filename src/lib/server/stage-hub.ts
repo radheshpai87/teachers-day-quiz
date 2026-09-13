@@ -6,6 +6,12 @@ export interface StageServerState {
   rapidSeconds: number
   timerRunning: boolean
   finalists: StageFinalist[]
+  audioState?: {
+    playing: boolean
+    audioId: string | null
+    audioUrl?: string
+    timestamp: number
+  }
   updatedAt: number
 }
 

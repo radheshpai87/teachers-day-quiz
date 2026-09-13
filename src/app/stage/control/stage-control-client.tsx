@@ -39,6 +39,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [isRevealed, setIsRevealed] = useState(false)
   const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
 
   // Stage Scoreboard State (Persisted in localStorage & BroadcastChannel)
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
@@ -64,6 +65,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         if (type === 'CHANGE_SLIDE') {
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
+          setPlayingAudioId(null)
         } else if (type === 'UPDATE_FINALISTS') {
           setFinalists(payload.finalists)
         } else if (type === 'TOGGLE_REVEAL') {
@@ -71,6 +73,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
           if (payload.seconds !== undefined) setRapidSeconds(payload.seconds)
+        } else if (type === 'AUDIO_ACTION') {
+          setPlayingAudioId(payload.action === 'play' ? payload.id : null)
         }
       }
     }
@@ -106,6 +110,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           }
           if (typeof state.timerRunning === 'boolean') {
             setTimerRunning(state.timerRunning)
+          }
+          if (state.audioState) {
+            setPlayingAudioId(state.audioState.playing ? state.audioState.audioId : null)
           }
         } catch {}
       }
@@ -235,11 +242,47 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       const clamped = Math.max(0, Math.min(slides.length - 1, slideIdx))
       setCurrentSlide(clamped)
       setIsRevealed(false)
+      setPlayingAudioId(null)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped } })
-      sendStageNetworkSync({ slideIndex: clamped, isRevealed: false })
+      sendStageNetworkSync({
+        slideIndex: clamped,
+        isRevealed: false,
+        audioState: { playing: false, audioId: null, timestamp: Date.now() },
+      })
       sound.tap()
     },
     [broadcast, slides.length],
+  )
+
+  // Toggle stage audio playback
+  const toggleStageAudio = useCallback(
+    (audioUrl: string, audioId: string) => {
+      const isCurrentlyPlaying = playingAudioId === audioId
+      const nextPlaying = !isCurrentlyPlaying
+      setPlayingAudioId(nextPlaying ? audioId : null)
+
+      broadcast({
+        type: 'AUDIO_ACTION',
+        payload: {
+          action: nextPlaying ? 'play' : 'pause',
+          id: audioId,
+          url: audioUrl,
+          timestamp: Date.now(),
+        },
+      })
+
+      sendStageNetworkSync({
+        audioState: {
+          playing: nextPlaying,
+          audioId: nextPlaying ? audioId : null,
+          audioUrl: audioUrl,
+          timestamp: Date.now(),
+        },
+      })
+
+      sound.tap()
+    },
+    [broadcast, playingAudioId],
   )
 
   // Toggle reveal
@@ -458,13 +501,61 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                       <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
                     </div>
                     <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
+
+                    {/* Stage Audio Remote Trigger */}
+                    <div className="p-2.5 sm:p-3 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/40 flex items-center justify-between gap-2 shadow-inner">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-black shrink-0 transition-all ${
+                            playingAudioId === currentSlideObj.data.id
+                              ? 'bg-emerald-500 text-[#081a2e] animate-pulse'
+                              : 'bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40'
+                          }`}
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[10px] text-[#7dd3fc] font-bold block uppercase tracking-wider">
+                            Stage Sound System
+                          </span>
+                          <span className="text-xs font-black text-white truncate block">
+                            {playingAudioId === currentSlideObj.data.id
+                              ? '🔊 Playing on Stage...'
+                              : 'Ready to Play on Stage'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => toggleStageAudio(currentSlideObj.data.audioUrl, currentSlideObj.data.id)}
+                        className={`px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                          playingAudioId === currentSlideObj.data.id
+                            ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
+                            : 'bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e]'
+                        }`}
+                      >
+                        {playingAudioId === currentSlideObj.data.id ? (
+                          <>
+                            <Pause className="w-4 h-4" /> Pause Audio
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-4 h-4 fill-current" /> Play on Stage
+                          </>
+                        )}
+                      </button>
+                    </div>
+
                     <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
-                      <Volume2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
                         <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">Speaker / Person:</span>
                         <strong className="text-white text-sm">{currentSlideObj.data.answer}</strong>
                         {currentSlideObj.data.quote && (
                           <p className="text-emerald-200 italic text-xs mt-1">"{currentSlideObj.data.quote}"</p>
+                        )}
+                        {currentSlideObj.data.explanation && (
+                          <p className="text-emerald-200/90 text-xs font-normal mt-1">{currentSlideObj.data.explanation}</p>
                         )}
                       </div>
                     </div>

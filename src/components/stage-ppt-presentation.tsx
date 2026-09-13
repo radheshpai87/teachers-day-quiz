@@ -139,6 +139,45 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   // Broadcast channel for sync with /stage/control
   const channelRef = useRef<BroadcastChannel | null>(null)
+  const lastAudioTimestamp = useRef<number>(0)
+
+  const pauseAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+    setPlayingAudioId(null)
+  }, [])
+
+  const playAudio = useCallback((url: string, id: string) => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+    const audio = new Audio(url)
+    audioRef.current = audio
+    setPlayingAudioId(id)
+
+    audio.ontimeupdate = () => {
+      setAudioProgress(audio.currentTime)
+      setAudioDuration(audio.duration || 0)
+    }
+
+    audio.onended = () => {
+      setPlayingAudioId(null)
+      setAudioProgress(0)
+      sendStageNetworkSync({
+        audioState: {
+          playing: false,
+          audioId: null,
+          timestamp: Date.now(),
+        },
+      })
+    }
+
+    audio.play().catch((err) => {
+      console.error('Audio play error:', err)
+      setPlayingAudioId(null)
+    })
+  }, [])
 
   useEffect(() => {
     const channel = getStageBroadcastChannel()
@@ -157,6 +196,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
           if (payload.seconds !== undefined) setRapidSeconds(payload.seconds)
+        } else if (type === 'AUDIO_ACTION') {
+          const { action, id, url } = payload
+          if (action === 'play' && url && id) {
+            playAudio(url, id)
+          } else if (action === 'pause' || action === 'stop') {
+            pauseAudio()
+          }
         }
       }
     }
@@ -193,6 +239,17 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           if (typeof state.timerRunning === 'boolean') {
             setTimerRunning(state.timerRunning)
           }
+          if (state.audioState) {
+            const { playing, audioId, audioUrl, timestamp } = state.audioState
+            if (timestamp && timestamp > lastAudioTimestamp.current) {
+              lastAudioTimestamp.current = timestamp
+              if (playing && audioUrl && audioId) {
+                playAudio(audioUrl, audioId)
+              } else {
+                pauseAudio()
+              }
+            }
+          }
         } catch {}
       }
     } catch {}
@@ -202,7 +259,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       if (es) es.close()
       window.removeEventListener('storage', handleStorage)
     }
-  }, [])
+  }, [playAudio, pauseAudio])
 
   // Broadcast helper
   const broadcast = useCallback((msg: StageSyncMessage) => {
@@ -415,40 +472,28 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   }
 
   // Audio Playback toggle
-  const togglePlayAudio = (url: string, id: string) => {
-    if (playingAudioId === id && audioRef.current) {
-      if (audioRef.current.paused) {
-        audioRef.current.play()
-      } else {
-        audioRef.current.pause()
-        setPlayingAudioId(null)
+  const togglePlayAudio = useCallback(
+    (url: string, id: string) => {
+      if (playingAudioId === id && audioRef.current) {
+        if (audioRef.current.paused) {
+          audioRef.current.play().catch(() => {})
+          setPlayingAudioId(id)
+          broadcast({ type: 'AUDIO_ACTION', payload: { action: 'play', id, url, timestamp: Date.now() } })
+          sendStageNetworkSync({ audioState: { playing: true, audioId: id, audioUrl: url, timestamp: Date.now() } })
+        } else {
+          pauseAudio()
+          broadcast({ type: 'AUDIO_ACTION', payload: { action: 'pause', id, url, timestamp: Date.now() } })
+          sendStageNetworkSync({ audioState: { playing: false, audioId: null, timestamp: Date.now() } })
+        }
+        return
       }
-      return
-    }
 
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
-
-    const audio = new Audio(url)
-    audioRef.current = audio
-    setPlayingAudioId(id)
-
-    audio.ontimeupdate = () => {
-      setAudioProgress(audio.currentTime)
-      setAudioDuration(audio.duration || 0)
-    }
-
-    audio.onended = () => {
-      setPlayingAudioId(null)
-      setAudioProgress(0)
-    }
-
-    audio.play().catch((err) => {
-      console.error('Audio play error:', err)
-      setPlayingAudioId(null)
-    })
-  }
+      playAudio(url, id)
+      broadcast({ type: 'AUDIO_ACTION', payload: { action: 'play', id, url, timestamp: Date.now() } })
+      sendStageNetworkSync({ audioState: { playing: true, audioId: id, audioUrl: url, timestamp: Date.now() } })
+    },
+    [playingAudioId, playAudio, pauseAudio, broadcast],
+  )
 
   // Keyboard navigation
   useEffect(() => {
