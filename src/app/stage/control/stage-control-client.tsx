@@ -39,7 +39,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isRevealed, setIsRevealed] = useState(false)
   const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
-  const [rapidSeconds, setRapidSeconds] = useState(40)
+  const [rapidSeconds, setRapidSeconds] = useState(60)
   const [timerRunning, setTimerRunning] = useState(false)
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
   const [mcqOptionStep, setMcqOptionStep] = useState(0)
@@ -86,6 +86,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
           setPlayingAudioId(null)
+          setTimerRunning(false)
+          setRapidSeconds(60)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
           setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
         } else if (type === 'UPDATE_FINALISTS') {
@@ -275,14 +277,19 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setCurrentSlide(clamped)
       setIsRevealed(false)
       setPlayingAudioId(null)
+      setTimerRunning(false)
+      setRapidSeconds(60)
       setMcqOptionStep(0)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
       sendStageNetworkSync({
         slideIndex: clamped,
         isRevealed: false,
         mcqOptionStep: 0,
         rapidQuestionIdx: 0,
+        timerRunning: false,
+        rapidSeconds: 60,
         audioState: { playing: false, audioId: null, timestamp: Date.now() },
       })
       sound.tap()
@@ -446,10 +453,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   }, [broadcast, rapidSeconds])
 
   const resetTimer = useCallback(() => {
-    setRapidSeconds(40)
+    setRapidSeconds(60)
     setTimerRunning(false)
-    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 40 } })
-    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 40 })
+    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60 })
   }, [broadcast])
 
   // Score adjustment helper
@@ -850,7 +857,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                             timerRunning ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                           }`}
                         >
-                          {timerRunning ? 'Pause' : 'Start 40s'}
+                          {timerRunning ? 'Pause' : 'Start 60s'}
                         </button>
                         <button
                           onClick={resetTimer}

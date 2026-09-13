@@ -117,7 +117,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   // Rapid Fire State
   const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
-  const [rapidSeconds, setRapidSeconds] = useState(40)
+  const [rapidSeconds, setRapidSeconds] = useState(60)
   const [timerRunning, setTimerRunning] = useState(false)
   const [rapidRevealMode, setRapidRevealMode] = useState<Record<number, boolean>>({})
 
@@ -196,6 +196,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         if (type === 'CHANGE_SLIDE') {
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
+          setTimerRunning(false)
+          setRapidSeconds(60)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
           setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
         } else if (type === 'UPDATE_FINALISTS') {
@@ -439,7 +441,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     setAudioProgress(0)
   }, [currentSlide])
 
-  // Rapid Fire Timer Interval (40s)
+  // Rapid Fire Timer Interval (60s)
   useEffect(() => {
     let interval: NodeJS.Timeout
     if (timerRunning && rapidSeconds > 0) {
@@ -467,15 +469,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       const duration = 5 * 1000
       const end = Date.now() + duration
       const interval: NodeJS.Timeout = setInterval(() => {
-        if (Date.now() > end) return clearInterval(interval)
+        if (Date.now() > end) {
+          return clearInterval(interval)
+        }
         confetti({
           startVelocity: 40,
           spread: 360,
           ticks: 80,
-          origin: { x: Math.random(), y: Math.random() * 0.4 },
-          colors: ['#00d2ff', '#fbbf24', '#10b981', '#38bdf8', '#f43f5e', '#ffffff'],
+          origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2,
+          },
         })
-      }, 300)
+      }, 350)
       return () => clearInterval(interval)
     }
   }, [slide?.type])
@@ -489,21 +495,26 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       sendStageNetworkSync({ rapidQuestionIdx: idx, isRevealed: false })
       sound.tap()
     },
-    [broadcast],
+    [broadcast]
   )
 
-  // Navigation handlers
+  // Next / Prev slide handlers
   const nextSlide = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed) {
-      const nextStep = mcqOptionStep + 1
-      setMcqOptionStep(nextStep)
-      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
-      sendStageNetworkSync({ mcqOptionStep: nextStep })
-      sound.tap()
-      return
+
+    // Multi-step reveals for Round 1 MCQ (Step through options 1, 2, 3, 4 one-by-one)
+    if (currentSlideObj?.type === 'r1_mcq' && !isRevealed) {
+      if (mcqOptionStep < 4) {
+        const nextStep = mcqOptionStep + 1
+        setMcqOptionStep(nextStep)
+        broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
+        sendStageNetworkSync({ mcqOptionStep: nextStep })
+        sound.tap()
+        return
+      }
     }
 
+    // Step-by-step questions for Round 3 Rapid Fire (advance through Q1->Q2->Q3 without revealing answer)
     if (currentSlideObj?.type === 'r3_rapid') {
       const qCount = currentSlideObj.data?.questions?.length || 5
       if (!isRevealed) {
@@ -528,10 +539,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       const nextIdx = currentSlide + 1
       setCurrentSlide(nextIdx)
       setIsRevealed(false)
+      setTimerRunning(false)
+      setRapidSeconds(60)
       setMcqOptionStep(0)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
-      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0, rapidQuestionIdx: 0 })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: 60 })
       sound.tap()
     }
   }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
@@ -570,10 +584,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       const targetStep = prevSlideObj?.type === 'r1_mcq' ? 4 : 0
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
+      setTimerRunning(false)
+      setRapidSeconds(60)
       setMcqOptionStep(targetStep)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep, rapidQuestionIdx: 0 } })
-      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep, rapidQuestionIdx: 0 })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: 60 })
       sound.tap()
     }
   }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
@@ -785,7 +802,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <div className="p-4 rounded-2xl notebook-card text-center">
                     <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 3</div>
                     <div className="text-lg font-black text-[#fbbf24]">Rapid Fire</div>
-                    <div className="text-xs text-slate-300 font-semibold">40s • Step-by-Step • +10 pts</div>
+                    <div className="text-xs text-slate-300 font-semibold">60s • Step-by-Step • +10 pts</div>
                   </div>
                 </div>
 
@@ -1326,7 +1343,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       })}
                     </div>
 
-                    {/* 40s Acoustic Timer Pill */}
+                    {/* 60s Acoustic Timer Pill */}
                     <div className="flex items-center gap-2.5">
                       <div
                         className={`flex items-center gap-2 px-4 py-1.5 rounded-full border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] font-mono font-black text-base transition ${
@@ -1361,13 +1378,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       <button
                         onClick={() => {
                           setTimerRunning(false)
-                          setRapidSeconds(40)
+                          setRapidSeconds(60)
                           setRapidQuestionIdx(0)
-                          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 40 } })
-                          sendStageNetworkSync({ timerRunning: false, rapidSeconds: 40, rapidQuestionIdx: 0 })
+                          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+                          sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60, rapidQuestionIdx: 0 })
                         }}
                         className="p-2 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] transition"
-                        title="Reset 40s Timer"
+                        title="Reset 60s Timer"
                       >
                         <RotateCcw className="w-4 h-4" />
                       </button>
@@ -1404,7 +1421,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                             <div className="mt-8 flex items-center justify-between w-full pt-4 border-t border-[#00d2ff]/20 text-xs text-[#7dd3fc] font-bold">
                               <span>Target Finalist: <strong className="text-white text-sm">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong></span>
-                              <span>40 Seconds Total • +10 Pts per Correct</span>
+                              <span>60 Seconds Total • +10 Pts per Correct</span>
                             </div>
                           </div>
                         </div>

@@ -32,7 +32,7 @@ if (!global.__stageState) {
     isRevealed: false,
     mcqOptionStep: 0,
     rapidQuestionIdx: 0,
-    rapidSeconds: 40,
+    rapidSeconds: 60,
     timerRunning: false,
     finalists: [
       { id: 'f1', name: 'Finalist 1', avatarSeed: 'finalist-1', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },
