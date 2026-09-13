@@ -1,21 +1,16 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import {
-  STAGE_RULES,
-  ROUND_1_MCQ,
-  ROUND_2_AUDIO_IMAGE,
-  ROUND_3_RAPID_FIRE,
-  ROUND_4_FASTEST_FINGERS,
-  TIE_BREAKER_QUESTIONS,
-  type StageMcqQuestion,
-  type StageMediaQuestion,
-  type RapidFireQuestion,
-  type FastestFingerQuestion,
+import type {
+  StageData,
+  StageMcqQuestion,
+  StageImageQuestion,
+  StageAudioQuestion,
+  RapidFireSet,
 } from '@/data/stage-rounds-data'
 import { sound } from '@/lib/client/sound'
 import { ParticipantAvatar } from '@/components/participant-avatar'
@@ -28,6 +23,7 @@ import {
   Users,
   Timer as TimerIcon,
   Play,
+  Pause,
   RotateCcw,
   Eye,
   EyeOff,
@@ -44,9 +40,14 @@ import {
   Radio,
   Flame,
   X,
-  Paperclip,
   CheckCircle2,
   AlertTriangle,
+  Lightbulb,
+  Music,
+  ImageIcon,
+  ArrowRight,
+  ShieldCheck,
+  FlameKindling,
 } from 'lucide-react'
 
 export interface StageFinalist {
@@ -71,36 +72,158 @@ const DEFAULT_FINALISTS: StageFinalist[] = [
   { id: 'f6', name: 'Finalist 6', avatarSeed: 'finalist-6', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },
 ]
 
-export function StagePptPresentation({ initialFinalists }: { initialFinalists?: StageFinalist[] }) {
+interface SlideItem {
+  type:
+    | 'error'
+    | 'title'
+    | 'rules'
+    | 'finalists'
+    | 'round_intro'
+    | 'r1_mcq'
+    | 'r2_image'
+    | 'r2_audio'
+    | 'r3_rapid'
+    | 'r4_intro'
+    | 'r4_buzzer'
+    | 'tie_breaker'
+    | 'podium'
+  title: string
+  roundNum?: number
+  data?: any
+  qIndex?: number
+  totalInRound?: number
+}
+
+export function StagePptPresentation({ stageData }: { stageData: StageData | null }) {
   // Slide Management
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showScoreboard, setShowScoreboard] = useState(false)
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({})
 
-  // Rapid Fire Timer (15s)
-  const [rapidSeconds, setRapidSeconds] = useState(15)
+  // Rapid Fire State
+  const [rapidSetIndex, setRapidSetIndex] = useState(0)
+  const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
+  const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
+  const [rapidRevealMode, setRapidRevealMode] = useState<Record<number, boolean>>({})
+  const [rapidAnswerAwarded, setRapidAnswerAwarded] = useState<Record<string, boolean>>({})
 
-  // Stage Scoreboard State for 6 Finalists (Persisted in localStorage)
+  // Audio Playback State for Round 2 Audio Questions
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
+  const [audioProgress, setAudioProgress] = useState(0)
+  const [audioDuration, setAudioDuration] = useState(0)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Stage Scoreboard State (Persisted in localStorage)
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('ingenium_stage_finalists_v1')
+        const saved = localStorage.getItem('ingenium_stage_finalists_v2')
         if (saved) return JSON.parse(saved)
       } catch {}
     }
-    return initialFinalists && initialFinalists.length === 6 ? initialFinalists : DEFAULT_FINALISTS
+    return DEFAULT_FINALISTS
   })
 
   // Save finalists to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('ingenium_stage_finalists_v1', JSON.stringify(finalists))
+      localStorage.setItem('ingenium_stage_finalists_v2', JSON.stringify(finalists))
     } catch {}
   }, [finalists])
 
-  // Rapid Fire Timer Effect
+  // Slide list definition
+  const slides = useMemo<SlideItem[]>(() => {
+    if (!stageData) {
+      return [{ type: 'error', title: 'Data Missing' }]
+    }
+
+    const list: SlideItem[] = []
+
+    // 0: Title
+    list.push({ type: 'title', title: stageData.title })
+    // 1: Rules
+    list.push({ type: 'rules', title: 'Official Stage Rules' })
+    // 2: Finalists Intro
+    list.push({ type: 'finalists', title: 'Meet the Top 6 Qualifiers' })
+
+    // Round 1: MCQ (12 Questions)
+    list.push({ type: 'round_intro', title: stageData.round1.name, roundNum: 1, data: stageData.round1 })
+    stageData.round1.questions.forEach((q, idx) => {
+      list.push({
+        type: 'r1_mcq',
+        title: `Round 1: Question ${idx + 1} of ${stageData.round1.questions.length}`,
+        roundNum: 1,
+        data: q,
+        qIndex: idx,
+        totalInRound: stageData.round1.questions.length,
+      })
+    })
+
+    // Round 2: Audio & Image
+    list.push({ type: 'round_intro', title: stageData.round2.name, roundNum: 2, data: stageData.round2 })
+    // Image questions (6)
+    stageData.round2.images.forEach((imgQ, idx) => {
+      list.push({
+        type: 'r2_image',
+        title: `Round 2 — Image ${idx + 1} of ${stageData.round2.images.length}`,
+        roundNum: 2,
+        data: imgQ,
+        qIndex: idx,
+        totalInRound: stageData.round2.images.length,
+      })
+    })
+    // Audio questions (6)
+    stageData.round2.audios.forEach((audQ, idx) => {
+      list.push({
+        type: 'r2_audio',
+        title: `Round 2 — Audio ${idx + 1} of ${stageData.round2.audios.length}`,
+        roundNum: 2,
+        data: audQ,
+        qIndex: idx,
+        totalInRound: stageData.round2.audios.length,
+      })
+    })
+
+    // Round 3: Rapid Fire (6 Sets for 6 Participants)
+    list.push({ type: 'round_intro', title: stageData.round3.name, roundNum: 3, data: stageData.round3 })
+    stageData.round3.sets.forEach((set, idx) => {
+      list.push({
+        type: 'r3_rapid',
+        title: `Round 3 — Rapid Fire: ${set.participantLabel} (Set ${set.setNumber})`,
+        roundNum: 3,
+        data: set,
+        qIndex: idx,
+        totalInRound: stageData.round3.sets.length,
+      })
+    })
+
+    // Round 4: Fastest Fingers First
+    list.push({ type: 'r4_intro', title: stageData.round4.name, roundNum: 4, data: stageData.round4 })
+    list.push({ type: 'r4_buzzer', title: 'Round 4 — Live Buzzer Arena', roundNum: 4, data: stageData.round4 })
+
+    // Tie Breaker & Podium
+    list.push({ type: 'tie_breaker', title: 'Tie-Breaker Arena' })
+    list.push({ type: 'podium', title: 'Grand Finale — Victory Ceremony' })
+
+    return list
+  }, [stageData])
+
+  // Clamp current slide
+  const slide = slides[currentSlide] || slides[0]
+
+  // Stop audio on slide change
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+    setPlayingAudioId(null)
+    setAudioProgress(0)
+  }, [currentSlide])
+
+  // Rapid Fire Timer Interval (40s)
   useEffect(() => {
     let interval: NodeJS.Timeout
     if (timerRunning && rapidSeconds > 0) {
@@ -108,10 +231,10 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
         setRapidSeconds((prev) => {
           if (prev <= 1) {
             setTimerRunning(false)
-            sound.buzzer()
+            sound.wrong()
             return 0
           }
-          if (prev <= 4) {
+          if (prev === 11 || prev === 6) {
             sound.tick()
           }
           return prev - 1
@@ -121,152 +244,51 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
     return () => clearInterval(interval)
   }, [timerRunning, rapidSeconds])
 
-  // Build Slides Array
-  const slides = useMemo(() => {
-    const list: Array<{
-      id: string
-      type: 'TITLE' | 'RULES' | 'FINALISTS_INTRO' | 'ROUND_INTRO' | 'MCQ' | 'MEDIA' | 'RAPID_SET' | 'FASTEST' | 'TIE' | 'PODIUM'
-      title?: string
-      roundNumber?: number
-      roundName?: string
-      data?: any
-    }> = []
-
-    // 1. Title Slide
-    list.push({ id: 'slide-title', type: 'TITLE' })
-
-    // 2. Official Rules Slide
-    list.push({ id: 'slide-rules', type: 'RULES' })
-
-    // 3. Meet Finalists Slide
-    list.push({ id: 'slide-finalists', type: 'FINALISTS_INTRO' })
-
-    // 4. Round 1 Intro (MCQ)
-    list.push({
-      id: 'r1-intro',
-      type: 'ROUND_INTRO',
-      roundNumber: 1,
-      roundName: 'Round 1 — MCQ',
-      data: {
-        title: 'Multiple Choice Questions (MCQ)',
-        rules: [
-          'Direct Question to Participant: +5 Points for Correct Answer',
-          'No Negative Marking in Round 1',
-          '30 Seconds Think Time per Question',
-        ],
-        icon: HelpCircle,
-        color: 'from-blue-600 to-cyan-600',
-      },
-    })
-
-    // Round 1 Question Slides
-    ROUND_1_MCQ.forEach((q) => {
-      list.push({ id: `r1-q-${q.number}`, type: 'MCQ', roundNumber: 1, data: q })
-    })
-
-    // 5. Round 2 Intro (Audio & Image)
-    list.push({
-      id: 'r2-intro',
-      type: 'ROUND_INTRO',
-      roundNumber: 2,
-      roundName: 'Round 2 — Audio & Image',
-      data: {
-        title: 'Audio & Image Clue Round',
-        rules: [
-          'Direct Correct: +10 Points | Direct Wrong: −5 Points',
-          'Passed Correct: +5 Points | Passed Wrong: 0 Points',
-          'Visual & Acoustic Clues for Historic Engineering Milestones',
-        ],
-        icon: Radio,
-        color: 'from-amber-500 to-orange-600',
-      },
-    })
-
-    // Round 2 Question Slides
-    ROUND_2_AUDIO_IMAGE.forEach((q) => {
-      list.push({ id: `r2-q-${q.number}`, type: 'MEDIA', roundNumber: 2, data: q })
-    })
-
-    // 6. Round 3 Intro (Rapid Fire)
-    list.push({
-      id: 'r3-intro',
-      type: 'ROUND_INTRO',
-      roundNumber: 3,
-      roundName: 'Round 3 — Rapid Fire',
-      data: {
-        title: 'Rapid Fire Round',
-        rules: [
-          '5 Questions per Participant',
-          '15 Seconds Timer per Question (No Options)',
-          'Correct Answer: +10 Points | Pass allowed (0 pts)',
-        ],
-        icon: Flame,
-        color: 'from-rose-600 to-red-600',
-      },
-    })
-
-    // Round 3 Participant Question Sets
-    ROUND_3_RAPID_FIRE.forEach((set) => {
-      list.push({ id: `r3-p-${set.participantNumber}`, type: 'RAPID_SET', roundNumber: 3, data: set })
-    })
-
-    // 7. Round 4 Intro (Fastest Fingers First)
-    list.push({
-      id: 'r4-intro',
-      type: 'ROUND_INTRO',
-      roundNumber: 4,
-      roundName: 'Round 4 — Fastest Fingers First',
-      data: {
-        title: 'Fastest Fingers First (Buzzer Round)',
-        rules: [
-          'Open to All 6 Finalists — Fastest to Buzz Gets the Floor',
-          'Correct Answer: +15 Points',
-          'Wrong Answer after Buzzing: −5 Points',
-        ],
-        icon: Zap,
-        color: 'from-purple-600 to-pink-600',
-      },
-    })
-
-    // Round 4 Question Slides
-    ROUND_4_FASTEST_FINGERS.forEach((q) => {
-      list.push({ id: `r4-q-${q.number}`, type: 'FASTEST', roundNumber: 4, data: q })
-    })
-
-    // 8. Tie Breaker Slide
-    list.push({
-      id: 'slide-tie-breaker',
-      type: 'TIE',
-      data: TIE_BREAKER_QUESTIONS,
-    })
-
-    // 9. Grand Finale Winner Podium Slide
-    list.push({ id: 'slide-podium', type: 'PODIUM' })
-
-    return list
-  }, [])
-
-  const totalSlides = slides.length
-  const current = slides[currentSlide]
-
-  const nextSlide = useCallback(() => {
-    if (currentSlide < totalSlides - 1) {
-      sound.tap()
-      setCurrentSlide((prev) => prev + 1)
-      setTimerRunning(false)
-      setRapidSeconds(15)
+  // Confetti on Podium slide
+  useEffect(() => {
+    if (slide?.type === 'podium') {
+      sound.celebrate()
+      const duration = 4.5 * 1000
+      const end = Date.now() + duration
+      const interval: NodeJS.Timeout = setInterval(() => {
+        if (Date.now() > end) return clearInterval(interval)
+        confetti({
+          startVelocity: 35,
+          spread: 360,
+          ticks: 70,
+          origin: { x: Math.random(), y: Math.random() * 0.4 },
+          colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'],
+        })
+      }, 350)
+      return () => clearInterval(interval)
     }
-  }, [currentSlide, totalSlides])
+  }, [slide?.type])
+
+  // Navigation handlers
+  const nextSlide = useCallback(() => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide((prev) => prev + 1)
+      sound.tap()
+    }
+  }, [currentSlide, slides.length])
 
   const prevSlide = useCallback(() => {
     if (currentSlide > 0) {
-      sound.tap()
       setCurrentSlide((prev) => prev - 1)
-      setTimerRunning(false)
-      setRapidSeconds(15)
+      sound.tap()
     }
   }, [currentSlide])
 
+  // Toggle reveal
+  const toggleReveal = (key: string) => {
+    setRevealedAnswers((prev) => {
+      const next = !prev[key]
+      if (next) sound.correct()
+      return { ...prev, [key]: next }
+    })
+  }
+
+  // Fullscreen toggle
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {})
@@ -277,17 +299,81 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
     }
   }
 
-  const toggleAnswer = (id: string) => {
-    sound.tap()
-    setRevealedAnswers((prev) => ({ ...prev, [id]: !prev[id] }))
+  // Score adjustments
+  const adjustScore = (finalistId: string, delta: number, roundKey?: 'r1' | 'r2' | 'r3' | 'r4') => {
+    setFinalists((prev) =>
+      prev.map((f) => {
+        if (f.id !== finalistId) return f
+        const newScore = Math.max(0, f.score + delta)
+        const roundScores = { ...f.roundScores }
+        if (roundKey) {
+          roundScores[roundKey] = Math.max(0, roundScores[roundKey] + delta)
+        }
+        return { ...f, score: newScore, roundScores }
+      }),
+    )
+    if (delta > 0) sound.ting()
+    else sound.wrong()
+  }
+
+  // Rename finalist
+  const updateFinalistName = (id: string, name: string) => {
+    setFinalists((prev) => prev.map((f) => (f.id === id ? { ...f, name: name.trim() || f.name } : f)))
+  }
+
+  // Reset all scores
+  const resetScores = () => {
+    if (confirm('Are you sure you want to reset all stage scores to 0?')) {
+      setFinalists(DEFAULT_FINALISTS)
+      localStorage.removeItem('ingenium_stage_finalists_v2')
+      sound.tap()
+    }
+  }
+
+  // Audio Playback toggle
+  const togglePlayAudio = (url: string, id: string) => {
+    if (playingAudioId === id && audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play()
+      } else {
+        audioRef.current.pause()
+        setPlayingAudioId(null)
+      }
+      return
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+
+    const audio = new Audio(url)
+    audioRef.current = audio
+    setPlayingAudioId(id)
+
+    audio.ontimeupdate = () => {
+      setAudioProgress(audio.currentTime)
+      setAudioDuration(audio.duration || 0)
+    }
+
+    audio.onended = () => {
+      setPlayingAudioId(null)
+      setAudioProgress(0)
+    }
+
+    audio.play().catch((err) => {
+      console.error('Audio play error:', err)
+      setPlayingAudioId(null)
+    })
   }
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (['input', 'textarea'].includes((e.target as HTMLElement)?.tagName?.toLowerCase())) {
+        return
+      }
 
-      if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
         e.preventDefault()
         nextSlide()
       } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
@@ -299,635 +385,993 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
       } else if (e.key === 's' || e.key === 'S') {
         e.preventDefault()
         setShowScoreboard((prev) => !prev)
-      } else if (e.key === 't' || e.key === 'T') {
-        // Toggle timer in Rapid Fire
-        if (current.type === 'RAPID_SET') {
-          e.preventDefault()
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault()
+        const revealKey = `slide_${currentSlide}`
+        toggleReveal(revealKey)
+      } else if (e.key === ' ') {
+        e.preventDefault()
+        if (slide.type === 'r3_rapid') {
           setTimerRunning((prev) => !prev)
+        } else {
+          nextSlide()
         }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [nextSlide, prevSlide, current.type])
+  }, [currentSlide, nextSlide, prevSlide, slide?.type])
 
-  // Fire confetti when reaching the Grand Podium slide
-  useEffect(() => {
-    if (current?.type === 'PODIUM') {
-      sound.celebrate()
-      confetti({
-        particleCount: 120,
-        spread: 100,
-        origin: { y: 0.6 },
-        colors: ['#00d2ff', '#fb8c00', '#43a047', '#e53935', '#fbc02d'],
-      })
-    }
-  }, [current])
-
-  // Score modifier for Stage Scoreboard
-  const updateScore = (finalistId: string, delta: number) => {
-    sound.ting()
-    setFinalists((prev) =>
-      prev.map((f) => (f.id === finalistId ? { ...f, score: Math.max(0, f.score + delta) } : f)),
-    )
-  }
-
-  const updateFinalistName = (finalistId: string, name: string) => {
-    setFinalists((prev) => prev.map((f) => (f.id === finalistId ? { ...f, name } : f)))
-  }
-
-  const resetAllScores = () => {
-    if (confirm('Reset all stage finalists scores to 0?')) {
-      setFinalists((prev) =>
-        prev.map((f) => ({ ...f, score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } })),
-      )
-    }
-  }
-
-  // Sorted finalists by score for the scoreboard
+  // Ranked Finalists
   const rankedFinalists = useMemo(() => {
     return [...finalists].sort((a, b) => b.score - a.score)
   }, [finalists])
 
-  return (
-    <div className="fixed inset-0 bg-[#061424] text-white flex flex-col justify-between select-none overflow-hidden font-sans">
-      {/* Background Cyber Grid Aesthetic */}
-      <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(to_right,#00d2ff_1px,transparent_1px),linear-gradient(to_bottom,#00d2ff_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+  if (!stageData) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-8 text-center">
+        <AlertTriangle className="w-16 h-16 text-amber-500 mb-4 animate-bounce" />
+        <h1 className="text-3xl font-bold mb-2">Stage Data Encrypted / Key Required</h1>
+        <p className="text-slate-400 max-w-md mb-6">
+          Please make sure the encryption key <code className="text-amber-400">QUIZ_SEED_KEY</code> is configured in your environment to unlock the stage finale questions.
+        </p>
+        <Link href="/" className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold transition">
+          Return Home
+        </Link>
+      </div>
+    )
+  }
 
-      {/* TOP PRESENTATION BAR */}
-      <header className="relative z-30 w-full h-16 bg-[#081a2e]/90 backdrop-blur-md border-b-2 border-[#00d2ff]/40 px-4 sm:px-8 flex items-center justify-between">
-        {/* Left: Branding & Event Title */}
-        <div className="flex items-center gap-4">
+  const isRevealed = !!revealedAnswers[`slide_${currentSlide}`]
+
+  return (
+    <div className="relative w-screen h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden font-sans select-none">
+      {/* Background Animated Gradient Mesh */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-[25%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-blue-600/10 blur-[140px]" />
+        <div className="absolute top-[30%] -right-[15%] w-[55vw] h-[55vw] rounded-full bg-indigo-600/10 blur-[150px]" />
+        <div className="absolute -bottom-[20%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-emerald-600/10 blur-[130px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(2,6,23,0.7)_100%)]" />
+      </div>
+
+      {/* Presentation Top Bar */}
+      <header className="relative z-20 flex items-center justify-between px-6 py-3 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md">
+        <div className="flex items-center gap-3">
           <Image
             src="/yenepoya-school-engineering-and-technology.svg"
-            alt="Yenepoya School of Engineering and Technology"
-            width={180}
-            height={40}
+            alt="Yenepoya School of Engineering & Technology"
+            width={140}
+            height={36}
+            className="h-8 w-auto object-contain brightness-110"
             priority
-            className="h-8 sm:h-9 w-auto object-contain"
           />
-          <div className="hidden md:flex flex-col border-l-2 border-[#00d2ff]/30 pl-3">
-            <span className="font-black text-sm text-[#00d2ff] uppercase tracking-wider">
-              INGENIUM 2026 • Live Stage Quiz
+          <div className="h-5 w-px bg-slate-800" />
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950">
+              Live Stage Finale
             </span>
-            <span className="text-[11px] text-white/70 font-semibold">
-              Celebrating National Engineers' Day
+            <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+              Slide {currentSlide + 1} / {slides.length}
             </span>
           </div>
         </div>
 
-        {/* Center: Slide Jump Navigator */}
-        <div className="hidden lg:flex items-center gap-1.5 bg-[#0e2e4e] px-3 py-1 rounded-xl border border-[#00d2ff]/40 text-xs font-bold">
-          <span>Slide {currentSlide + 1} of {totalSlides}</span>
-          <span className="text-[#00d2ff] font-black">•</span>
-          <span className="text-[#00d2ff] font-black truncate max-w-[200px]">
-            {current.roundName || current.type}
-          </span>
-        </div>
+        {/* Action Controls */}
+        <div className="flex items-center gap-2">
+          {/* Quick Finalists Score Ticker */}
+          <div className="hidden lg:flex items-center gap-2 mr-2 px-3 py-1 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <div className="flex items-center gap-3">
+              {rankedFinalists.slice(0, 3).map((f, i) => (
+                <div key={f.id} className="flex items-center gap-1.5 font-medium">
+                  <span className={i === 0 ? 'text-amber-400' : i === 1 ? 'text-slate-300' : 'text-amber-600'}>
+                    #{i + 1}
+                  </span>
+                  <span className="text-slate-200 max-w-[80px] truncate">{f.name}:</span>
+                  <span className="font-mono font-bold text-emerald-400">{f.score}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {/* Right: Quick Action Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Toggle Scoreboard Button */}
           <button
-            type="button"
             onClick={() => setShowScoreboard((prev) => !prev)}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 transition-all font-black text-xs cursor-pointer shadow-[2px_2px_0px_#04101d] ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
               showScoreboard
-                ? 'bg-yellow-400 text-[#081a2e] border-[#081a2e]'
-                : 'bg-[#0e2e4e] text-yellow-300 border-yellow-400/50 hover:border-yellow-400'
+                ? 'bg-amber-500 text-slate-950 border-amber-400'
+                : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
             }`}
+            title="Toggle Finalists Scoreboard (Key: S)"
           >
-            <Trophy className="w-4 h-4" />
-            <span className="hidden sm:inline">Stage Scoreboard</span>
+            <Trophy className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Scoreboard</span> (S)
           </button>
 
-          {/* Fullscreen Toggle */}
           <button
-            type="button"
             onClick={toggleFullscreen}
-            className="p-2 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 hover:border-[#00d2ff] text-[#00d2ff] transition-all cursor-pointer"
-            title="Toggle Fullscreen (F)"
+            className="p-1.5 rounded-lg bg-slate-900/80 text-slate-300 border border-slate-700 hover:bg-slate-800 transition"
+            title="Toggle Fullscreen (Key: F)"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
         </div>
       </header>
 
-      {/* MAIN SLIDE STAGE CONTENT */}
-      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto p-4 sm:p-8 flex flex-col justify-center items-center overflow-y-auto">
+      {/* Main Slide Canvas */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 md:p-10 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            initial={{ opacity: 0, scale: 0.98, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: -10 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="w-full h-full flex flex-col justify-center items-center"
+            exit={{ opacity: 0, scale: 1.01, y: -8 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="w-full max-w-6xl h-full flex flex-col justify-center"
           >
-            {/* 1. TITLE SLIDE */}
-            {current.type === 'TITLE' && (
-              <div className="text-center space-y-6 max-w-4xl py-6">
-                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#00d2ff]/15 border-2 border-[#00d2ff] text-[#00d2ff] font-black text-sm uppercase tracking-widest animate-pulse">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Grand Finale • Live Stage Showdown</span>
-                </div>
+            {/* SLIDE TYPE: Title */}
+            {slide.type === 'title' && (
+              <div className="text-center flex flex-col items-center justify-center py-8">
+                <motion.div
+                  initial={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.1, duration: 0.5 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-semibold tracking-wider uppercase mb-6"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  Yenepoya School of Engineering & Technology
+                </motion.div>
 
-                <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-tight">
-                  INGENIUM QUIZ 2026
+                <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-4 bg-gradient-to-r from-blue-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent drop-shadow-sm">
+                  {stageData.title}
                 </h1>
 
-                <p className="text-lg sm:text-2xl text-cyan-300 font-extrabold max-w-2xl mx-auto leading-relaxed">
-                  Honoring Sir M. Visvesvaraya & The Spirit of Engineering Innovation
+                <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-medium mb-10 leading-relaxed">
+                  {stageData.subtitle}
                 </p>
 
-                <div className="pt-4 flex items-center justify-center gap-3 flex-wrap">
-                  <span className="px-4 py-2 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/40 text-sm font-black text-white">
-                    🎯 Top 6 Finalists
-                  </span>
-                  <span className="px-4 py-2 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/40 text-sm font-black text-white">
-                    ⚡ 4 High-Octane Rounds
-                  </span>
-                  <span className="px-4 py-2 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/40 text-sm font-black text-white">
-                    🏆 1 Champion Trophy
-                  </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl mb-10">
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
+                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 1</div>
+                    <div className="text-lg font-bold text-blue-400">MCQ Arena</div>
+                    <div className="text-xs text-slate-500">+5 pts • No Negative</div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
+                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 2</div>
+                    <div className="text-lg font-bold text-indigo-400">Audio & Image</div>
+                    <div className="text-xs text-slate-500">+10 / −5 • Pass +5</div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
+                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 3</div>
+                    <div className="text-lg font-bold text-amber-400">Rapid Fire</div>
+                    <div className="text-xs text-slate-500">40s • 5 Qs • +10 pts</div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
+                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 4</div>
+                    <div className="text-lg font-bold text-rose-400">Fastest Fingers</div>
+                    <div className="text-xs text-slate-500">+15 / −5 on Buzz</div>
+                  </div>
                 </div>
+
+                <button
+                  onClick={nextSlide}
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg font-bold shadow-lg shadow-blue-500/25 transition-transform active:scale-95"
+                >
+                  Start Stage Presentation <ArrowRight className="w-5 h-5" />
+                </button>
               </div>
             )}
 
-            {/* 2. OFFICIAL RULES SLIDE */}
-            {current.type === 'RULES' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e]/90 p-6 sm:p-10 rounded-3xl border-3 border-[#00d2ff] shadow-[8px_8px_0px_#04101d] space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/40 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-yellow-400 text-[#081a2e]">
-                      <AlertTriangle className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl sm:text-3xl font-black text-white">
-                        Official Stage Competition Rules
-                      </h2>
-                      <p className="text-xs sm:text-sm text-cyan-300 font-bold">
-                        Please read carefully before the round commences
-                      </p>
-                    </div>
+            {/* SLIDE TYPE: Rules */}
+            {slide.type === 'rules' && (
+              <div className="flex flex-col h-full justify-center">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                    <ShieldCheck className="w-8 h-8" />
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff] font-black text-xs uppercase">
-                    Stage Finals
-                  </span>
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Regulations</span>
+                    <h2 className="text-3xl md:text-4xl font-black text-white">Official Stage Quiz Rules</h2>
+                  </div>
                 </div>
 
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm sm:text-base font-semibold text-white/95">
-                  {STAGE_RULES.map((rule, idx) => (
-                    <li
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-8">
+                  {stageData.rules.map((rule, idx) => (
+                    <motion.div
                       key={idx}
-                      className="p-3 sm:p-4 rounded-2xl bg-[#081a2e]/90 border border-[#00d2ff]/30 flex items-start gap-3 shadow-md"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="flex items-start gap-3.5 p-4 rounded-xl bg-slate-900/90 border border-slate-800/90 hover:border-slate-700 transition"
                     >
-                      <span className="w-6 h-6 rounded-lg bg-[#00d2ff] text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/10 text-blue-400 font-mono font-bold text-sm flex items-center justify-center border border-blue-500/20">
                         {idx + 1}
-                      </span>
-                      <span className="leading-snug">{rule.text}</span>
-                    </li>
+                      </div>
+                      <p className="text-slate-200 text-sm md:text-base font-medium leading-relaxed">{rule}</p>
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                  <span className="text-xs text-slate-400">Press Space or Arrow Right to proceed</span>
+                  <button
+                    onClick={nextSlide}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white transition"
+                  >
+                    Meet Finalists <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* 3. MEET THE 6 FINALISTS */}
-            {current.type === 'FINALISTS_INTRO' && (
-              <div className="w-full max-w-5xl space-y-6 text-center">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-400/20 text-yellow-300 font-black text-xs uppercase tracking-widest border border-yellow-400">
-                    <Crown className="w-4 h-4 text-yellow-400" />
-                    <span>Round 1 Qualifiers</span>
+            {/* SLIDE TYPE: Finalists Intro */}
+            {slide.type === 'finalists' && (
+              <div className="flex flex-col h-full justify-center">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
+                    <Crown className="w-4 h-4" /> Stage Qualifiers
                   </div>
-                  <h2 className="text-3xl sm:text-5xl font-black text-white">
-                    Meet the 6 Stage Finalists
-                  </h2>
+                  <h2 className="text-3xl md:text-5xl font-black text-white">Meet the Top 6 Finalists</h2>
+                  <p className="text-slate-400 text-sm mt-1">Click any name to rename qualifier</p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 pt-2">
-                  {finalists.map((f, idx) => (
-                    <div
-                      key={f.id}
-                      className="p-4 sm:p-6 rounded-3xl bg-[#0e2e4e]/90 border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d] flex flex-col items-center gap-3 text-center"
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                  {finalists.map((finalist, idx) => (
+                    <motion.div
+                      key={finalist.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.08 }}
+                      className="flex flex-col items-center p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800 hover:border-slate-700 transition group text-center"
                     >
-                      <div className="relative">
-                        <ParticipantAvatar seed={f.avatarSeed} size="xl" className="border-2 border-yellow-400 shadow-lg" />
-                        <span className="absolute -bottom-2 -right-1 px-2.5 py-0.5 rounded-full bg-yellow-400 text-[#081a2e] font-black text-xs border border-[#081a2e]">
+                      <div className="relative mb-3">
+                        <ParticipantAvatar seed={finalist.avatarSeed} size="lg" className="ring-2 ring-blue-500/40" />
+                        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center">
                           #{idx + 1}
-                        </span>
+                        </div>
                       </div>
+
                       <input
                         type="text"
-                        value={f.name}
-                        onChange={(e) => updateFinalistName(f.id, e.target.value)}
-                        className="w-full text-center font-black text-base sm:text-lg text-white bg-transparent border-b border-white/20 focus:border-[#00d2ff] outline-none px-1"
+                        defaultValue={finalist.name}
+                        onBlur={(e) => updateFinalistName(finalist.id, e.target.value)}
+                        className="w-full text-center font-bold text-slate-100 bg-transparent hover:bg-slate-800/60 focus:bg-slate-800 focus:ring-1 focus:ring-blue-500 rounded px-1 py-0.5 text-sm transition outline-none"
                       />
-                      <span className="text-xs font-black px-3 py-1 rounded-full bg-[#081a2e] text-[#00d2ff] border border-[#00d2ff]/40">
-                        Score: {f.score} pts
-                      </span>
-                    </div>
+
+                      <div className="mt-3 w-full pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                        <span className="text-slate-400">Score</span>
+                        <span className="font-mono font-bold text-emerald-400 text-sm">{finalist.score} pts</span>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
-            )}
 
-            {/* 4. ROUND INTRO SLIDE */}
-            {current.type === 'ROUND_INTRO' && (
-              <div className="w-full max-w-4xl text-center space-y-6 py-6">
-                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] font-black text-sm uppercase tracking-widest border-2 border-[#00d2ff]">
-                  <span>Round {current.roundNumber} of 4</span>
-                </div>
-
-                <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight">
-                  {current.data.title}
-                </h1>
-
-                <div className="max-w-2xl mx-auto p-6 rounded-3xl bg-[#0e2e4e] border-2 border-[#00d2ff] shadow-[6px_6px_0px_#04101d] text-left space-y-3">
-                  <h3 className="text-xs uppercase font-black tracking-wider text-yellow-300 border-b border-white/20 pb-2">
-                    Round Rules & Scoring
-                  </h3>
-                  <ul className="space-y-2 text-sm sm:text-base font-bold text-white/90">
-                    {current.data.rules.map((r: string, idx: number) => (
-                      <li key={idx} className="flex items-center gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <span>{r}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {/* 5. ROUND 1: MCQ QUESTION SLIDE */}
-            {current.type === 'MCQ' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e] p-6 sm:p-10 rounded-3xl border-3 border-[#00d2ff] shadow-[8px_8px_0px_#04101d] space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
-                  <span className="px-3 py-1 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] font-black text-xs uppercase tracking-wider">
-                    Round 1 — MCQ • Question {current.data.number}
-                  </span>
-                  <span className="text-xs font-bold text-yellow-300">
-                    +5 Points
-                  </span>
-                </div>
-
-                <h2 className="text-xl sm:text-3xl font-black text-white leading-snug">
-                  {current.data.question}
-                </h2>
-
-                {/* 4 Options Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-                  {current.data.options.map((opt: { label: string; text: string }, idx: number) => {
-                    const isRevealed = revealedAnswers[current.id]
-                    const isCorrect = idx === current.data.correctIndex
-
-                    return (
-                      <div
-                        key={idx}
-                        className={`p-4 rounded-2xl border-2 font-bold text-base sm:text-lg flex items-center gap-3 transition-all ${
-                          isRevealed && isCorrect
-                            ? 'bg-emerald-600 border-emerald-300 text-white shadow-xl scale-102 ring-4 ring-emerald-400'
-                            : 'bg-[#081a2e] border-[#00d2ff]/40 text-white'
-                        }`}
-                      >
-                        <span className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-black text-sm shrink-0">
-                          {opt.label}
-                        </span>
-                        <span className="leading-snug">{opt.text}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {/* Reveal Answer Section */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/15">
+                <div className="flex items-center justify-center">
                   <button
-                    type="button"
-                    onClick={() => toggleAnswer(current.id)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-yellow-400 text-[#081a2e] font-black text-sm hover:bg-yellow-300 transition-all cursor-pointer shadow-[3px_3px_0px_#04101d]"
+                    onClick={nextSlide}
+                    className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 font-bold text-white shadow-lg transition"
                   >
-                    {revealedAnswers[current.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    <span>{revealedAnswers[current.id] ? 'Hide Answer' : 'Reveal Correct Answer'}</span>
+                    Enter Round 1 (MCQ) <ArrowRight className="w-4 h-4" />
                   </button>
-
-                  {revealedAnswers[current.id] && (
-                    <motion.div
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="text-xs sm:text-sm text-emerald-300 font-bold bg-emerald-950/60 p-3 rounded-xl border border-emerald-500/40 flex-1 ml-0 sm:ml-4"
-                    >
-                      💡 {current.data.explanation}
-                    </motion.div>
-                  )}
                 </div>
               </div>
             )}
 
-            {/* 6. ROUND 2: AUDIO & IMAGE QUESTION SLIDE */}
-            {current.type === 'MEDIA' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e] p-6 sm:p-10 rounded-3xl border-3 border-[#00d2ff] shadow-[8px_8px_0px_#04101d] space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
-                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-black text-xs uppercase tracking-wider">
-                    Round 2 — Audio & Image • Question {current.data.number}
-                  </span>
-                  <span className="text-xs font-bold text-amber-300">
-                    Direct +10 / −5 | Pass +5 / 0
-                  </span>
+            {/* SLIDE TYPE: Round Intro */}
+            {slide.type === 'round_intro' && (
+              <div className="text-center flex flex-col items-center justify-center py-10">
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mb-6">
+                  {slide.roundNum === 1 && <HelpCircle className="w-8 h-8" />}
+                  {slide.roundNum === 2 && <Radio className="w-8 h-8" />}
+                  {slide.roundNum === 3 && <Flame className="w-8 h-8 text-amber-400" />}
                 </div>
 
-                <div className="space-y-2">
-                  <span className="text-xs font-black uppercase text-[#00d2ff] tracking-wider">
-                    {current.data.title}
-                  </span>
-                  <h2 className="text-xl sm:text-3xl font-black text-white leading-snug">
-                    {current.data.clue}
-                  </h2>
-                </div>
+                <span className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-2">
+                  Round {slide.roundNum}
+                </span>
 
-                {current.data.audioClueText && (
-                  <div className="p-4 rounded-2xl bg-[#081a2e] border-2 border-amber-400/50 text-amber-200 font-mono text-sm sm:text-base flex items-center gap-3">
-                    <Radio className="w-6 h-6 text-amber-400 animate-pulse shrink-0" />
-                    <span>{current.data.audioClueText}</span>
-                  </div>
-                )}
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-4">{slide.data?.name}</h2>
+                <p className="text-lg text-slate-300 max-w-xl mb-8 leading-relaxed">{slide.data?.ruleText}</p>
 
-                {/* Reveal Answer Section */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/15">
-                  <button
-                    type="button"
-                    onClick={() => toggleAnswer(current.id)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 text-[#081a2e] font-black text-sm hover:bg-amber-300 transition-all cursor-pointer shadow-[3px_3px_0px_#04101d]"
-                  >
-                    {revealedAnswers[current.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    <span>{revealedAnswers[current.id] ? 'Hide Answer' : 'Reveal Answer'}</span>
-                  </button>
-
-                  {revealedAnswers[current.id] && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-[#081a2e] p-4 rounded-2xl border-2 border-emerald-400 text-left flex-1 sm:ml-4 space-y-1"
-                    >
-                      <div className="text-lg font-black text-emerald-400">
-                        Answer: {current.data.answer}
-                      </div>
-                      <div className="text-xs text-white/80 font-medium">
-                        {current.data.explanation}
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
+                <button
+                  onClick={nextSlide}
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition shadow-lg"
+                >
+                  Start Round {slide.roundNum} <ArrowRight className="w-5 h-5" />
+                </button>
               </div>
             )}
 
-            {/* 7. ROUND 3: RAPID FIRE QUESTION SET SLIDE */}
-            {current.type === 'RAPID_SET' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e] p-6 sm:p-8 rounded-3xl border-3 border-[#00d2ff] shadow-[8px_8px_0px_#04101d] space-y-5">
-                {/* Header with 15s Timer */}
-                <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3 flex-wrap gap-2">
-                  <div>
-                    <span className="px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 font-black text-xs uppercase tracking-wider">
-                      Round 3 — Rapid Fire
+            {/* SLIDE TYPE: Round 1 MCQ */}
+            {slide.type === 'r1_mcq' && (
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      Round 1 — MCQ • Question {slide.qIndex! + 1} of {slide.totalInRound}
                     </span>
-                    <h2 className="text-2xl font-black text-white mt-1">
-                      {current.data.title}
-                    </h2>
+                    <span className="text-xs text-slate-400 font-semibold">+5 Points for Correct</span>
                   </div>
 
-                  {/* 15-Second Interactive Timer */}
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex items-center gap-2 px-4 py-1.5 rounded-2xl border-2 font-black text-xl tnum shadow-md ${
-                        rapidSeconds <= 4
-                          ? 'bg-rose-600 text-white border-rose-300 animate-pulse'
-                          : 'bg-yellow-400 text-[#081a2e] border-[#081a2e]'
-                      }`}
-                    >
-                      <TimerIcon className="w-5 h-5" />
-                      <span>{rapidSeconds}s</span>
+                  {/* Question Prompt */}
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-snug mb-8">
+                    {slide.data.question}
+                  </h2>
+
+                  {/* 4 Options Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    {slide.data.options.map((opt: string, idx: number) => {
+                      const isCorrect = idx === slide.data.correctIndex
+                      const letter = String.fromCharCode(65 + idx)
+                      return (
+                        <div
+                          key={idx}
+                          className={`flex items-center gap-4 p-4 md:p-5 rounded-2xl border transition-all duration-300 ${
+                            isRevealed
+                              ? isCorrect
+                                ? 'bg-emerald-950/80 border-emerald-500 text-emerald-100 ring-2 ring-emerald-500/50 scale-[1.01]'
+                                : 'bg-slate-900/40 border-slate-800/80 text-slate-400 opacity-60'
+                              : 'bg-slate-900/80 border-slate-800 text-slate-100 hover:border-slate-700'
+                          }`}
+                        >
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base transition ${
+                              isRevealed && isCorrect
+                                ? 'bg-emerald-500 text-slate-950'
+                                : 'bg-slate-800 text-slate-300'
+                            }`}
+                          >
+                            {letter}
+                          </div>
+                          <span className="text-base md:text-lg font-semibold flex-1">{opt}</span>
+                          {isRevealed && isCorrect && <CheckCircle2 className="w-6 h-6 text-emerald-400" />}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Fact Card (Revealed only when answer is revealed) */}
+                  <AnimatePresence>
+                    {isRevealed && slide.data.explanation && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 12, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: 12, height: 0 }}
+                        className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-indigo-950/40 border border-amber-500/30 text-slate-200 text-sm md:text-base leading-relaxed mb-4 shadow-lg flex items-start gap-3.5"
+                      >
+                        <Lightbulb className="w-6 h-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-1">
+                            Engineering Fact & Backstory
+                          </span>
+                          <p>{slide.data.explanation}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Bottom Bar Controls for Slide */}
+                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    onClick={() => toggleReveal(`slide_${currentSlide}`)}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border transition ${
+                      isRevealed
+                        ? 'bg-slate-800 text-slate-300 border-slate-700'
+                        : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500'
+                    }`}
+                  >
+                    {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {isRevealed ? 'Hide Answer' : 'Reveal Answer & Fact'} (R)
+                  </button>
+
+                  {/* Award Points Quick Bar */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-medium mr-1">Award +5 to:</span>
+                    {finalists.map((f, i) => (
+                      <button
+                        key={f.id}
+                        onClick={() => adjustScore(f.id, 5, 'r1')}
+                        className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-emerald-600 hover:text-white border border-slate-800 text-xs font-semibold text-slate-300 transition"
+                      >
+                        #{i + 1} {f.name.split(' ')[0]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Round 2 Image Question */}
+            {slide.type === 'r2_image' && (
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                      Round 2 — Image {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
+                    </span>
+                    <span className="text-xs text-slate-400 font-semibold">Direct +10 | Direct −5 | Pass +5</span>
+                  </div>
+
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-4 leading-snug">
+                    {slide.data.question}
+                  </h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-4">
+                    {/* Image Box */}
+                    <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 flex items-center justify-center group shadow-xl">
+                      <Image
+                        src={slide.data.imageUrl}
+                        alt="Clue Image"
+                        fill
+                        className="object-contain p-2"
+                        priority
+                      />
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setTimerRunning((prev) => !prev)}
-                      className="px-3 py-1.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs hover:bg-[#38bdf8] transition-all cursor-pointer shadow-md"
-                    >
-                      {timerRunning ? 'Pause' : 'Start 15s'}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTimerRunning(false)
-                        setRapidSeconds(15)
-                      }}
-                      className="p-1.5 rounded-xl bg-[#081a2e] border border-[#00d2ff]/40 text-[#00d2ff] hover:bg-[#00d2ff]/20 transition-all cursor-pointer"
-                      title="Reset Timer"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* 5 Questions List */}
-                <div className="space-y-2.5">
-                  {current.data.questions.map((q: RapidFireQuestion, idx: number) => {
-                    const isRevealed = revealedAnswers[q.id]
-
-                    return (
-                      <div
-                        key={q.id}
-                        className="p-3 sm:p-4 rounded-2xl bg-[#081a2e] border border-[#00d2ff]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                      >
-                        <div className="flex items-start gap-3 flex-1">
-                          <span className="w-6 h-6 rounded-lg bg-rose-500 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
-                            Q{idx + 1}
-                          </span>
-                          <span className="font-extrabold text-sm sm:text-base text-white">
-                            {q.question}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-                          {isRevealed && (
-                            <span className="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400 text-xs font-black">
-                              {q.answer}
+                    {/* Answer Reveal Box */}
+                    <div className="flex flex-col justify-center">
+                      <AnimatePresence>
+                        {isRevealed ? (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-100"
+                          >
+                            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">
+                              Correct Answer
                             </span>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => toggleAnswer(q.id)}
-                            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold cursor-pointer"
-                          >
-                            {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* 8. ROUND 4: FASTEST FINGERS FIRST SLIDE */}
-            {current.type === 'FASTEST' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e] p-6 sm:p-10 rounded-3xl border-3 border-[#00d2ff] shadow-[8px_8px_0px_#04101d] space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
-                  <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 font-black text-xs uppercase tracking-wider">
-                    Round 4 — Fastest Fingers First • Q{current.data.number}
-                  </span>
-                  <span className="text-xs font-bold text-yellow-300">
-                    Correct +15 | Wrong −5
-                  </span>
-                </div>
-
-                <div className="space-y-2">
-                  <span className="text-xs font-black uppercase text-[#00d2ff] tracking-wider">
-                    {current.data.category}
-                  </span>
-                  <h2 className="text-xl sm:text-3xl font-black text-white leading-snug">
-                    {current.data.question}
-                  </h2>
-                </div>
-
-                {/* Reveal Answer Section */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/15">
-                  <button
-                    type="button"
-                    onClick={() => toggleAnswer(current.id)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-500 text-white font-black text-sm hover:bg-purple-400 transition-all cursor-pointer shadow-[3px_3px_0px_#04101d]"
-                  >
-                    {revealedAnswers[current.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    <span>{revealedAnswers[current.id] ? 'Hide Answer' : 'Reveal Answer'}</span>
-                  </button>
-
-                  {revealedAnswers[current.id] && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-[#081a2e] p-4 rounded-2xl border-2 border-purple-400 text-left flex-1 sm:ml-4 space-y-1"
-                    >
-                      <div className="text-lg font-black text-purple-300">
-                        Answer: {current.data.answer}
-                      </div>
-                      <div className="text-xs text-white/80 font-medium">
-                        {current.data.explanation}
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 9. TIE BREAKER SLIDE */}
-            {current.type === 'TIE' && (
-              <div className="w-full max-w-4xl bg-[#0e2e4e] p-6 sm:p-10 rounded-3xl border-3 border-yellow-400 shadow-[8px_8px_0px_#04101d] space-y-6">
-                <div className="flex items-center justify-between border-b-2 border-yellow-400/40 pb-3">
-                  <span className="px-3 py-1 rounded-full bg-yellow-400 text-[#081a2e] font-black text-xs uppercase tracking-wider">
-                    Sudden Death Tie-Breaker
-                  </span>
-                  <span className="text-xs font-bold text-yellow-300">
-                    Fastest Correct Answer Wins
-                  </span>
-                </div>
-
-                <div className="space-y-4">
-                  {current.data.map((tb: FastestFingerQuestion, idx: number) => {
-                    const isRevealed = revealedAnswers[tb.id]
-
-                    return (
-                      <div key={tb.id} className="p-4 rounded-2xl bg-[#081a2e] border border-yellow-400/40 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-yellow-400 uppercase">
-                            Tie-Breaker Question #{idx + 1} • {tb.category}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => toggleAnswer(tb.id)}
-                            className="px-3 py-1 rounded-lg bg-yellow-400/20 text-yellow-300 text-xs font-bold hover:bg-yellow-400/30 cursor-pointer"
-                          >
-                            {isRevealed ? 'Hide' : 'Reveal Answer'}
-                          </button>
-                        </div>
-                        <p className="text-base sm:text-lg font-extrabold text-white">
-                          {tb.question}
-                        </p>
-                        {isRevealed && (
-                          <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-400 text-emerald-300 font-black text-sm">
-                            Answer: {tb.answer} ({tb.explanation})
+                            <h3 className="text-2xl font-black text-white mb-3">{slide.data.answer}</h3>
+                            <p className="text-sm text-slate-300 leading-relaxed">{slide.data.explanation}</p>
+                          </motion.div>
+                        ) : (
+                          <div className="p-8 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-center text-slate-400">
+                            <ImageIcon className="w-10 h-10 mx-auto text-slate-600 mb-2" />
+                            <p className="text-sm font-medium">Participant answers directly without options</p>
+                            <p className="text-xs text-slate-500 mt-1">Press Reveal or R to show answer</p>
                           </div>
                         )}
-                      </div>
-                    )
-                  })}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Score Award Bar */}
+                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    onClick={() => toggleReveal(`slide_${currentSlide}`)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition"
+                  >
+                    {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
+                  </button>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-emerald-400 font-bold">Direct (+10):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, 10, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-emerald-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-amber-400 font-bold">Passed (+5):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, 5, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-amber-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-rose-400 font-bold">Wrong (−5):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, -5, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-rose-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* 10. GRAND PODIUM SLIDE */}
-            {current.type === 'PODIUM' && (
-              <div className="w-full max-w-4xl text-center space-y-6">
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-yellow-400 text-[#081a2e] font-black text-sm uppercase tracking-widest shadow-lg">
-                    <Trophy className="w-5 h-5" />
-                    <span>Grand Finale Ceremony</span>
+            {/* SLIDE TYPE: Round 2 Audio Question */}
+            {slide.type === 'r2_audio' && (
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                      Round 2 — Audio {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
+                    </span>
+                    <span className="text-xs text-slate-400 font-semibold">Direct +10 | Direct −5 | Pass +5</span>
                   </div>
-                  <h1 className="text-4xl sm:text-6xl font-black text-white">
-                    Congratulations Champions!
-                  </h1>
+
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-6 leading-snug">
+                    {slide.data.question}
+                  </h2>
+
+                  {/* Audio Player Card */}
+                  <div className="p-6 md:p-8 rounded-3xl bg-slate-900/90 border border-purple-500/30 shadow-2xl mb-6 flex flex-col md:flex-row items-center gap-6">
+                    <button
+                      onClick={() => togglePlayAudio(slide.data.audioUrl, slide.data.id)}
+                      className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 transition-transform active:scale-95 flex-shrink-0"
+                    >
+                      {playingAudioId === slide.data.id ? (
+                        <Pause className="w-10 h-10" />
+                      ) : (
+                        <Play className="w-10 h-10 ml-1" />
+                      )}
+                    </button>
+
+                    <div className="flex-1 w-full">
+                      <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                        <span>Audio Track #{slide.qIndex! + 1}</span>
+                        <span>
+                          {Math.floor(audioProgress)}s / {Math.floor(audioDuration)}s
+                        </span>
+                      </div>
+
+                      {/* Animated Soundwave Visualizer Bars */}
+                      <div className="flex items-center gap-1.5 h-12 w-full px-2 py-1 rounded-xl bg-slate-950 border border-slate-800">
+                        {Array.from({ length: 36 }).map((_, i) => (
+                          <motion.div
+                            key={i}
+                            animate={
+                              playingAudioId === slide.data.id
+                                ? { height: ['20%', `${Math.random() * 80 + 20}%`, '20%'] }
+                                : { height: '20%' }
+                            }
+                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.03 }}
+                            className={`flex-1 rounded-full ${
+                              playingAudioId === slide.data.id ? 'bg-purple-400' : 'bg-slate-700'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Answer Reveal Box */}
+                  <AnimatePresence>
+                    {isRevealed && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-100"
+                      >
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">
+                          Personality Identified
+                        </span>
+                        <h3 className="text-2xl font-black text-white mb-2">{slide.data.answer}</h3>
+                        {slide.data.quote && (
+                          <p className="text-sm font-semibold italic text-amber-300 mb-2">
+                            "{slide.data.quote}"
+                          </p>
+                        )}
+                        <p className="text-xs md:text-sm text-slate-300">{slide.data.explanation}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Top 3 Finalists Podium */}
-                <div className="grid grid-cols-3 gap-3 sm:gap-6 items-end pt-4 pb-2">
-                  {/* 2nd Place */}
-                  {rankedFinalists[1] && (
-                    <div className="p-4 sm:p-6 rounded-3xl bg-[#0e2e4e] border-2 border-slate-300 shadow-xl flex flex-col items-center gap-2">
-                      <ParticipantAvatar seed={rankedFinalists[1].avatarSeed} size="lg" className="border-2 border-slate-300" />
-                      <span className="font-black text-sm sm:text-lg text-white truncate max-w-full">
-                        {rankedFinalists[1].name}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-slate-300 text-[#081a2e] font-black text-xs uppercase">
-                        🥈 1st Runner Up
-                      </span>
-                      <span className="text-sm font-black text-cyan-300">
-                        {rankedFinalists[1].score} pts
-                      </span>
-                    </div>
-                  )}
+                {/* Score Award Bar */}
+                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    onClick={() => toggleReveal(`slide_${currentSlide}`)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-purple-600 hover:bg-purple-500 text-white transition"
+                  >
+                    {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
+                  </button>
 
-                  {/* 1st Place (Winner) */}
-                  {rankedFinalists[0] && (
-                    <div className="p-5 sm:p-8 rounded-3xl bg-[#0e2e4e] border-3 border-yellow-400 shadow-2xl flex flex-col items-center gap-3 -translate-y-4 ring-4 ring-yellow-400/50">
-                      <Crown className="w-8 h-8 text-yellow-400 animate-bounce" />
-                      <ParticipantAvatar seed={rankedFinalists[0].avatarSeed} size="xl" className="border-3 border-yellow-400" />
-                      <span className="font-black text-lg sm:text-2xl text-yellow-300 truncate max-w-full">
-                        {rankedFinalists[0].name}
-                      </span>
-                      <span className="px-4 py-1.5 rounded-full bg-yellow-400 text-[#081a2e] font-black text-xs sm:text-sm uppercase tracking-wider">
-                        🏆 INGENIUM CHAMPION
-                      </span>
-                      <span className="text-base font-black text-emerald-400">
-                        {rankedFinalists[0].score} pts
-                      </span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-emerald-400 font-bold">Direct (+10):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, 10, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-emerald-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
                     </div>
-                  )}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-amber-400 font-bold">Passed (+5):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, 5, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-amber-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-rose-400 font-bold">Wrong (−5):</span>
+                      {finalists.map((f, i) => (
+                        <button
+                          key={f.id}
+                          onClick={() => adjustScore(f.id, -5, 'r2')}
+                          className="px-2 py-1 rounded bg-slate-900 hover:bg-rose-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                        >
+                          #{i + 1}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-                  {/* 3rd Place */}
-                  {rankedFinalists[2] && (
-                    <div className="p-4 sm:p-6 rounded-3xl bg-[#0e2e4e] border-2 border-amber-600 shadow-xl flex flex-col items-center gap-2">
-                      <ParticipantAvatar seed={rankedFinalists[2].avatarSeed} size="lg" className="border-2 border-amber-600" />
-                      <span className="font-black text-sm sm:text-lg text-white truncate max-w-full">
-                        {rankedFinalists[2].name}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-amber-600 text-white font-black text-xs uppercase">
-                        🥉 2nd Runner Up
-                      </span>
-                      <span className="text-sm font-black text-cyan-300">
-                        {rankedFinalists[2].score} pts
+            {/* SLIDE TYPE: Round 3 Rapid Fire */}
+            {slide.type === 'r3_rapid' && (
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                        <FlameKindling className="w-3.5 h-3.5" /> Rapid Fire • {slide.data.participantLabel} (Set {slide.data.setNumber})
                       </span>
                     </div>
+
+                    {/* 40s Acoustic Timer Pill */}
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full border font-mono font-bold text-lg transition ${
+                          rapidSeconds <= 10
+                            ? 'bg-rose-950/80 border-rose-500 text-rose-400 animate-pulse'
+                            : timerRunning
+                            ? 'bg-amber-950/80 border-amber-500 text-amber-400'
+                            : 'bg-slate-900 border-slate-700 text-slate-300'
+                        }`}
+                      >
+                        <TimerIcon className="w-5 h-5" />
+                        <span>{rapidSeconds}s</span>
+                      </div>
+
+                      <button
+                        onClick={() => setTimerRunning((prev) => !prev)}
+                        className={`p-2 rounded-xl text-white font-bold transition ${
+                          timerRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
+                        }`}
+                        title="Start / Pause Timer (Space)"
+                      >
+                        {timerRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setTimerRunning(false)
+                          setRapidSeconds(40)
+                          setRapidQuestionIdx(0)
+                        }}
+                        className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                        title="Reset 40s Timer"
+                      >
+                        <RotateCcw className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* If NOT in reveal mode: Live 5 questions run (NO ANSWERS SHOWN) */}
+                  {!rapidRevealMode[slide.data.setNumber] ? (
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
+                        <span>Questions for {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</span>
+                        <span>5 Questions • 40s Total</span>
+                      </div>
+
+                      {slide.data.questions.map((q: any, qIdx: number) => (
+                        <div
+                          key={qIdx}
+                          onClick={() => setRapidQuestionIdx(qIdx)}
+                          className={`p-4 rounded-2xl border transition flex items-center justify-between cursor-pointer ${
+                            rapidQuestionIdx === qIdx
+                              ? 'bg-slate-900 border-amber-500/80 ring-1 ring-amber-500/40'
+                              : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 font-mono font-bold text-xs flex items-center justify-center">
+                              {q.number}
+                            </span>
+                            <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                              {q.category}
+                            </span>
+                            <span className="text-base md:text-lg font-semibold text-slate-100">{q.prompt}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* REVEAL ALL ANSWERS MODE: After questions are done, reveal each question with answers! */
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center justify-between text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">
+                        <span>Reveal & Verification Mode • Award +10 Points</span>
+                        <span>Participant: {finalists[slide.data.participantIndex]?.name}</span>
+                      </div>
+
+                      {slide.data.questions.map((q: any, qIdx: number) => {
+                        const awardKey = `r3_s${slide.data.setNumber}_q${q.number}`
+                        const isAwarded = !!rapidAnswerAwarded[awardKey]
+                        return (
+                          <motion.div
+                            key={qIdx}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: qIdx * 0.05 }}
+                            className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3"
+                          >
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="w-6 h-6 rounded bg-slate-800 text-slate-300 font-mono font-bold text-xs flex items-center justify-center">
+                                  {q.number}
+                                </span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400">
+                                  {q.category}
+                                </span>
+                                <span className="text-sm md:text-base font-semibold text-slate-200">{q.prompt}</span>
+                              </div>
+                              <div className="ml-8 text-emerald-400 font-bold text-sm md:text-base flex items-center gap-1.5">
+                                <CheckCircle2 className="w-4 h-4" /> Ans: {q.answer}
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                const finalistId = finalists[slide.data.participantIndex]?.id
+                                if (!finalistId) return
+                                if (isAwarded) {
+                                  adjustScore(finalistId, -10, 'r3')
+                                  setRapidAnswerAwarded((prev) => ({ ...prev, [awardKey]: false }))
+                                } else {
+                                  adjustScore(finalistId, 10, 'r3')
+                                  setRapidAnswerAwarded((prev) => ({ ...prev, [awardKey]: true }))
+                                }
+                              }}
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                                isAwarded
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-slate-800 hover:bg-emerald-600/30 text-slate-300 border border-slate-700'
+                              }`}
+                            >
+                              {isAwarded ? 'Awarded +10' : '+10 Correct'}
+                            </button>
+                          </motion.div>
+                        )
+                      })}
+                    </div>
                   )}
+                </div>
+
+                {/* Bottom Bar: Mode Switcher */}
+                <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+                  <button
+                    onClick={() => {
+                      setRapidRevealMode((prev) => ({
+                        ...prev,
+                        [slide.data.setNumber]: !prev[slide.data.setNumber],
+                      }))
+                      sound.tap()
+                    }}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition shadow-lg"
+                  >
+                    {rapidRevealMode[slide.data.setNumber] ? (
+                      <>
+                        <RotateCcw className="w-4 h-4" /> Back to Questions Mode
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4" /> Reveal All Answers & Score (+10)
+                      </>
+                    )}
+                  </button>
+
+                  <div className="text-xs text-slate-400">
+                    Target Participant: <strong className="text-white">{finalists[slide.data.participantIndex]?.name}</strong>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Round 4 Intro */}
+            {slide.type === 'r4_intro' && (
+              <div className="text-center flex flex-col items-center justify-center py-10">
+                <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mb-6">
+                  <Zap className="w-8 h-8" />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-widest text-rose-400 mb-2">Final Round</span>
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-4">Fastest Fingers First</h2>
+                <p className="text-lg text-slate-300 max-w-xl mb-6 leading-relaxed">
+                  Correct answer = <strong className="text-emerald-400">+15 Points</strong> • Wrong answer after buzzing = <strong className="text-rose-400">−5 Points</strong>
+                </p>
+                <p className="text-xs text-slate-400 max-w-md mb-8">
+                  Buzz only after the question is completely read. Early buzzes will not be considered.
+                </p>
+                <button
+                  onClick={nextSlide}
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition shadow-lg"
+                >
+                  Enter Buzzer Arena <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Round 4 Live Buzzer Arena */}
+            {slide.type === 'r4_buzzer' && (
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                      Round 4 — Fastest Fingers First • Live Scoring Arena
+                    </span>
+                    <span className="text-xs text-slate-400 font-semibold">Correct +15 | Wrong −5</span>
+                  </div>
+
+                  <h2 className="text-2xl md:text-3xl font-black text-white mb-6 text-center">
+                    Fastest Fingers Live Buzzer Arena
+                  </h2>
+
+                  {/* 6 Finalists Buzzer Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                    {finalists.map((f, i) => (
+                      <div
+                        key={f.id}
+                        className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col items-center text-center shadow-lg hover:border-slate-700 transition"
+                      >
+                        <ParticipantAvatar seed={f.avatarSeed} size="md" className="mb-2" />
+                        <span className="font-bold text-slate-100 text-sm truncate w-full">{f.name}</span>
+                        <span className="font-mono font-black text-lg text-emerald-400 my-2">{f.score} pts</span>
+
+                        <div className="flex items-center gap-2 w-full mt-1">
+                          <button
+                            onClick={() => adjustScore(f.id, 15, 'r4')}
+                            className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition"
+                            title="Award +15 points"
+                          >
+                            +15
+                          </button>
+                          <button
+                            onClick={() => adjustScore(f.id, -5, 'r4')}
+                            className="flex-1 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition"
+                            title="Deduct 5 points"
+                          >
+                            −5
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+                  <span className="text-xs text-slate-400">In case of equal scores, proceed to Tie-Breaker</span>
+                  <button
+                    onClick={nextSlide}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-slate-950 transition"
+                  >
+                    Proceed to Tie-Breaker / Finale <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Tie Breaker */}
+            {slide.type === 'tie_breaker' && (
+              <div className="text-center flex flex-col items-center justify-center py-10">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-6">
+                  <Crown className="w-8 h-8" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">Stage Finale</span>
+                <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Tie-Breaker Arena</h2>
+                <p className="text-slate-300 max-w-md mb-8 leading-relaxed">
+                  Conducted by Quizmaster if two or more finalists share identical scores for podium positions.
+                </p>
+                <button
+                  onClick={nextSlide}
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold transition shadow-xl"
+                >
+                  Reveal Grand Victory Podium <Trophy className="w-5 h-5 ml-1" />
+                </button>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Grand Podium */}
+            {slide.type === 'podium' && (
+              <div className="flex flex-col items-center justify-center h-full text-center py-6">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs uppercase tracking-widest mb-4"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" /> INGENIUM 2026 Champion Ceremony
+                </motion.div>
+
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-8">Grand Victory Podium</h2>
+
+                {/* Podium Top 3 */}
+                <div className="grid grid-cols-3 gap-4 md:gap-6 w-full max-w-2xl items-end mb-8">
+                  {/* Rank 2 (Silver) */}
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="flex flex-col items-center"
+                  >
+                    <ParticipantAvatar seed={rankedFinalists[1]?.avatarSeed || 'f2'} size="lg" className="mb-2 ring-2 ring-slate-400" />
+                    <span className="font-bold text-slate-200 text-sm truncate max-w-[120px]">
+                      {rankedFinalists[1]?.name || 'Finalist 2'}
+                    </span>
+                    <span className="font-mono font-bold text-emerald-400 text-sm mb-2">{rankedFinalists[1]?.score || 0} pts</span>
+                    <div className="w-full h-28 rounded-t-2xl bg-gradient-to-b from-slate-700 to-slate-800 border-t-2 border-slate-400 flex flex-col items-center justify-center text-slate-200">
+                      <Medal className="w-6 h-6 text-slate-300 mb-1" />
+                      <span className="font-black text-lg">2nd Place</span>
+                    </div>
+                  </motion.div>
+
+                  {/* Rank 1 (Gold) */}
+                  <motion.div
+                    initial={{ y: 40, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="flex flex-col items-center"
+                  >
+                    <div className="relative mb-2">
+                      <ParticipantAvatar seed={rankedFinalists[0]?.avatarSeed || 'f1'} size="xl" className="ring-4 ring-amber-400" />
+                      <Crown className="w-7 h-7 text-amber-400 absolute -top-4 left-1/2 -translate-x-1/2 animate-bounce" />
+                    </div>
+                    <span className="font-black text-white text-base truncate max-w-[140px]">
+                      {rankedFinalists[0]?.name || 'Finalist 1'}
+                    </span>
+                    <span className="font-mono font-bold text-amber-400 text-base mb-2">{rankedFinalists[0]?.score || 0} pts</span>
+                    <div className="w-full h-40 rounded-t-2xl bg-gradient-to-b from-amber-500 to-amber-600 border-t-4 border-amber-300 flex flex-col items-center justify-center text-slate-950 shadow-2xl">
+                      <Trophy className="w-8 h-8 text-slate-950 mb-1" />
+                      <span className="font-black text-xl">CHAMPION</span>
+                    </div>
+                  </motion.div>
+
+                  {/* Rank 3 (Bronze) */}
+                  <motion.div
+                    initial={{ y: 30, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex flex-col items-center"
+                  >
+                    <ParticipantAvatar seed={rankedFinalists[2]?.avatarSeed || 'f3'} size="lg" className="mb-2 ring-2 ring-amber-700" />
+                    <span className="font-bold text-slate-200 text-sm truncate max-w-[120px]">
+                      {rankedFinalists[2]?.name || 'Finalist 3'}
+                    </span>
+                    <span className="font-mono font-bold text-emerald-400 text-sm mb-2">{rankedFinalists[2]?.score || 0} pts</span>
+                    <div className="w-full h-20 rounded-t-2xl bg-gradient-to-b from-amber-800 to-amber-900 border-t-2 border-amber-600 flex flex-col items-center justify-center text-amber-200">
+                      <Award className="w-6 h-6 text-amber-400 mb-1" />
+                      <span className="font-black text-base">3rd Place</span>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Qualifiers 4 to 6 */}
+                <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
+                  {rankedFinalists.slice(3, 6).map((f, i) => (
+                    <div key={f.id} className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
+                      #{i + 4} <strong className="text-slate-200">{f.name}</strong>: {f.score} pts
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -935,158 +1379,139 @@ export function StagePptPresentation({ initialFinalists }: { initialFinalists?: 
         </AnimatePresence>
       </main>
 
-      {/* BOTTOM SLIDE CONTROLS BAR */}
-      <footer className="relative z-30 w-full h-16 bg-[#081a2e]/90 backdrop-blur-md border-t-2 border-[#00d2ff]/40 px-4 sm:px-8 flex items-center justify-between">
-        {/* Previous Slide */}
-        <button
-          type="button"
-          onClick={prevSlide}
-          disabled={currentSlide === 0}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 text-white font-black text-xs sm:text-sm hover:bg-[#00d2ff] hover:text-[#081a2e] transition-all cursor-pointer disabled:opacity-30"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Previous</span>
-        </button>
+      {/* Presentation Footer Navigation */}
+      <footer className="relative z-20 flex items-center justify-between px-6 py-3 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={prevSlide}
+            disabled={currentSlide === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition"
+          >
+            <ChevronLeft className="w-4 h-4" /> Prev
+          </button>
+          <button
+            onClick={nextSlide}
+            disabled={currentSlide === slides.length - 1}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white disabled:opacity-40 disabled:pointer-events-none transition"
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
 
-        {/* Progress Bar Dots */}
-        <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-md py-1 px-2">
-          {slides.map((_, idx) => (
+        {/* Slide Selector Scrubber */}
+        <div className="flex items-center gap-1 max-w-md overflow-x-auto py-1 px-2">
+          {slides.map((_, i) => (
             <button
-              key={idx}
-              type="button"
-              onClick={() => {
-                sound.tap()
-                setCurrentSlide(idx)
-              }}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
-                idx === currentSlide
-                  ? 'w-6 bg-[#00d2ff]'
-                  : 'w-2 bg-white/20 hover:bg-white/40'
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-1.5 rounded-full transition-all duration-200 ${
+                currentSlide === i ? 'w-6 bg-blue-500' : 'w-1.5 bg-slate-800 hover:bg-slate-700'
               }`}
-              title={`Jump to Slide ${idx + 1}`}
+              title={`Jump to Slide ${i + 1}`}
             />
           ))}
         </div>
 
-        {/* Next Slide */}
-        <button
-          type="button"
-          onClick={nextSlide}
-          disabled={currentSlide === totalSlides - 1}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs sm:text-sm hover:bg-[#38bdf8] transition-all cursor-pointer disabled:opacity-30 shadow-[2px_2px_0px_#04101d]"
-        >
-          <span>Next</span>
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        <div className="text-xs text-slate-500 font-mono hidden sm:inline">
+          Use &larr; &rarr; keys or Space to navigate
+        </div>
       </footer>
 
-      {/* INTERACTIVE STAGE SCOREBOARD DRAWER */}
+      {/* Interactive Scoreboard Drawer (Toggle with 'S' key or Scoreboard button) */}
       <AnimatePresence>
         {showScoreboard && (
-          <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-xs">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end"
+            onClick={() => setShowScoreboard(false)}
+          >
             <motion.div
-              initial={{ x: '100%' }}
+              initial={{ x: 400 }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="w-full max-w-md h-full bg-[#0c2340] border-l-3 border-[#00d2ff] p-5 flex flex-col justify-between shadow-2xl overflow-y-auto"
+              exit={{ x: 400 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="w-full max-w-md h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-[#00d2ff]/30 pb-3">
+              <div>
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-yellow-400" />
-                    <h3 className="text-lg font-black text-white">Stage Finalists Scoreboard</h3>
+                    <Trophy className="w-5 h-5 text-amber-400" />
+                    <h3 className="font-bold text-white text-lg">Stage Leaderboard</h3>
                   </div>
                   <button
-                    type="button"
                     onClick={() => setShowScoreboard(false)}
-                    className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                {/* Finalists Score Modification List */}
-                <div className="space-y-3">
-                  {rankedFinalists.map((f, rankIdx) => (
+                <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
+                  {rankedFinalists.map((f, rank) => (
                     <div
                       key={f.id}
-                      className="p-3.5 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-2.5"
+                      className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3"
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-6 h-6 rounded-lg bg-yellow-400 text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0">
-                            #{rankIdx + 1}
-                          </span>
-                          <ParticipantAvatar seed={f.avatarSeed} size="sm" className="shrink-0" />
-                          <input
-                            type="text"
-                            value={f.name}
-                            onChange={(e) => updateFinalistName(f.id, e.target.value)}
-                            className="font-black text-sm text-white bg-transparent border-b border-transparent focus:border-[#00d2ff] outline-none truncate"
-                          />
-                        </div>
-                        <span className="text-base font-black text-yellow-300 shrink-0 tnum">
-                          {f.score} pts
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`font-black text-sm w-5 text-center ${
+                            rank === 0 ? 'text-amber-400' : rank === 1 ? 'text-slate-300' : rank === 2 ? 'text-amber-600' : 'text-slate-500'
+                          }`}
+                        >
+                          #{rank + 1}
                         </span>
+                        <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                        <div>
+                          <span className="font-bold text-slate-100 text-sm block">{f.name}</span>
+                          <span className="text-[10px] text-slate-500">
+                            R1: {f.roundScores.r1} • R2: {f.roundScores.r2} • R3: {f.roundScores.r3} • R4: {f.roundScores.r4}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Score Modifier Buttons */}
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => updateScore(f.id, 15)}
-                          className="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-black cursor-pointer"
-                        >
-                          +15
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updateScore(f.id, 10)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black cursor-pointer"
-                        >
-                          +10
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updateScore(f.id, 5)}
-                          className="px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black cursor-pointer"
-                        >
-                          +5
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updateScore(f.id, -5)}
-                          className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-black cursor-pointer"
-                        >
-                          −5
-                        </button>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-black text-emerald-400 text-base">{f.score}</span>
+                        <div className="flex flex-col gap-0.5">
+                          <button
+                            onClick={() => adjustScore(f.id, 5)}
+                            className="p-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-400 text-[10px]"
+                            title="Add 5 pts"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => adjustScore(f.id, -5)}
+                            className="p-1 rounded bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-400 text-[10px]"
+                            title="Deduct 5 pts"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Bottom Actions */}
-              <div className="pt-4 border-t border-[#00d2ff]/30 flex items-center justify-between">
+              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
                 <button
-                  type="button"
-                  onClick={resetAllScores}
-                  className="px-3 py-1.5 rounded-xl bg-rose-600/30 text-rose-300 border border-rose-500 text-xs font-bold hover:bg-rose-600/50 cursor-pointer"
+                  onClick={resetScores}
+                  className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold"
                 >
-                  Reset Scores
+                  <RotateCcw className="w-3.5 h-3.5" /> Reset All Scores
                 </button>
                 <button
-                  type="button"
                   onClick={() => setShowScoreboard(false)}
-                  className="px-4 py-2 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs cursor-pointer shadow-md"
+                  className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-500"
                 >
-                  Close Panel (S)
+                  Close
                 </button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

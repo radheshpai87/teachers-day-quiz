@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
 import { StagePptPresentation } from '@/components/stage-ppt-presentation'
+import { getStageData } from '@/lib/stage-loader'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "INGENIUM 2026 — Live Stage Quiz (PPT Presentation)",
@@ -7,5 +10,6 @@ export const metadata: Metadata = {
 }
 
 export default function StagePage() {
-  return <StagePptPresentation />
+  const stageData = getStageData()
+  return <StagePptPresentation stageData={stageData} />
 }

@@ -44,4 +44,7 @@ __pycache__/
 
 # document files
 *.pdf
+*.docx
+*.doc
+*.zip
 
