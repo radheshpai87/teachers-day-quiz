@@ -7,6 +7,7 @@ export interface StageServerState {
   rapidQuestionIdx: number
   rapidSeconds: number
   timerRunning: boolean
+  timerExpiresAt?: number | null
   finalists: StageFinalist[]
   audioState?: {
     playing: boolean
@@ -34,6 +35,7 @@ if (!global.__stageState) {
     rapidQuestionIdx: 0,
     rapidSeconds: 60,
     timerRunning: false,
+    timerExpiresAt: null,
     finalists: [
       { id: 'f1', name: 'Finalist 1', avatarSeed: 'finalist-1', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },
       { id: 'f2', name: 'Finalist 2', avatarSeed: 'finalist-2', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },

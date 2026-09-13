@@ -141,6 +141,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   // Broadcast channel for sync with /stage/control
   const channelRef = useRef<BroadcastChannel | null>(null)
   const lastAudioTimestamp = useRef<number>(0)
+  const timerExpiresAtRef = useRef<number | null>(null)
 
   const pauseAudio = useCallback(() => {
     if (audioRef.current) {
@@ -197,6 +198,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
           setTimerRunning(false)
+          timerExpiresAtRef.current = null
           setRapidSeconds(60)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
           setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
@@ -214,7 +216,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           }
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
-          if (payload.seconds !== undefined) setRapidSeconds(payload.seconds)
+          if (payload.expiresAt !== undefined) {
+            timerExpiresAtRef.current = payload.expiresAt
+          }
+          if (payload.seconds !== undefined && !payload.running) {
+            setRapidSeconds(payload.seconds)
+          }
         } else if (type === 'AUDIO_ACTION') {
           const { action, id, url } = payload
           if (action === 'play' && url && id) {
@@ -258,11 +265,14 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
           }
-          if (typeof state.rapidSeconds === 'number') {
-            setRapidSeconds(state.rapidSeconds)
+          if (state.timerExpiresAt !== undefined) {
+            timerExpiresAtRef.current = state.timerExpiresAt
           }
           if (typeof state.timerRunning === 'boolean') {
             setTimerRunning(state.timerRunning)
+          }
+          if (typeof state.rapidSeconds === 'number' && !state.timerRunning) {
+            setRapidSeconds(state.rapidSeconds)
           }
           if (state.audioState) {
             const { playing, audioId, audioUrl, timestamp } = state.audioState
@@ -441,26 +451,70 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     setAudioProgress(0)
   }, [currentSlide])
 
-  // Rapid Fire Timer Interval (60s)
+  // Rapid Fire Timer toggle / reset actions
+  const toggleRapidTimer = useCallback(() => {
+    if (timerRunning) {
+      // Pause
+      const remaining = timerExpiresAtRef.current
+        ? Math.max(0, Math.ceil((timerExpiresAtRef.current - Date.now()) / 1000))
+        : rapidSeconds
+      setTimerRunning(false)
+      timerExpiresAtRef.current = null
+      setRapidSeconds(remaining)
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: remaining } })
+      sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: remaining })
+    } else {
+      // Start 60s countdown (or resume remaining)
+      const currentSecs = rapidSeconds <= 0 ? 60 : rapidSeconds
+      const expiresAt = Date.now() + currentSecs * 1000
+      timerExpiresAtRef.current = expiresAt
+      setRapidSeconds(currentSecs)
+      setTimerRunning(true)
+      broadcast({ type: 'TIMER_ACTION', payload: { running: true, expiresAt, seconds: currentSecs } })
+      sendStageNetworkSync({ timerRunning: true, timerExpiresAt: expiresAt, rapidSeconds: currentSecs })
+    }
+  }, [timerRunning, rapidSeconds, broadcast])
+
+  const resetRapidTimer = useCallback(() => {
+    setTimerRunning(false)
+    timerExpiresAtRef.current = null
+    setRapidSeconds(60)
+    setRapidQuestionIdx(0)
+    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+    sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 60, rapidQuestionIdx: 0 })
+  }, [broadcast])
+
+  // Rapid Fire Timer Interval (Uninterrupted 60s Countdown)
   useEffect(() => {
-    let interval: NodeJS.Timeout
-    if (timerRunning && rapidSeconds > 0) {
-      interval = setInterval(() => {
+    if (!timerRunning) return
+
+    const tick = () => {
+      if (timerExpiresAtRef.current) {
+        const remaining = Math.max(0, Math.ceil((timerExpiresAtRef.current - Date.now()) / 1000))
+        setRapidSeconds(remaining)
+        if (remaining <= 0) {
+          setTimerRunning(false)
+          timerExpiresAtRef.current = null
+          sound.wrong()
+          sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 0 })
+        }
+      } else {
         setRapidSeconds((prev) => {
           if (prev <= 1) {
             setTimerRunning(false)
             sound.wrong()
+            sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 0 })
             return 0
-          }
-          if (prev === 11 || prev === 6) {
-            sound.tick()
           }
           return prev - 1
         })
-      }, 1000)
+      }
     }
+
+    tick()
+    const interval = setInterval(tick, 250)
     return () => clearInterval(interval)
-  }, [timerRunning, rapidSeconds])
+  }, [timerRunning])
 
   // Confetti on Podium slide (2 Prizes Finale)
   useEffect(() => {
@@ -666,11 +720,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       } else if (e.key === ' ') {
         e.preventDefault()
         if (slide.type === 'r3_rapid') {
-          setTimerRunning((prev) => {
-            const next = !prev
-            broadcast({ type: 'TIMER_ACTION', payload: { running: next, seconds: rapidSeconds } })
-            return next
-          })
+          toggleRapidTimer()
         } else {
           nextSlide()
         }
@@ -679,7 +729,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [nextSlide, prevSlide, toggleReveal, slide?.type, rapidSeconds, broadcast])
+  }, [nextSlide, prevSlide, toggleReveal, toggleRapidTimer, slide?.type])
 
   // Ranked Finalists
   const rankedFinalists = useMemo(() => {
@@ -1359,14 +1409,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       </div>
 
                       <button
-                        onClick={() => {
-                          setTimerRunning((prev) => {
-                            const next = !prev
-                            broadcast({ type: 'TIMER_ACTION', payload: { running: next, seconds: rapidSeconds } })
-                            sendStageNetworkSync({ timerRunning: next, rapidSeconds })
-                            return next
-                          })
-                        }}
+                        onClick={toggleRapidTimer}
                         className={`p-2 rounded-xl font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition ${
                           timerRunning ? 'bg-[#fbbf24]' : 'bg-[#10b981]'
                         }`}
@@ -1376,13 +1419,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       </button>
 
                       <button
-                        onClick={() => {
-                          setTimerRunning(false)
-                          setRapidSeconds(60)
-                          setRapidQuestionIdx(0)
-                          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-                          sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60, rapidQuestionIdx: 0 })
-                        }}
+                        onClick={resetRapidTimer}
                         className="p-2 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] transition"
                         title="Reset 60s Timer"
                       >
