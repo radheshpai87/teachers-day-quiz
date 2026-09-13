@@ -40,7 +40,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [isRevealed, setIsRevealed] = useState(false)
   const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
-  const [isEditingNames, setIsEditingNames] = useState(false)
+  const [mobileTab, setMobileTab] = useState<'control' | 'standings'>('control')
 
   // Stage Scoreboard State (Persisted in localStorage & BroadcastChannel)
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
@@ -295,349 +295,556 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const isRapidFire = currentSlideObj?.type === 'r3_rapid'
 
   return (
-    <div className="notebook-paper min-h-screen max-h-screen text-slate-100 flex flex-col font-sans select-none overflow-hidden">
-      {/* 1. TOP HEADER & QUICK SLIDE NAVIGATOR */}
-      <header className="shrink-0 z-20 flex items-center justify-between px-3 py-2 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_2px_0px_#04101d]">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shrink-0">
-            Host
+    <div className="notebook-paper min-h-screen text-slate-100 flex flex-col font-sans select-none">
+      {/* 1. TOP HEADER (Responsive for both Mobile & Desktop) */}
+      <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <Image
+            src="/yenepoya-school-engineering-and-technology.svg"
+            alt="YSET"
+            width={120}
+            height={30}
+            className="h-6 sm:h-7 w-auto object-contain brightness-110"
+            priority
+          />
+          <div className="h-4 sm:h-5 w-px bg-[#00d2ff]/40" />
+          <span className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            🎮 Quizmaster Deck
           </span>
-
-          {/* Compact Slide Selector Dropdown */}
-          <select
-            value={currentSlide}
-            onChange={(e) => setSlide(Number(e.target.value))}
-            className="bg-[#0e2e4e] border border-[#00d2ff]/50 text-white font-bold rounded-lg px-2 py-1 text-xs outline-none truncate max-w-[170px] sm:max-w-xs focus:border-[#00d2ff]"
-          >
-            {slides.map((s) => (
-              <option key={s.index} value={s.index}>
-                {s.index + 1}/{slides.length}: {s.title}
-              </option>
-            ))}
-          </select>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        {/* Mobile Tab Switcher (Visible only on phone) */}
+        <div className="flex lg:hidden items-center bg-[#081a2e] p-0.5 rounded-xl border border-[#00d2ff]/40">
           <button
-            onClick={() => setIsEditingNames(true)}
-            className="p-1.5 rounded-lg bg-[#0e2e4e] text-[#00d2ff] border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition"
-            title="Edit Finalist Names & Standings"
+            onClick={() => setMobileTab('control')}
+            className={`px-3 py-1 rounded-lg text-xs font-black transition ${
+              mobileTab === 'control' ? 'bg-[#00d2ff] text-[#081a2e]' : 'text-[#7dd3fc]'
+            }`}
           >
-            <Edit3 className="w-4 h-4" />
+            Scorer
           </button>
+          <button
+            onClick={() => setMobileTab('standings')}
+            className={`px-3 py-1 rounded-lg text-xs font-black transition ${
+              mobileTab === 'standings' ? 'bg-[#00d2ff] text-[#081a2e]' : 'text-[#7dd3fc]'
+            }`}
+          >
+            Rankings
+          </button>
+        </div>
 
+        <div className="flex items-center gap-2">
           <Link
             href="/stage"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-1.5 rounded-lg bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] hover:bg-[#38bdf8] transition flex items-center gap-1"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition"
             title="Open Projector View"
           >
-            <ExternalLink className="w-4 h-4" />
+            <span className="hidden sm:inline">Projector View</span> <ExternalLink className="w-3.5 h-3.5" />
           </Link>
         </div>
       </header>
 
-      {/* 2. PRIMARY MOBILE DASHBOARD (Fits phone viewport with zero scrolling) */}
-      <main className="flex-1 flex flex-col justify-between p-2.5 sm:p-4 max-w-2xl mx-auto w-full overflow-y-auto">
-        {/* TOP SECTION: QUESTION & ANSWER PREVIEW */}
-        <div className="space-y-2 shrink-0">
-          {/* Action Row: Prev / Reveal / Next / Timer */}
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setSlide(currentSlide - 1)}
-              disabled={currentSlide === 0}
-              className="px-3 py-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 font-black text-xs text-[#00d2ff] active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d]"
-            >
-              <ChevronLeft className="w-4 h-4" /> Prev
-            </button>
+      {/* ========================================================================= */}
+      {/* 2. DESKTOP / PC VIEW (WIDESCREEN 3-COLUMN RICH DASHBOARD) */}
+      {/* ========================================================================= */}
+      <main className="hidden lg:grid max-w-7xl w-full mx-auto p-6 grid-cols-3 gap-6 flex-1">
+        {/* LEFT 2 COLUMNS: Slide Controller & Live Questions & Matrix */}
+        <div className="col-span-2 space-y-6">
+          {/* Active Projector Slide Card */}
+          <div className="notebook-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-[#7dd3fc]">
+                Active Projector Slide ({currentSlide + 1} / {slides.length})
+              </span>
+              <span className="px-3 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
+                {currentSlideObj?.round ? `Round ${currentSlideObj.round}` : currentSlideObj?.type}
+              </span>
+            </div>
 
-            {/* Large Reveal Toggle Button */}
-            <button
-              onClick={toggleReveal}
-              className={`flex-1 py-2 px-3 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center justify-center gap-1.5 active:scale-95 ${
-                isRevealed
-                  ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
-                  : 'bg-[#fbbf24] text-[#081a2e] hover:bg-[#f59e0b]'
-              }`}
-            >
-              {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              {isRevealed ? 'Hide (R)' : 'Reveal Answer (R)'}
-            </button>
-
-            {/* Rapid Fire Timer controls if on Set */}
-            {isRapidFire && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={toggleTimer}
-                  className={`p-2 rounded-xl border border-[#081a2e] font-black text-xs shadow-[2px_2px_0px_#04101d] ${
-                    timerRunning ? 'bg-[#f43f5e] text-white' : 'bg-[#10b981] text-[#081a2e]'
-                  }`}
-                  title={timerRunning ? 'Pause Timer' : 'Start 40s Timer'}
-                >
-                  {timerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={resetTimer}
-                  className="p-2 rounded-xl bg-[#0e2e4e] text-slate-300 border border-[#00d2ff]/40"
-                  title="Reset Timer"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
+            {/* Slide Title & Reveal Button */}
+            <div className="p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex items-center justify-between gap-4">
+              <div>
+                <span className="text-xs text-[#7dd3fc] font-bold block mb-0.5">Current Title</span>
+                <h3 className="text-lg font-black text-white">{currentSlideObj?.title}</h3>
               </div>
-            )}
 
-            <button
-              onClick={() => setSlide(currentSlide + 1)}
-              disabled={currentSlide === slides.length - 1}
-              className="px-3.5 py-2 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d]"
-            >
-              Next <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+              <button
+                onClick={toggleReveal}
+                className={`px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 ${
+                  isRevealed
+                    ? 'bg-[#0e2e4e] text-white'
+                    : 'bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e]'
+                }`}
+              >
+                {isRevealed ? <EyeOff className="w-4 h-4 inline mr-1.5" /> : <Eye className="w-4 h-4 inline mr-1.5" />}
+                {isRevealed ? 'Hide Answer (R)' : 'Reveal Answer (R)'}
+              </button>
+            </div>
 
-          {/* Live Slide Question & Verified Answer Card */}
-          <div className="p-3 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 shadow-[2px_2px_0px_#04101d]">
-            {/* MCQ Preview */}
-            {currentSlideObj?.type === 'r1_mcq' && currentSlideObj.data && (
-              <div className="space-y-1.5 text-left">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
-                  <span>Round 1 MCQ • Q{currentSlideObj.qIndex! + 1} of 12</span>
-                  <span className="text-[#fbbf24] font-bold">+5 Correct</span>
-                </div>
-                <h4 className="text-xs sm:text-sm font-black text-white leading-snug">
-                  {currentSlideObj.data.question}
-                </h4>
-                <div className="p-2 rounded-xl bg-emerald-950/70 border border-emerald-500/50 flex items-start gap-1.5 text-xs text-emerald-300 font-bold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">
-                      Correct Answer ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}):
-                    </span>
-                    <span className="text-white font-black">{currentSlideObj.data.options[currentSlideObj.data.correctIndex]}</span>
-                    {currentSlideObj.data.explanation && (
-                      <p className="text-[10px] text-emerald-200/90 font-normal mt-0.5">{currentSlideObj.data.explanation}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Image Question Preview */}
-            {currentSlideObj?.type === 'r2_image' && currentSlideObj.data && (
-              <div className="space-y-1.5 text-left">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
-                  <span>Round 2 Image • #{currentSlideObj.qIndex! + 1}</span>
-                  <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
-                </div>
-                <h4 className="text-xs sm:text-sm font-black text-white leading-snug">
-                  {currentSlideObj.data.question}
-                </h4>
-                <div className="p-2 rounded-xl bg-emerald-950/70 border border-emerald-500/50 flex items-start gap-1.5 text-xs text-emerald-300 font-bold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">Verified Answer:</span>
-                    <span className="text-white font-black">{currentSlideObj.data.answer}</span>
-                    {currentSlideObj.data.explanation && (
-                      <p className="text-[10px] text-emerald-200/90 font-normal mt-0.5">{currentSlideObj.data.explanation}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Audio Question Preview */}
-            {currentSlideObj?.type === 'r2_audio' && currentSlideObj.data && (
-              <div className="space-y-1.5 text-left">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
-                  <span>Round 2 Audio • #{currentSlideObj.qIndex! + 1}</span>
-                  <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
-                </div>
-                <h4 className="text-xs sm:text-sm font-black text-white leading-snug">
-                  {currentSlideObj.data.question}
-                </h4>
-                <div className="p-2 rounded-xl bg-emerald-950/70 border border-emerald-500/50 flex items-start gap-1.5 text-xs text-emerald-300 font-bold">
-                  <Volume2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">Speaker / Answer:</span>
-                    <span className="text-white font-black">{currentSlideObj.data.answer}</span>
-                    {currentSlideObj.data.quote && (
-                      <p className="text-[10px] text-emerald-200 italic mt-0.5">"{currentSlideObj.data.quote}"</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Rapid Fire Preview (5 Questions & Answers) */}
-            {currentSlideObj?.type === 'r3_rapid' && currentSlideObj.data && (
-              <div className="space-y-1.5 text-left">
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
-                  <span>Rapid Fire: {currentSlideObj.data.participantLabel} (Set {currentSlideObj.data.setNumber})</span>
-                  <span className="text-[#fbbf24] font-bold">+10 each (40s)</span>
-                </div>
-                <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
-                  {currentSlideObj.data.questions.map((q: any, i: number) => (
-                    <div key={i} className="p-1.5 rounded-lg bg-[#0e2e4e] border border-[#00d2ff]/30 text-[11px]">
-                      <div className="text-slate-200 font-bold">
-                        <span className="text-[#00d2ff] font-mono mr-1">#{i + 1} [{q.category}]</span>
-                        {q.prompt}
-                      </div>
-                      <div className="text-emerald-300 font-black mt-0.5">
-                        ✓ {q.answer}
+            {/* Live Question & Verified Answer Peek */}
+            {currentSlideObj?.data && (
+              <div className="p-4 rounded-2xl bg-[#081a2e]/90 border border-[#00d2ff]/30 space-y-2 text-left">
+                {currentSlideObj.type === 'r1_mcq' && (
+                  <>
+                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">
+                          Correct Option ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}):
+                        </span>
+                        <strong className="text-white text-sm">{currentSlideObj.data.options[currentSlideObj.data.correctIndex]}</strong>
+                        {currentSlideObj.data.explanation && (
+                          <p className="text-emerald-200/90 text-xs font-normal mt-1">{currentSlideObj.data.explanation}</p>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </>
+                )}
+
+                {currentSlideObj.type === 'r2_image' && (
+                  <>
+                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">Verified Answer:</span>
+                        <strong className="text-white text-sm">{currentSlideObj.data.answer}</strong>
+                        {currentSlideObj.data.explanation && (
+                          <p className="text-emerald-200/90 text-xs font-normal mt-1">{currentSlideObj.data.explanation}</p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {currentSlideObj.type === 'r2_audio' && (
+                  <>
+                    <p className="text-sm font-black text-white">{currentSlideObj.data.question}</p>
+                    <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
+                      <Volume2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">Speaker / Person:</span>
+                        <strong className="text-white text-sm">{currentSlideObj.data.answer}</strong>
+                        {currentSlideObj.data.quote && (
+                          <p className="text-emerald-200 italic text-xs mt-1">"{currentSlideObj.data.quote}"</p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {currentSlideObj.type === 'r3_rapid' && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs text-[#fbbf24] font-black">
+                      <span>Rapid Fire: {currentSlideObj.data.participantLabel} (40s)</span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={toggleTimer}
+                          className={`px-3 py-1 rounded-lg text-xs font-black ${
+                            timerRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
+                          }`}
+                        >
+                          {timerRunning ? 'Pause' : 'Start 40s'}
+                        </button>
+                        <button onClick={resetTimer} className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300">
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-1.5 pt-1">
+                      {currentSlideObj.data.questions.map((q: any, i: number) => (
+                        <div key={i} className="p-2 rounded-lg bg-[#0e2e4e] border border-[#00d2ff]/30 text-xs flex items-center justify-between">
+                          <span className="text-slate-200 font-bold">
+                            #{i + 1} [{q.category}] {q.prompt}
+                          </span>
+                          <strong className="text-emerald-300 shrink-0 ml-2">✓ {q.answer}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Round 4 Buzzer Preview */}
-            {currentSlideObj?.type === 'r4_buzzer' && (
-              <div className="text-left space-y-1">
-                <div className="text-[11px] font-mono text-[#fbbf24] font-black uppercase">
-                  ⚡ Round 4 — Fastest Fingers First Arena
-                </div>
-                <p className="text-xs text-slate-200 font-bold">
-                  Award points immediately after buzzer: <strong className="text-emerald-400">+15 Correct</strong> or <strong className="text-rose-400">−5 Wrong</strong>.
-                </p>
-              </div>
-            )}
+            {/* Slide Navigation Buttons */}
+            <div className="flex items-center justify-between gap-4 pt-1">
+              <button
+                onClick={() => setSlide(currentSlide - 1)}
+                disabled={currentSlide === 0}
+                className="flex-1 py-3 rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_#04101d]"
+              >
+                <ChevronLeft className="w-5 h-5" /> Previous Slide
+              </button>
 
-            {/* Default Slides (Title, Intro, Standings) */}
-            {['title', 'rules', 'finalists', 'round_intro', 'round_leaderboard', 'r4_intro', 'tie_breaker', 'podium'].includes(currentSlideObj?.type) && (
-              <div className="text-center py-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#7dd3fc]">
-                  {currentSlideObj?.round ? `${currentSlideObj.round} Screen` : 'Presentation Screen'}
-                </span>
-                <h4 className="text-sm font-black text-white">{currentSlideObj?.title}</h4>
+              <button
+                onClick={() => setSlide(currentSlide + 1)}
+                disabled={currentSlide === slides.length - 1}
+                className="flex-1 py-3 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+              >
+                Next Slide <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quick Slide Jump Dropdown */}
+            <div className="pt-1">
+              <label className="text-xs font-black uppercase text-[#7dd3fc] block mb-1.5">
+                Jump Direct to Slide
+              </label>
+              <select
+                value={currentSlide}
+                onChange={(e) => setSlide(Number(e.target.value))}
+                className="w-full bg-[#081a2e] border-2 border-[#00d2ff]/40 text-white font-bold rounded-xl p-2.5 text-xs outline-none focus:border-[#00d2ff]"
+              >
+                {slides.map((s) => (
+                  <option key={s.index} value={s.index}>
+                    Slide {s.index + 1}: {s.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Quick Score Assigner Matrix (PC 2-Column Grid) */}
+          <div className="notebook-card p-6 space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-[#fbbf24]" />
+                <h3 className="font-black text-white text-base">Quick Score Assigner (6 Finalists)</h3>
               </div>
-            )}
+              <span className="text-xs text-[#7dd3fc] font-bold">Instant Projector Sync</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {finalists.map((f, i) => (
+                <div key={f.id} className="p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-3 shadow-[2px_2px_0px_#04101d]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-6 h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0">
+                        #{i + 1}
+                      </span>
+                      <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                      <input
+                        type="text"
+                        defaultValue={f.name}
+                        onBlur={(e) => handleRename(f.id, e.target.value)}
+                        className="bg-transparent font-black text-white text-sm focus:bg-[#0e2e4e] rounded px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[130px]"
+                        title="Click to rename"
+                      />
+                    </div>
+                    <span className="font-mono font-black text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                  </div>
+
+                  {/* Cohesive, Clean Scoring Buttons */}
+                  <div className="grid grid-cols-4 gap-1.5 text-xs font-black">
+                    <button
+                      onClick={() => adjustScore(f.id, 10, 'r2')}
+                      className="py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
+                      title="Direct Correct / Rapid Fire (+10)"
+                    >
+                      +10 (Dir)
+                    </button>
+                    <button
+                      onClick={() => adjustScore(f.id, 5, 'r1')}
+                      className="py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
+                      title="MCQ / Passed (+5)"
+                    >
+                      +5 (Pass)
+                    </button>
+                    <button
+                      onClick={() => adjustScore(f.id, -5, 'r2')}
+                      className="py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
+                      title="Wrong Penalty (-5)"
+                    >
+                      −5 (Wr)
+                    </button>
+                    <button
+                      onClick={() => adjustScore(f.id, 15, 'r4')}
+                      className="py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
+                      title="Fastest Fingers First (+15)"
+                    >
+                      +15 (FFF)
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs font-bold pt-0.5">
+                    <button
+                      onClick={() => adjustScore(f.id, 1)}
+                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition"
+                    >
+                      +1 Fine
+                    </button>
+                    <button
+                      onClick={() => adjustScore(f.id, -1)}
+                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-rose-300 border border-rose-500/40 hover:bg-rose-600 hover:text-white transition"
+                    >
+                      −1 Fine
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* BOTTOM SECTION: 6 FINALISTS QUICK SCORING MATRIX (ZERO-SCROLL COMPACT) */}
-        <div className="mt-2 space-y-1.5 shrink-0">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#7dd3fc] flex items-center gap-1">
-              <Trophy className="w-3.5 h-3.5 text-[#fbbf24]" /> 1-Tap Scoring Matrix
-            </span>
-            <span className="text-[10px] font-bold text-slate-300">
-              Top 2: 🥇 #{rankedFinalists[0]?.name?.split(' ')[0]} ({rankedFinalists[0]?.score}) • 🥈 #{rankedFinalists[1]?.name?.split(' ')[0]} ({rankedFinalists[1]?.score})
-            </span>
-          </div>
-
-          <div className="space-y-1.5">
-            {finalists.map((f, i) => (
-              <div
-                key={f.id}
-                className="px-2.5 py-1.5 rounded-xl bg-[#081a2e] border border-[#00d2ff]/40 flex items-center justify-between gap-2 shadow-[2px_2px_0px_#04101d]"
-              >
-                {/* Finalist Info */}
-                <div className="flex items-center gap-2 min-w-0 max-w-[125px] sm:max-w-[180px]">
-                  <span className="w-4 h-4 rounded bg-[#00d2ff]/20 text-[#00d2ff] font-mono font-black text-[10px] flex items-center justify-center shrink-0 border border-[#00d2ff]/40">
-                    {i + 1}
-                  </span>
-                  <ParticipantAvatar seed={f.avatarSeed} size="sm" className="shrink-0" />
-                  <span className="font-black text-xs text-white truncate">{f.name}</span>
-                </div>
-
-                {/* Points Display */}
-                <div className="font-mono font-black text-xs text-[#00d2ff] shrink-0 text-center min-w-[40px]">
-                  {f.score} <span className="text-[9px] font-normal text-slate-400">pts</span>
-                </div>
-
-                {/* Cohesive, Ergonomic Point Awarding Buttons */}
-                <div className="flex items-center gap-1 shrink-0">
-                  {/* +10 Direct (Solid Emerald) */}
-                  <button
-                    onClick={() => adjustScore(f.id, 10, 'r2')}
-                    className="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black text-xs border border-emerald-700 shadow-sm active:scale-95 transition"
-                    title="Direct Correct / Rapid Fire (+10)"
-                  >
-                    +10
-                  </button>
-
-                  {/* +5 Pass / MCQ (Solid Sky Blue) */}
-                  <button
-                    onClick={() => adjustScore(f.id, 5, 'r1')}
-                    className="px-2 py-1 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] active:bg-[#075985] text-white font-black text-xs border border-[#0369a1] shadow-sm active:scale-95 transition"
-                    title="MCQ / Passed (+5)"
-                  >
-                    +5
-                  </button>
-
-                  {/* -5 Penalty (Solid Crimson Rose) */}
-                  <button
-                    onClick={() => adjustScore(f.id, -5, 'r2')}
-                    className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black text-xs border border-rose-700 shadow-sm active:scale-95 transition"
-                    title="Wrong Penalty (-5)"
-                  >
-                    −5
-                  </button>
-
-                  {/* +15 FFF Bonus (Solid Amber Gold) */}
-                  <button
-                    onClick={() => adjustScore(f.id, 15, 'r4')}
-                    className="px-1.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-[#081a2e] font-black text-xs border border-amber-500 shadow-sm active:scale-95 transition"
-                    title="Fastest Fingers First (+15)"
-                  >
-                    +15
-                  </button>
-
-                  {/* Fine Adjustment (+1 / -1) */}
-                  <button
-                    onClick={() => adjustScore(f.id, 1)}
-                    className="px-1.5 py-1 rounded-lg bg-[#0e2e4e] text-[#7dd3fc] font-bold text-[11px] border border-[#00d2ff]/30 active:scale-95 transition"
-                    title="+1 Fine tune"
-                  >
-                    +1
-                  </button>
-                  <button
-                    onClick={() => adjustScore(f.id, -1)}
-                    className="px-1.5 py-1 rounded-lg bg-[#0e2e4e] text-rose-300 font-bold text-[11px] border border-rose-500/30 active:scale-95 transition"
-                    title="-1 Fine tune"
-                  >
-                    −1
-                  </button>
-                </div>
+        {/* RIGHT 1 COLUMN: Live Standings (PC) */}
+        <div className="space-y-6">
+          <div className="notebook-card p-6 space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-[#fbbf24]" />
+                <h3 className="font-black text-white text-base">Live Stage Standings</h3>
               </div>
-            ))}
+              <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] px-2 py-0.5 rounded-full">
+                2 Prizes (1st & 2nd)
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {rankedFinalists.map((f, rank) => (
+                <div
+                  key={f.id}
+                  className={`p-3.5 rounded-2xl flex items-center justify-between border-2 transition ${
+                    rank === 0
+                      ? 'bg-[#fbbf24]/10 border-[#fbbf24] shadow-[3px_3px_0px_#04101d]'
+                      : rank === 1
+                      ? 'bg-slate-800/60 border-slate-300 shadow-[2px_2px_0px_#04101d]'
+                      : 'bg-[#081a2e] border-[#00d2ff]/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span
+                      className={`font-black text-sm w-6 text-center ${
+                        rank === 0 ? 'text-[#fbbf24]' : rank === 1 ? 'text-slate-200' : 'text-slate-400'
+                      }`}
+                    >
+                      #{rank + 1}
+                    </span>
+                    <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                    <div className="min-w-0">
+                      <span className="font-black text-white text-sm block truncate">{f.name}</span>
+                      <span className="text-[10px] text-[#7dd3fc] font-bold">
+                        {rank === 0 ? '🥇 1st Prize Leader' : rank === 1 ? '🥈 2nd Prize Runner-Up' : `Qualifier #${rank + 1}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  <span className="font-mono font-black text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+              <button
+                onClick={handleResetScores}
+                className="text-xs text-[#f43f5e] hover:text-[#fb7185] flex items-center gap-1 font-black transition"
+              >
+                <RotateCcw className="w-3.5 h-3.5" /> Reset All Stage Scores
+              </button>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* 3. MANAGE FINALISTS & RESET MODAL */}
-      {isEditingNames && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="notebook-card p-5 rounded-3xl max-w-md w-full space-y-4 border-2 border-[#00d2ff]">
-            <div className="flex items-center justify-between border-b border-[#00d2ff]/30 pb-2.5">
+      {/* ========================================================================= */}
+      {/* 3. MOBILE / PHONE VIEW (ZERO-SCROLL SMARTPHONE DECK) */}
+      {/* ========================================================================= */}
+      <div className="lg:hidden flex-1 flex flex-col justify-between p-3 max-w-lg mx-auto w-full overflow-y-auto">
+        {mobileTab === 'control' ? (
+          <div className="space-y-2.5 flex-1 flex flex-col justify-between">
+            {/* Top Row: Slide Jump Dropdown & Prev/Next */}
+            <div className="space-y-2 shrink-0">
               <div className="flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-[#00d2ff]" />
-                <h3 className="font-black text-white text-base">Edit Finalist Names</h3>
+                <select
+                  value={currentSlide}
+                  onChange={(e) => setSlide(Number(e.target.value))}
+                  className="flex-1 bg-[#081a2e] border border-[#00d2ff]/50 text-white font-bold rounded-xl px-2.5 py-2 text-xs outline-none truncate focus:border-[#00d2ff]"
+                >
+                  {slides.map((s) => (
+                    <option key={s.index} value={s.index}>
+                      Slide {s.index + 1}: {s.title}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={() => setSlide(currentSlide - 1)}
+                  disabled={currentSlide === 0}
+                  className="px-3 py-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setSlide(currentSlide + 1)}
+                  disabled={currentSlide === slides.length - 1}
+                  className="px-3 py-2 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs disabled:opacity-30 active:scale-95 shrink-0"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
+
+              {/* Reveal Toggle Banner */}
               <button
-                onClick={() => setIsEditingNames(false)}
-                className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300 hover:text-white"
+                onClick={toggleReveal}
+                className={`w-full py-2 px-3 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center justify-center gap-1.5 active:scale-95 ${
+                  isRevealed
+                    ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
+                    : 'bg-[#fbbf24] text-[#081a2e] hover:bg-[#f59e0b]'
+                }`}
               >
-                <X className="w-5 h-5" />
+                {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {isRevealed ? 'Hide Answer on Stage (R)' : 'Reveal Answer on Stage (R)'}
               </button>
+
+              {/* Live Question & Verified Answer Box */}
+              <div className="p-3 rounded-2xl bg-[#081a2e] border border-[#00d2ff]/40 text-left space-y-1.5 shadow-[2px_2px_0px_#04101d]">
+                <div className="flex items-center justify-between text-[11px] font-mono text-[#7dd3fc]">
+                  <span>{currentSlideObj?.round ? `Round ${currentSlideObj.round}` : 'Stage Slide'}</span>
+                  {isRapidFire && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={toggleTimer}
+                        className={`px-2 py-0.5 rounded text-[10px] font-black ${
+                          timerRunning ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'
+                        }`}
+                      >
+                        {timerRunning ? 'Pause' : 'Start 40s'}
+                      </button>
+                      <button onClick={resetTimer} className="p-0.5 rounded bg-[#0e2e4e] text-slate-300">
+                        <RotateCcw className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <h4 className="text-xs font-black text-white leading-snug">
+                  {currentSlideObj?.data?.question || currentSlideObj?.title}
+                </h4>
+
+                {/* Verified Answer Display */}
+                {currentSlideObj?.type === 'r1_mcq' && currentSlideObj.data && (
+                  <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">
+                        Answer ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}):
+                      </span>
+                      <strong className="text-white">{currentSlideObj.data.options[currentSlideObj.data.correctIndex]}</strong>
+                    </div>
+                  </div>
+                )}
+
+                {(currentSlideObj?.type === 'r2_image' || currentSlideObj?.type === 'r2_audio') && currentSlideObj.data && (
+                  <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-wider block text-emerald-400">Verified Answer:</span>
+                      <strong className="text-white">{currentSlideObj.data.answer}</strong>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
-              {finalists.map((f, i) => (
-                <div key={f.id} className="flex items-center gap-2 p-2 rounded-xl bg-[#081a2e] border border-[#00d2ff]/30">
-                  <span className="w-6 h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center shrink-0">
-                    #{i + 1}
-                  </span>
-                  <input
-                    type="text"
-                    defaultValue={f.name}
-                    onBlur={(e) => handleRename(f.id, e.target.value)}
-                    className="flex-1 bg-[#0e2e4e] text-white font-bold text-xs rounded-lg px-2.5 py-1.5 border border-[#00d2ff]/40 outline-none focus:border-[#00d2ff]"
-                    placeholder={`Finalist ${i + 1} Name`}
-                  />
-                  <span className="font-mono text-xs font-black text-[#00d2ff] shrink-0">{f.score} pts</span>
+            {/* Bottom: 6 Finalist Touch Strips (Compact Zero Scroll) */}
+            <div className="space-y-1.5 mt-2 shrink-0">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#7dd3fc]">
+                  Instant Point Awarder
+                </span>
+                <span className="text-[10px] font-bold text-slate-300">
+                  Top 2: 🥇 #{rankedFinalists[0]?.name?.split(' ')[0]} ({rankedFinalists[0]?.score}) • 🥈 #{rankedFinalists[1]?.name?.split(' ')[0]} ({rankedFinalists[1]?.score})
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                {finalists.map((f, i) => (
+                  <div
+                    key={f.id}
+                    className="px-2.5 py-1.5 rounded-xl bg-[#081a2e] border border-[#00d2ff]/40 flex items-center justify-between gap-1.5 shadow-[2px_2px_0px_#04101d]"
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0 max-w-[110px]">
+                      <span className="w-4 h-4 rounded bg-[#00d2ff]/20 text-[#00d2ff] font-mono font-black text-[10px] flex items-center justify-center shrink-0">
+                        {i + 1}
+                      </span>
+                      <span className="font-black text-xs text-white truncate">{f.name}</span>
+                    </div>
+
+                    <div className="font-mono font-black text-xs text-[#00d2ff] shrink-0 text-center min-w-[36px]">
+                      {f.score} <span className="text-[9px] font-normal text-slate-400">pts</span>
+                    </div>
+
+                    {/* Cohesive Point Buttons */}
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => adjustScore(f.id, 10, 'r2')}
+                        className="px-2 py-1 rounded-lg bg-emerald-600 active:bg-emerald-700 text-white font-black text-xs shadow-sm active:scale-95"
+                      >
+                        +10
+                      </button>
+                      <button
+                        onClick={() => adjustScore(f.id, 5, 'r1')}
+                        className="px-2 py-1 rounded-lg bg-sky-600 active:bg-sky-700 text-white font-black text-xs shadow-sm active:scale-95"
+                      >
+                        +5
+                      </button>
+                      <button
+                        onClick={() => adjustScore(f.id, -5, 'r2')}
+                        className="px-2 py-1 rounded-lg bg-rose-600 active:bg-rose-700 text-white font-black text-xs shadow-sm active:scale-95"
+                      >
+                        −5
+                      </button>
+                      <button
+                        onClick={() => adjustScore(f.id, 15, 'r4')}
+                        className="px-1.5 py-1 rounded-lg bg-amber-500 active:bg-amber-600 text-slate-950 font-black text-xs shadow-sm active:scale-95"
+                      >
+                        +15
+                      </button>
+                      <button
+                        onClick={() => adjustScore(f.id, 1)}
+                        className="px-1.5 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 text-[11px] font-bold border border-[#00d2ff]/30 active:scale-95"
+                      >
+                        +1
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Mobile Standings Tab */
+          <div className="space-y-4 notebook-card p-4 rounded-3xl">
+            <div className="flex items-center justify-between border-b border-[#00d2ff]/30 pb-2.5">
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-[#fbbf24]" />
+                <h3 className="font-black text-white text-base">Stage Standings</h3>
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] px-2 py-0.5 rounded-full">
+                2 Prizes
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {rankedFinalists.map((f, rank) => (
+                <div
+                  key={f.id}
+                  className={`p-3 rounded-xl flex items-center justify-between border ${
+                    rank === 0
+                      ? 'bg-[#fbbf24]/10 border-[#fbbf24]'
+                      : rank === 1
+                      ? 'bg-slate-800/60 border-slate-300'
+                      : 'bg-[#081a2e] border-[#00d2ff]/30'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="font-black text-sm w-5 text-center text-[#7dd3fc]">#{rank + 1}</span>
+                    <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                    <span className="font-black text-white text-xs truncate">{f.name}</span>
+                  </div>
+                  <span className="font-mono font-black text-sm text-[#00d2ff]">{f.score} pts</span>
                 </div>
               ))}
             </div>
@@ -645,21 +852,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             <div className="pt-2 border-t border-[#00d2ff]/30 flex items-center justify-between">
               <button
                 onClick={handleResetScores}
-                className="text-xs font-black text-[#f43f5e] hover:text-[#fb7185] flex items-center gap-1 transition"
+                className="text-xs text-[#f43f5e] flex items-center gap-1 font-black"
               >
                 <RotateCcw className="w-3.5 h-3.5" /> Reset All Scores
               </button>
-
-              <button
-                onClick={() => setIsEditingNames(false)}
-                className="px-5 py-2 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d]"
-              >
-                Done
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
