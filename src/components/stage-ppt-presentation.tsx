@@ -48,6 +48,8 @@ import {
   ArrowRight,
   ShieldCheck,
   FlameKindling,
+  Compass,
+  Cpu,
 } from 'lucide-react'
 
 export interface StageFinalist {
@@ -210,7 +212,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     return list
   }, [stageData])
 
-  // Clamp current slide
   const slide = slides[currentSlide] || slides[0]
 
   // Stop audio on slide change
@@ -257,7 +258,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           spread: 360,
           ticks: 70,
           origin: { x: Math.random(), y: Math.random() * 0.4 },
-          colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'],
+          colors: ['#00d2ff', '#fbbf24', '#10b981', '#38bdf8', '#f43f5e', '#ffffff'],
         })
       }, 350)
       return () => clearInterval(interval)
@@ -410,15 +411,20 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   if (!stageData) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-8 text-center">
-        <AlertTriangle className="w-16 h-16 text-amber-500 mb-4 animate-bounce" />
-        <h1 className="text-3xl font-bold mb-2">Stage Data Encrypted / Key Required</h1>
-        <p className="text-slate-400 max-w-md mb-6">
-          Please make sure the encryption key <code className="text-amber-400">QUIZ_SEED_KEY</code> is configured in your environment to unlock the stage finale questions.
-        </p>
-        <Link href="/" className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold transition">
-          Return Home
-        </Link>
+      <div className="notebook-paper min-h-screen text-white flex flex-col items-center justify-center p-8 text-center">
+        <div className="p-6 rounded-3xl notebook-card max-w-md">
+          <AlertTriangle className="w-16 h-16 text-[#fbbf24] mx-auto mb-4 animate-bounce" />
+          <h1 className="text-2xl font-black mb-2 text-white">Stage Data Encrypted / Key Required</h1>
+          <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+            Please make sure <code className="text-[#00d2ff] bg-[#081a2e] px-2 py-0.5 rounded">QUIZ_SEED_KEY</code> is configured in your environment to decrypt the stage questions.
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-6 py-2.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105"
+          >
+            Return Home
+          </Link>
+        </div>
       </div>
     )
   }
@@ -426,17 +432,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   const isRevealed = !!revealedAnswers[`slide_${currentSlide}`]
 
   return (
-    <div className="relative w-screen h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden font-sans select-none">
-      {/* Background Animated Gradient Mesh */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[25%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-blue-600/10 blur-[140px]" />
-        <div className="absolute top-[30%] -right-[15%] w-[55vw] h-[55vw] rounded-full bg-indigo-600/10 blur-[150px]" />
-        <div className="absolute -bottom-[20%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-emerald-600/10 blur-[130px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(2,6,23,0.7)_100%)]" />
-      </div>
+    <div className="notebook-paper relative w-screen h-screen text-slate-100 flex flex-col overflow-hidden font-sans select-none">
+      {/* Blueprint Grid Technical Vignette Accent */}
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-40 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(4,16,29,0.85)_100%)]" />
 
-      {/* Presentation Top Bar */}
-      <header className="relative z-20 flex items-center justify-between px-6 py-3 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md">
+      {/* Presentation Top Bar (Blueprint Header) */}
+      <header className="relative z-20 flex items-center justify-between px-5 py-3 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
         <div className="flex items-center gap-3">
           <Image
             src="/yenepoya-school-engineering-and-technology.svg"
@@ -446,30 +447,30 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             className="h-8 w-auto object-contain brightness-110"
             priority
           />
-          <div className="h-5 w-px bg-slate-800" />
+          <div className="h-5 w-px bg-[#00d2ff]/40" />
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950">
-              Live Stage Finale
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e]">
+              ⚡ Live Stage Finale
             </span>
-            <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+            <span className="text-xs text-[#7dd3fc] font-bold hidden sm:inline">
               Slide {currentSlide + 1} / {slides.length}
             </span>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Quick Finalists Score Ticker */}
-          <div className="hidden lg:flex items-center gap-2 mr-2 px-3 py-1 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
-            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] text-xs">
+            <Trophy className="w-3.5 h-3.5 text-[#fbbf24]" />
             <div className="flex items-center gap-3">
               {rankedFinalists.slice(0, 3).map((f, i) => (
-                <div key={f.id} className="flex items-center gap-1.5 font-medium">
-                  <span className={i === 0 ? 'text-amber-400' : i === 1 ? 'text-slate-300' : 'text-amber-600'}>
+                <div key={f.id} className="flex items-center gap-1.5 font-bold">
+                  <span className={i === 0 ? 'text-[#fbbf24]' : i === 1 ? 'text-slate-200' : 'text-[#f59e0b]'}>
                     #{i + 1}
                   </span>
                   <span className="text-slate-200 max-w-[80px] truncate">{f.name}:</span>
-                  <span className="font-mono font-bold text-emerald-400">{f.score}</span>
+                  <span className="font-mono font-black text-[#00d2ff]">{f.score}</span>
                 </div>
               ))}
             </div>
@@ -477,10 +478,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
           <button
             onClick={() => setShowScoreboard((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition hover:scale-105 active:scale-95 ${
               showScoreboard
-                ? 'bg-amber-500 text-slate-950 border-amber-400'
-                : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
+                ? 'bg-[#fbbf24] text-[#081a2e]'
+                : 'bg-[#00d2ff] text-[#081a2e]'
             }`}
             title="Toggle Finalists Scoreboard (Key: S)"
           >
@@ -490,7 +491,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
           <button
             onClick={toggleFullscreen}
-            className="p-1.5 rounded-lg bg-slate-900/80 text-slate-300 border border-slate-700 hover:bg-slate-800 transition"
+            className="p-1.5 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] hover:bg-[#00d2ff] hover:text-[#081a2e] transition"
             title="Toggle Fullscreen (Key: F)"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -499,63 +500,63 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       </header>
 
       {/* Main Slide Canvas */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 md:p-10 overflow-hidden">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
             initial={{ opacity: 0, scale: 0.98, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.01, y: -8 }}
-            transition={{ duration: 0.28, ease: 'easeOut' }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
             className="w-full max-w-6xl h-full flex flex-col justify-center"
           >
             {/* SLIDE TYPE: Title */}
             {slide.type === 'title' && (
-              <div className="text-center flex flex-col items-center justify-center py-8">
+              <div className="text-center flex flex-col items-center justify-center py-6">
                 <motion.div
-                  initial={{ scale: 0.85, opacity: 0 }}
+                  initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.1, duration: 0.5 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-semibold tracking-wider uppercase mb-6"
+                  transition={{ delay: 0.1 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-[#081a2e] mb-5 -rotate-1"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <Sparkles className="w-4 h-4 text-[#081a2e]" />
                   Yenepoya School of Engineering & Technology
                 </motion.div>
 
-                <h1 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-4 bg-gradient-to-r from-blue-400 via-indigo-300 to-amber-300 bg-clip-text text-transparent drop-shadow-sm">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white mb-3 text-ink drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                   {stageData.title}
                 </h1>
 
-                <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-medium mb-10 leading-relaxed">
+                <p className="text-lg md:text-2xl text-[#7dd3fc] max-w-2xl font-bold mb-8 leading-relaxed">
                   {stageData.subtitle}
                 </p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl mb-10">
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
-                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 1</div>
-                    <div className="text-lg font-bold text-blue-400">MCQ Arena</div>
-                    <div className="text-xs text-slate-500">+5 pts • No Negative</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-4xl mb-8">
+                  <div className="p-4 rounded-2xl notebook-card text-center">
+                    <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 1</div>
+                    <div className="text-lg font-black text-[#00d2ff]">MCQ Arena</div>
+                    <div className="text-xs text-slate-300 font-semibold">+5 pts • No Negative</div>
                   </div>
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
-                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 2</div>
-                    <div className="text-lg font-bold text-indigo-400">Audio & Image</div>
-                    <div className="text-xs text-slate-500">+10 / −5 • Pass +5</div>
+                  <div className="p-4 rounded-2xl notebook-card text-center">
+                    <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 2</div>
+                    <div className="text-lg font-black text-[#38bdf8]">Audio & Image</div>
+                    <div className="text-xs text-slate-300 font-semibold">+10 / −5 • Pass +5</div>
                   </div>
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
-                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 3</div>
-                    <div className="text-lg font-bold text-amber-400">Rapid Fire</div>
-                    <div className="text-xs text-slate-500">40s • 5 Qs • +10 pts</div>
+                  <div className="p-4 rounded-2xl notebook-card text-center">
+                    <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 3</div>
+                    <div className="text-lg font-black text-[#fbbf24]">Rapid Fire</div>
+                    <div className="text-xs text-slate-300 font-semibold">40s • 5 Qs • +10 pts</div>
                   </div>
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-center">
-                    <div className="text-xs uppercase text-slate-400 font-bold tracking-wider mb-1">Round 4</div>
-                    <div className="text-lg font-bold text-rose-400">Fastest Fingers</div>
-                    <div className="text-xs text-slate-500">+15 / −5 on Buzz</div>
+                  <div className="p-4 rounded-2xl notebook-card text-center">
+                    <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 4</div>
+                    <div className="text-lg font-black text-[#f43f5e]">Fastest Fingers</div>
+                    <div className="text-xs text-slate-300 font-semibold">+15 / −5 on Buzz</div>
                   </div>
                 </div>
 
                 <button
                   onClick={nextSlide}
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg font-bold shadow-lg shadow-blue-500/25 transition-transform active:scale-95"
+                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] text-lg font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition-transform hover:scale-105 active:scale-95"
                 >
                   Start Stage Presentation <ArrowRight className="w-5 h-5" />
                 </button>
@@ -564,39 +565,39 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Rules */}
             {slide.type === 'rules' && (
-              <div className="flex flex-col h-full justify-center">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                    <ShieldCheck className="w-8 h-8" />
+              <div className="flex flex-col h-full justify-center p-2 sm:p-4">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="p-3 rounded-2xl bg-[#00d2ff] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d]">
+                    <ShieldCheck className="w-7 h-7" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Regulations</span>
-                    <h2 className="text-3xl md:text-4xl font-black text-white">Official Stage Quiz Rules</h2>
+                    <span className="text-xs font-black uppercase tracking-wider text-[#00d2ff]">Blueprint Directives</span>
+                    <h2 className="text-2xl md:text-4xl font-black text-white">Official Stage Quiz Rules</h2>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                   {stageData.rules.map((rule, idx) => (
                     <motion.div
                       key={idx}
-                      initial={{ opacity: 0, x: -10 }}
+                      initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="flex items-start gap-3.5 p-4 rounded-xl bg-slate-900/90 border border-slate-800/90 hover:border-slate-700 transition"
+                      transition={{ delay: idx * 0.04 }}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl notebook-card"
                     >
-                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/10 text-blue-400 font-mono font-bold text-sm flex items-center justify-center border border-blue-500/20">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
                         {idx + 1}
                       </div>
-                      <p className="text-slate-200 text-sm md:text-base font-medium leading-relaxed">{rule}</p>
+                      <p className="text-slate-100 text-xs md:text-sm font-bold leading-relaxed">{rule}</p>
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                  <span className="text-xs text-slate-400">Press Space or Arrow Right to proceed</span>
+                <div className="flex items-center justify-between pt-3 border-t-2 border-[#00d2ff]/30">
+                  <span className="text-xs text-[#7dd3fc] font-bold">Press Space or Arrow Right to proceed</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-semibold text-white transition"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
                   >
                     Meet Finalists <ArrowRight className="w-4 h-4" />
                   </button>
@@ -606,27 +607,27 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Finalists Intro */}
             {slide.type === 'finalists' && (
-              <div className="flex flex-col h-full justify-center">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-                    <Crown className="w-4 h-4" /> Stage Qualifiers
+              <div className="flex flex-col h-full justify-center p-2 sm:p-4">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] text-xs font-black uppercase tracking-wider mb-2 -rotate-1">
+                    <Crown className="w-4 h-4 text-[#081a2e]" /> Stage Qualifiers
                   </div>
                   <h2 className="text-3xl md:text-5xl font-black text-white">Meet the Top 6 Finalists</h2>
-                  <p className="text-slate-400 text-sm mt-1">Click any name to rename qualifier</p>
+                  <p className="text-[#7dd3fc] text-xs font-bold mt-1">Click any name to edit qualifier name</p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 mb-6">
                   {finalists.map((finalist, idx) => (
                     <motion.div
                       key={finalist.id}
-                      initial={{ opacity: 0, y: 15 }}
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.08 }}
-                      className="flex flex-col items-center p-5 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800 hover:border-slate-700 transition group text-center"
+                      transition={{ delay: idx * 0.06 }}
+                      className="flex flex-col items-center p-4 rounded-2xl notebook-card text-center group"
                     >
-                      <div className="relative mb-3">
-                        <ParticipantAvatar seed={finalist.avatarSeed} size="lg" className="ring-2 ring-blue-500/40" />
-                        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center">
+                      <div className="relative mb-2.5">
+                        <ParticipantAvatar seed={finalist.avatarSeed} size="lg" className="ring-2 ring-[#00d2ff]" />
+                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#fbbf24] text-[#081a2e] font-black text-xs flex items-center justify-center border border-[#081a2e]">
                           #{idx + 1}
                         </div>
                       </div>
@@ -635,12 +636,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         type="text"
                         defaultValue={finalist.name}
                         onBlur={(e) => updateFinalistName(finalist.id, e.target.value)}
-                        className="w-full text-center font-bold text-slate-100 bg-transparent hover:bg-slate-800/60 focus:bg-slate-800 focus:ring-1 focus:ring-blue-500 rounded px-1 py-0.5 text-sm transition outline-none"
+                        className="w-full text-center font-black text-white bg-transparent hover:bg-[#081a2e] focus:bg-[#081a2e] focus:ring-2 focus:ring-[#00d2ff] rounded-lg px-1 py-0.5 text-xs md:text-sm transition outline-none"
                       />
 
-                      <div className="mt-3 w-full pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Score</span>
-                        <span className="font-mono font-bold text-emerald-400 text-sm">{finalist.score} pts</span>
+                      <div className="mt-2.5 w-full pt-2 border-t-2 border-[#00d2ff]/30 flex items-center justify-between text-xs">
+                        <span className="text-[#7dd3fc] font-bold">Score</span>
+                        <span className="font-mono font-black text-[#00d2ff] text-sm">{finalist.score} pts</span>
                       </div>
                     </motion.div>
                   ))}
@@ -649,7 +650,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 <div className="flex items-center justify-center">
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 font-bold text-white shadow-lg transition"
+                    className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
                   >
                     Enter Round 1 (MCQ) <ArrowRight className="w-4 h-4" />
                   </button>
@@ -659,23 +660,23 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round Intro */}
             {slide.type === 'round_intro' && (
-              <div className="text-center flex flex-col items-center justify-center py-10">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mb-6">
+              <div className="text-center flex flex-col items-center justify-center py-8">
+                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#00d2ff]">
                   {slide.roundNum === 1 && <HelpCircle className="w-8 h-8" />}
                   {slide.roundNum === 2 && <Radio className="w-8 h-8" />}
-                  {slide.roundNum === 3 && <Flame className="w-8 h-8 text-amber-400" />}
+                  {slide.roundNum === 3 && <Flame className="w-8 h-8 text-[#fbbf24]" />}
                 </div>
 
-                <span className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-2">
+                <span className="text-xs font-black uppercase tracking-widest text-[#00d2ff] mb-1">
                   Round {slide.roundNum}
                 </span>
 
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-4">{slide.data?.name}</h2>
-                <p className="text-lg text-slate-300 max-w-xl mb-8 leading-relaxed">{slide.data?.ruleText}</p>
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3">{slide.data?.name}</h2>
+                <p className="text-base md:text-lg text-[#7dd3fc] max-w-xl mb-6 font-bold leading-relaxed">{slide.data?.ruleText}</p>
 
                 <button
                   onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition shadow-lg"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
                 >
                   Start Round {slide.roundNum} <ArrowRight className="w-5 h-5" />
                 </button>
@@ -684,67 +685,67 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 1 MCQ */}
             {slide.type === 'r1_mcq' && (
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border-2 border-[#00d2ff]/50">
                       Round 1 — MCQ • Question {slide.qIndex! + 1} of {slide.totalInRound}
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">+5 Points for Correct</span>
+                    <span className="text-xs text-[#fbbf24] font-black uppercase tracking-wider">+5 Points for Correct</span>
                   </div>
 
                   {/* Question Prompt */}
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-snug mb-8">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-white leading-snug mb-6">
                     {slide.data.question}
                   </h2>
 
                   {/* 4 Options Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4">
                     {slide.data.options.map((opt: string, idx: number) => {
                       const isCorrect = idx === slide.data.correctIndex
                       const letter = String.fromCharCode(65 + idx)
                       return (
                         <div
                           key={idx}
-                          className={`flex items-center gap-4 p-4 md:p-5 rounded-2xl border transition-all duration-300 ${
+                          className={`flex items-center gap-3.5 p-3.5 md:p-4 rounded-2xl transition-all duration-200 border-2 ${
                             isRevealed
                               ? isCorrect
-                                ? 'bg-emerald-950/80 border-emerald-500 text-emerald-100 ring-2 ring-emerald-500/50 scale-[1.01]'
-                                : 'bg-slate-900/40 border-slate-800/80 text-slate-400 opacity-60'
-                              : 'bg-slate-900/80 border-slate-800 text-slate-100 hover:border-slate-700'
+                                ? 'bg-[#10b981] text-[#081a2e] border-[#081a2e] shadow-[4px_4px_0px_#04101d] font-black scale-[1.01]'
+                                : 'bg-[#081a2e]/50 border-[#00d2ff]/20 text-slate-400 opacity-40'
+                              : 'notebook-card-interactive text-white'
                           }`}
                         >
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base transition ${
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm border-2 ${
                               isRevealed && isCorrect
-                                ? 'bg-emerald-500 text-slate-950'
-                                : 'bg-slate-800 text-slate-300'
+                                ? 'bg-[#081a2e] text-[#10b981] border-[#081a2e]'
+                                : 'bg-[#00d2ff] text-[#081a2e] border-[#081a2e]'
                             }`}
                           >
                             {letter}
                           </div>
-                          <span className="text-base md:text-lg font-semibold flex-1">{opt}</span>
-                          {isRevealed && isCorrect && <CheckCircle2 className="w-6 h-6 text-emerald-400" />}
+                          <span className="text-sm md:text-base font-bold flex-1">{opt}</span>
+                          {isRevealed && isCorrect && <CheckCircle2 className="w-6 h-6 text-[#081a2e]" />}
                         </div>
                       )
                     })}
                   </div>
 
-                  {/* Fact Card (Revealed only when answer is revealed) */}
+                  {/* Engineering Fact Card */}
                   <AnimatePresence>
                     {isRevealed && slide.data.explanation && (
                       <motion.div
-                        initial={{ opacity: 0, y: 12, height: 0 }}
+                        initial={{ opacity: 0, y: 8, height: 0 }}
                         animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: 12, height: 0 }}
-                        className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-indigo-950/40 border border-amber-500/30 text-slate-200 text-sm md:text-base leading-relaxed mb-4 shadow-lg flex items-start gap-3.5"
+                        exit={{ opacity: 0, y: 8, height: 0 }}
+                        className="p-4 rounded-2xl sticky-note-yellow text-[#081a2e] text-xs md:text-sm leading-relaxed mb-2 shadow-[4px_4px_0px_#04101d] flex items-start gap-3"
                       >
-                        <Lightbulb className="w-6 h-6 text-amber-400 flex-shrink-0 mt-0.5" />
+                        <Lightbulb className="w-5 h-5 text-[#081a2e] flex-shrink-0 mt-0.5" />
                         <div>
-                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-1">
-                            Engineering Fact & Backstory
+                          <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5 text-[#081a2e]">
+                            💡 Engineering Backstory & Fact
                           </span>
-                          <p>{slide.data.explanation}</p>
+                          <p className="font-bold">{slide.data.explanation}</p>
                         </div>
                       </motion.div>
                     )}
@@ -752,13 +753,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Bottom Bar Controls for Slide */}
-                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex flex-wrap items-center justify-between gap-2.5">
                   <button
                     onClick={() => toggleReveal(`slide_${currentSlide}`)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold border transition ${
+                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105 active:scale-95 ${
                       isRevealed
-                        ? 'bg-slate-800 text-slate-300 border-slate-700'
-                        : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500'
+                        ? 'bg-[#0e2e4e] text-white'
+                        : 'bg-[#fbbf24] text-[#081a2e]'
                     }`}
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -766,13 +767,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   </button>
 
                   {/* Award Points Quick Bar */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400 font-medium mr-1">Award +5 to:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs text-[#7dd3fc] font-bold mr-1">Award +5 to:</span>
                     {finalists.map((f, i) => (
                       <button
                         key={f.id}
                         onClick={() => adjustScore(f.id, 5, 'r1')}
-                        className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-emerald-600 hover:text-white border border-slate-800 text-xs font-semibold text-slate-300 transition"
+                        className="px-2.5 py-1 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] text-xs font-black transition hover:scale-105"
                       >
                         #{i + 1} {f.name.split(' ')[0]}
                       </button>
@@ -784,22 +785,22 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 2 Image Question */}
             {slide.type === 'r2_image' && (
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border-2 border-[#00d2ff]/50">
                       Round 2 — Image {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">Direct +10 | Direct −5 | Pass +5</span>
+                    <span className="text-xs text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
                   </div>
 
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-4 leading-snug">
+                  <h2 className="text-lg md:text-2xl font-black text-white mb-3 leading-snug">
                     {slide.data.question}
                   </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-3">
                     {/* Image Box */}
-                    <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 flex items-center justify-center group shadow-xl">
+                    <div className="relative w-full h-56 md:h-72 rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-2">
                       <Image
                         src={slide.data.imageUrl}
                         alt="Clue Image"
@@ -816,19 +817,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-100"
+                            className="p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d]"
                           >
-                            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">
-                              Correct Answer
+                            <span className="text-[11px] font-black uppercase tracking-wider block mb-1">
+                              ✓ Verified Technical Answer
                             </span>
-                            <h3 className="text-2xl font-black text-white mb-3">{slide.data.answer}</h3>
-                            <p className="text-sm text-slate-300 leading-relaxed">{slide.data.explanation}</p>
+                            <h3 className="text-xl md:text-2xl font-black mb-2">{slide.data.answer}</h3>
+                            <p className="text-xs md:text-sm font-bold leading-relaxed">{slide.data.explanation}</p>
                           </motion.div>
                         ) : (
-                          <div className="p-8 rounded-2xl bg-slate-900/60 border border-slate-800/80 text-center text-slate-400">
-                            <ImageIcon className="w-10 h-10 mx-auto text-slate-600 mb-2" />
-                            <p className="text-sm font-medium">Participant answers directly without options</p>
-                            <p className="text-xs text-slate-500 mt-1">Press Reveal or R to show answer</p>
+                          <div className="p-6 rounded-2xl notebook-card text-center text-[#7dd3fc]">
+                            <ImageIcon className="w-8 h-8 mx-auto text-[#00d2ff] mb-2" />
+                            <p className="text-sm font-black text-white">Direct Answer Round (No Multiple Choice)</p>
+                            <p className="text-xs text-[#7dd3fc] mt-1 font-bold">Press Reveal Answer or Key R</p>
                           </div>
                         )}
                       </AnimatePresence>
@@ -837,47 +838,47 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Score Award Bar */}
-                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex flex-wrap items-center justify-between gap-2.5">
                   <button
                     onClick={() => toggleReveal(`slide_${currentSlide}`)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition"
+                    className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
                   </button>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-emerald-400 font-bold">Direct (+10):</span>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#10b981] font-black">Direct (+10):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, 10, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-emerald-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#10b981] text-[#081a2e] text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-amber-400 font-bold">Passed (+5):</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#fbbf24] font-black">Passed (+5):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, 5, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-amber-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#fbbf24] text-[#081a2e] text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-rose-400 font-bold">Wrong (−5):</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#f43f5e] font-black">Wrong (−5):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, -5, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-rose-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#f43f5e] text-white text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
@@ -890,42 +891,42 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 2 Audio Question */}
             {slide.type === 'r2_audio' && (
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border-2 border-[#00d2ff]/50">
                       Round 2 — Audio {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">Direct +10 | Direct −5 | Pass +5</span>
+                    <span className="text-xs text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
                   </div>
 
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-6 leading-snug">
+                  <h2 className="text-lg md:text-2xl font-black text-white mb-4 leading-snug">
                     {slide.data.question}
                   </h2>
 
-                  {/* Audio Player Card */}
-                  <div className="p-6 md:p-8 rounded-3xl bg-slate-900/90 border border-purple-500/30 shadow-2xl mb-6 flex flex-col md:flex-row items-center gap-6">
+                  {/* Audio Player Card (Blueprint Style) */}
+                  <div className="p-5 md:p-6 rounded-3xl notebook-card mb-4 flex flex-col md:flex-row items-center gap-5">
                     <button
                       onClick={() => togglePlayAudio(slide.data.audioUrl, slide.data.id)}
-                      className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 transition-transform active:scale-95 flex-shrink-0"
+                      className="w-16 h-16 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] flex items-center justify-center border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition-transform active:scale-95 flex-shrink-0"
                     >
                       {playingAudioId === slide.data.id ? (
-                        <Pause className="w-10 h-10" />
+                        <Pause className="w-8 h-8" />
                       ) : (
-                        <Play className="w-10 h-10 ml-1" />
+                        <Play className="w-8 h-8 ml-1" />
                       )}
                     </button>
 
                     <div className="flex-1 w-full">
-                      <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-                        <span>Audio Track #{slide.qIndex! + 1}</span>
+                      <div className="flex items-center justify-between text-xs font-mono font-bold text-[#7dd3fc] mb-1.5">
+                        <span>AUDIO TRACK #{slide.qIndex! + 1}</span>
                         <span>
                           {Math.floor(audioProgress)}s / {Math.floor(audioDuration)}s
                         </span>
                       </div>
 
-                      {/* Animated Soundwave Visualizer Bars */}
-                      <div className="flex items-center gap-1.5 h-12 w-full px-2 py-1 rounded-xl bg-slate-950 border border-slate-800">
+                      {/* Animated Technical Waveform Bars */}
+                      <div className="flex items-center gap-1 h-10 w-full px-2 py-1 rounded-xl bg-[#081a2e] border-2 border-[#00d2ff]/40">
                         {Array.from({ length: 36 }).map((_, i) => (
                           <motion.div
                             key={i}
@@ -934,9 +935,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                                 ? { height: ['20%', `${Math.random() * 80 + 20}%`, '20%'] }
                                 : { height: '20%' }
                             }
-                            transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.03 }}
+                            transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.025 }}
                             className={`flex-1 rounded-full ${
-                              playingAudioId === slide.data.id ? 'bg-purple-400' : 'bg-slate-700'
+                              playingAudioId === slide.data.id ? 'bg-[#00d2ff]' : 'bg-[#0f355c]'
                             }`}
                           />
                         ))}
@@ -948,67 +949,67 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <AnimatePresence>
                     {isRevealed && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-100"
+                        className="p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d]"
                       >
-                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-1">
-                          Personality Identified
+                        <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5">
+                          ✓ Speaker Personality Identified
                         </span>
-                        <h3 className="text-2xl font-black text-white mb-2">{slide.data.answer}</h3>
+                        <h3 className="text-xl md:text-2xl font-black mb-1">{slide.data.answer}</h3>
                         {slide.data.quote && (
-                          <p className="text-sm font-semibold italic text-amber-300 mb-2">
+                          <p className="text-xs md:text-sm font-black italic mb-1 text-[#081a2e]">
                             "{slide.data.quote}"
                           </p>
                         )}
-                        <p className="text-xs md:text-sm text-slate-300">{slide.data.explanation}</p>
+                        <p className="text-xs font-bold text-[#081a2e]">{slide.data.explanation}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Score Award Bar */}
-                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex flex-wrap items-center justify-between gap-2.5">
                   <button
                     onClick={() => toggleReveal(`slide_${currentSlide}`)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-purple-600 hover:bg-purple-500 text-white transition"
+                    className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
                   </button>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-emerald-400 font-bold">Direct (+10):</span>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#10b981] font-black">Direct (+10):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, 10, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-emerald-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#10b981] text-[#081a2e] text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-amber-400 font-bold">Passed (+5):</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#fbbf24] font-black">Passed (+5):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, 5, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-amber-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#fbbf24] text-[#081a2e] text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-rose-400 font-bold">Wrong (−5):</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-[#f43f5e] font-black">Wrong (−5):</span>
                       {finalists.map((f, i) => (
                         <button
                           key={f.id}
                           onClick={() => adjustScore(f.id, -5, 'r2')}
-                          className="px-2 py-1 rounded bg-slate-900 hover:bg-rose-600 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition"
+                          className="px-2 py-0.5 rounded-lg bg-[#f43f5e] text-white text-xs font-black border border-[#081a2e] shadow-[1px_1px_0px_#04101d] hover:scale-105 transition"
                         >
                           #{i + 1}
                         </button>
@@ -1021,38 +1022,38 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 3 Rapid Fire */}
             {slide.type === 'r3_rapid' && (
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                      <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] flex items-center gap-1">
                         <FlameKindling className="w-3.5 h-3.5" /> Rapid Fire • {slide.data.participantLabel} (Set {slide.data.setNumber})
                       </span>
                     </div>
 
                     {/* 40s Acoustic Timer Pill */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
                       <div
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full border font-mono font-bold text-lg transition ${
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] font-mono font-black text-base transition ${
                           rapidSeconds <= 10
-                            ? 'bg-rose-950/80 border-rose-500 text-rose-400 animate-pulse'
+                            ? 'bg-[#f43f5e] text-white animate-pulse'
                             : timerRunning
-                            ? 'bg-amber-950/80 border-amber-500 text-amber-400'
-                            : 'bg-slate-900 border-slate-700 text-slate-300'
+                            ? 'bg-[#fbbf24] text-[#081a2e]'
+                            : 'bg-[#00d2ff] text-[#081a2e]'
                         }`}
                       >
-                        <TimerIcon className="w-5 h-5" />
+                        <TimerIcon className="w-4 h-4" />
                         <span>{rapidSeconds}s</span>
                       </div>
 
                       <button
                         onClick={() => setTimerRunning((prev) => !prev)}
-                        className={`p-2 rounded-xl text-white font-bold transition ${
-                          timerRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
+                        className={`p-2 rounded-xl font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition ${
+                          timerRunning ? 'bg-[#fbbf24]' : 'bg-[#10b981]'
                         }`}
                         title="Start / Pause Timer (Space)"
                       >
-                        {timerRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                        {timerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                       </button>
 
                       <button
@@ -1061,19 +1062,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           setRapidSeconds(40)
                           setRapidQuestionIdx(0)
                         }}
-                        className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                        className="p-2 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] transition"
                         title="Reset 40s Timer"
                       >
-                        <RotateCcw className="w-5 h-5" />
+                        <RotateCcw className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
 
                   {/* If NOT in reveal mode: Live 5 questions run (NO ANSWERS SHOWN) */}
                   {!rapidRevealMode[slide.data.setNumber] ? (
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
-                        <span>Questions for {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</span>
+                    <div className="space-y-2.5 mb-4">
+                      <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-bold mb-1">
+                        <span>Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong></span>
                         <span>5 Questions • 40s Total</span>
                       </div>
 
@@ -1081,29 +1082,29 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         <div
                           key={qIdx}
                           onClick={() => setRapidQuestionIdx(qIdx)}
-                          className={`p-4 rounded-2xl border transition flex items-center justify-between cursor-pointer ${
+                          className={`p-3.5 rounded-2xl border-2 transition flex items-center justify-between cursor-pointer ${
                             rapidQuestionIdx === qIdx
-                              ? 'bg-slate-900 border-amber-500/80 ring-1 ring-amber-500/40'
-                              : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                              ? 'bg-[#0e2e4e] border-[#fbbf24] shadow-[4px_4px_0px_#04101d]'
+                              : 'bg-[#081a2e]/80 border-[#00d2ff]/30 hover:border-[#00d2ff]'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 font-mono font-bold text-xs flex items-center justify-center">
+                            <span className="w-6 h-6 rounded-lg bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
                               {q.number}
                             </span>
-                            <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40">
                               {q.category}
                             </span>
-                            <span className="text-base md:text-lg font-semibold text-slate-100">{q.prompt}</span>
+                            <span className="text-sm md:text-base font-bold text-white">{q.prompt}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     /* REVEAL ALL ANSWERS MODE: After questions are done, reveal each question with answers! */
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center justify-between text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">
-                        <span>Reveal & Verification Mode • Award +10 Points</span>
+                    <div className="space-y-2.5 mb-4 max-h-[60vh] overflow-y-auto pr-1">
+                      <div className="flex items-center justify-between text-xs font-black text-[#10b981] uppercase tracking-wider mb-1">
+                        <span>✓ Verification & Scoring Mode</span>
                         <span>Participant: {finalists[slide.data.participantIndex]?.name}</span>
                       </div>
 
@@ -1113,23 +1114,23 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         return (
                           <motion.div
                             key={qIdx}
-                            initial={{ opacity: 0, y: 8 }}
+                            initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: qIdx * 0.05 }}
-                            className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3"
+                            transition={{ delay: qIdx * 0.04 }}
+                            className="p-3.5 rounded-2xl notebook-card flex flex-col md:flex-row md:items-center justify-between gap-2.5"
                           >
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="w-6 h-6 rounded bg-slate-800 text-slate-300 font-mono font-bold text-xs flex items-center justify-center">
+                                <span className="w-5 h-5 rounded bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
                                   {q.number}
                                 </span>
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400">
+                                <span className="px-2 py-0.2 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff]">
                                   {q.category}
                                 </span>
-                                <span className="text-sm md:text-base font-semibold text-slate-200">{q.prompt}</span>
+                                <span className="text-xs md:text-sm font-bold text-white">{q.prompt}</span>
                               </div>
-                              <div className="ml-8 text-emerald-400 font-bold text-sm md:text-base flex items-center gap-1.5">
-                                <CheckCircle2 className="w-4 h-4" /> Ans: {q.answer}
+                              <div className="ml-7 text-[#10b981] font-black text-xs md:text-sm flex items-center gap-1">
+                                <CheckCircle2 className="w-4 h-4 text-[#10b981]" /> Ans: {q.answer}
                               </div>
                             </div>
 
@@ -1145,13 +1146,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                                   setRapidAnswerAwarded((prev) => ({ ...prev, [awardKey]: true }))
                                 }
                               }}
-                              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                              className={`px-3.5 py-1.5 rounded-xl text-xs font-black border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center gap-1 ${
                                 isAwarded
-                                  ? 'bg-emerald-600 text-white'
-                                  : 'bg-slate-800 hover:bg-emerald-600/30 text-slate-300 border border-slate-700'
+                                  ? 'bg-[#10b981] text-[#081a2e]'
+                                  : 'bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e]'
                               }`}
                             >
-                              {isAwarded ? 'Awarded +10' : '+10 Correct'}
+                              {isAwarded ? '✓ Awarded +10' : '+10 Correct'}
                             </button>
                           </motion.div>
                         )
@@ -1161,7 +1162,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Bottom Bar: Mode Switcher */}
-                <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
                   <button
                     onClick={() => {
                       setRapidRevealMode((prev) => ({
@@ -1170,7 +1171,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       }))
                       sound.tap()
                     }}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition shadow-lg"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
                   >
                     {rapidRevealMode[slide.data.setNumber] ? (
                       <>
@@ -1183,8 +1184,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     )}
                   </button>
 
-                  <div className="text-xs text-slate-400">
-                    Target Participant: <strong className="text-white">{finalists[slide.data.participantIndex]?.name}</strong>
+                  <div className="text-xs text-[#7dd3fc] font-bold">
+                    Target: <strong className="text-white">{finalists[slide.data.participantIndex]?.name}</strong>
                   </div>
                 </div>
               </div>
@@ -1192,21 +1193,21 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 4 Intro */}
             {slide.type === 'r4_intro' && (
-              <div className="text-center flex flex-col items-center justify-center py-10">
-                <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mb-6">
+              <div className="text-center flex flex-col items-center justify-center py-8">
+                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#f43f5e]">
                   <Zap className="w-8 h-8" />
                 </div>
-                <span className="text-sm font-bold uppercase tracking-widest text-rose-400 mb-2">Final Round</span>
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-4">Fastest Fingers First</h2>
-                <p className="text-lg text-slate-300 max-w-xl mb-6 leading-relaxed">
-                  Correct answer = <strong className="text-emerald-400">+15 Points</strong> • Wrong answer after buzzing = <strong className="text-rose-400">−5 Points</strong>
+                <span className="text-xs font-black uppercase tracking-widest text-[#f43f5e] mb-1">Final Round</span>
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-3">Fastest Fingers First</h2>
+                <p className="text-base md:text-lg text-[#7dd3fc] max-w-xl mb-4 font-bold leading-relaxed">
+                  Correct answer = <strong className="text-[#10b981]">+15 Points</strong> • Wrong answer after buzzing = <strong className="text-[#f43f5e]">−5 Points</strong>
                 </p>
-                <p className="text-xs text-slate-400 max-w-md mb-8">
+                <p className="text-xs text-slate-300 font-bold max-w-md mb-6">
                   Buzz only after the question is completely read. Early buzzes will not be considered.
                 </p>
                 <button
                   onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition shadow-lg"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#f43f5e] hover:bg-[#e11d48] text-white font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
                 >
                   Enter Buzzer Arena <ArrowRight className="w-5 h-5" />
                 </button>
@@ -1215,41 +1216,41 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 4 Live Buzzer Arena */}
             {slide.type === 'r4_buzzer' && (
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                      Round 4 — Fastest Fingers First • Live Scoring Arena
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#f43f5e]/20 text-[#f43f5e] border-2 border-[#f43f5e]/50">
+                      Round 4 — Fastest Fingers First • Live Arena
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">Correct +15 | Wrong −5</span>
+                    <span className="text-xs text-[#fbbf24] font-black">Correct +15 | Wrong −5</span>
                   </div>
 
-                  <h2 className="text-2xl md:text-3xl font-black text-white mb-6 text-center">
+                  <h2 className="text-xl md:text-3xl font-black text-white mb-5 text-center">
                     Fastest Fingers Live Buzzer Arena
                   </h2>
 
                   {/* 6 Finalists Buzzer Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 mb-4">
                     {finalists.map((f, i) => (
                       <div
                         key={f.id}
-                        className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col items-center text-center shadow-lg hover:border-slate-700 transition"
+                        className="p-4 rounded-2xl notebook-card flex flex-col items-center text-center group"
                       >
-                        <ParticipantAvatar seed={f.avatarSeed} size="md" className="mb-2" />
-                        <span className="font-bold text-slate-100 text-sm truncate w-full">{f.name}</span>
-                        <span className="font-mono font-black text-lg text-emerald-400 my-2">{f.score} pts</span>
+                        <ParticipantAvatar seed={f.avatarSeed} size="md" className="mb-2 ring-2 ring-[#00d2ff]" />
+                        <span className="font-black text-white text-xs truncate w-full">{f.name}</span>
+                        <span className="font-mono font-black text-base text-[#00d2ff] my-1.5">{f.score} pts</span>
 
-                        <div className="flex items-center gap-2 w-full mt-1">
+                        <div className="flex items-center gap-1.5 w-full mt-1">
                           <button
                             onClick={() => adjustScore(f.id, 15, 'r4')}
-                            className="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition"
+                            className="flex-1 py-1 rounded-lg bg-[#10b981] hover:bg-[#059669] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[1px_1px_0px_#04101d] transition"
                             title="Award +15 points"
                           >
                             +15
                           </button>
                           <button
                             onClick={() => adjustScore(f.id, -5, 'r4')}
-                            className="flex-1 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition"
+                            className="flex-1 py-1 rounded-lg bg-[#f43f5e] hover:bg-[#e11d48] text-white font-black text-xs border border-[#081a2e] shadow-[1px_1px_0px_#04101d] transition"
                             title="Deduct 5 points"
                           >
                             −5
@@ -1260,13 +1261,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">In case of equal scores, proceed to Tie-Breaker</span>
+                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+                  <span className="text-xs text-[#7dd3fc] font-bold">In case of tied scores, proceed to Tie-Breaker</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-slate-950 transition"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#fbbf24] hover:bg-[#f59e0b] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
                   >
-                    Proceed to Tie-Breaker / Finale <ArrowRight className="w-4 h-4" />
+                    Proceed to Finale <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -1274,18 +1275,18 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Tie Breaker */}
             {slide.type === 'tie_breaker' && (
-              <div className="text-center flex flex-col items-center justify-center py-10">
-                <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-6">
+              <div className="text-center flex flex-col items-center justify-center py-8">
+                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#fbbf24]">
                   <Crown className="w-8 h-8" />
                 </div>
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">Stage Finale</span>
-                <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Tie-Breaker Arena</h2>
-                <p className="text-slate-300 max-w-md mb-8 leading-relaxed">
+                <span className="text-xs font-black uppercase tracking-widest text-[#fbbf24] mb-1">Stage Finale</span>
+                <h2 className="text-3xl md:text-5xl font-black text-white mb-3">Tie-Breaker Arena</h2>
+                <p className="text-[#7dd3fc] font-bold max-w-md mb-6 leading-relaxed">
                   Conducted by Quizmaster if two or more finalists share identical scores for podium positions.
                 </p>
                 <button
                   onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold transition shadow-xl"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
                 >
                   Reveal Grand Victory Podium <Trophy className="w-5 h-5 ml-1" />
                 </button>
@@ -1294,82 +1295,82 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Grand Podium */}
             {slide.type === 'podium' && (
-              <div className="flex flex-col items-center justify-center h-full text-center py-6">
+              <div className="flex flex-col items-center justify-center h-full text-center py-4">
                 <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
+                  initial={{ scale: 0.85, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs uppercase tracking-widest mb-4"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-widest mb-4 -rotate-1"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-400" /> INGENIUM 2026 Champion Ceremony
+                  <Sparkles className="w-4 h-4 text-[#081a2e]" /> INGENIUM 2026 Champion Ceremony
                 </motion.div>
 
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-8">Grand Victory Podium</h2>
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6">Grand Victory Podium</h2>
 
                 {/* Podium Top 3 */}
-                <div className="grid grid-cols-3 gap-4 md:gap-6 w-full max-w-2xl items-end mb-8">
+                <div className="grid grid-cols-3 gap-3 md:gap-5 w-full max-w-2xl items-end mb-6">
                   {/* Rank 2 (Silver) */}
                   <motion.div
-                    initial={{ y: 30, opacity: 0 }}
+                    initial={{ y: 25, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                     className="flex flex-col items-center"
                   >
-                    <ParticipantAvatar seed={rankedFinalists[1]?.avatarSeed || 'f2'} size="lg" className="mb-2 ring-2 ring-slate-400" />
-                    <span className="font-bold text-slate-200 text-sm truncate max-w-[120px]">
+                    <ParticipantAvatar seed={rankedFinalists[1]?.avatarSeed || 'f2'} size="lg" className="mb-2 ring-2 ring-slate-300" />
+                    <span className="font-black text-slate-100 text-xs md:text-sm truncate max-w-[110px]">
                       {rankedFinalists[1]?.name || 'Finalist 2'}
                     </span>
-                    <span className="font-mono font-bold text-emerald-400 text-sm mb-2">{rankedFinalists[1]?.score || 0} pts</span>
-                    <div className="w-full h-28 rounded-t-2xl bg-gradient-to-b from-slate-700 to-slate-800 border-t-2 border-slate-400 flex flex-col items-center justify-center text-slate-200">
-                      <Medal className="w-6 h-6 text-slate-300 mb-1" />
-                      <span className="font-black text-lg">2nd Place</span>
+                    <span className="font-mono font-black text-[#00d2ff] text-xs md:text-sm mb-1.5">{rankedFinalists[1]?.score || 0} pts</span>
+                    <div className="w-full h-24 md:h-28 rounded-t-2xl bg-slate-400 border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e]">
+                      <Medal className="w-6 h-6 mb-0.5" />
+                      <span className="font-black text-sm md:text-base">2nd Place</span>
                     </div>
                   </motion.div>
 
                   {/* Rank 1 (Gold) */}
                   <motion.div
-                    initial={{ y: 40, opacity: 0 }}
+                    initial={{ y: 35, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.35 }}
                     className="flex flex-col items-center"
                   >
                     <div className="relative mb-2">
-                      <ParticipantAvatar seed={rankedFinalists[0]?.avatarSeed || 'f1'} size="xl" className="ring-4 ring-amber-400" />
-                      <Crown className="w-7 h-7 text-amber-400 absolute -top-4 left-1/2 -translate-x-1/2 animate-bounce" />
+                      <ParticipantAvatar seed={rankedFinalists[0]?.avatarSeed || 'f1'} size="xl" className="ring-4 ring-[#fbbf24]" />
+                      <Crown className="w-7 h-7 text-[#fbbf24] absolute -top-4 left-1/2 -translate-x-1/2 animate-bounce" />
                     </div>
-                    <span className="font-black text-white text-base truncate max-w-[140px]">
+                    <span className="font-black text-white text-sm md:text-base truncate max-w-[130px]">
                       {rankedFinalists[0]?.name || 'Finalist 1'}
                     </span>
-                    <span className="font-mono font-bold text-amber-400 text-base mb-2">{rankedFinalists[0]?.score || 0} pts</span>
-                    <div className="w-full h-40 rounded-t-2xl bg-gradient-to-b from-amber-500 to-amber-600 border-t-4 border-amber-300 flex flex-col items-center justify-center text-slate-950 shadow-2xl">
-                      <Trophy className="w-8 h-8 text-slate-950 mb-1" />
-                      <span className="font-black text-xl">CHAMPION</span>
+                    <span className="font-mono font-black text-[#fbbf24] text-sm md:text-base mb-1.5">{rankedFinalists[0]?.score || 0} pts</span>
+                    <div className="w-full h-36 md:h-40 rounded-t-2xl bg-[#fbbf24] border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e]">
+                      <Trophy className="w-8 h-8 mb-0.5" />
+                      <span className="font-black text-base md:text-xl">CHAMPION</span>
                     </div>
                   </motion.div>
 
                   {/* Rank 3 (Bronze) */}
                   <motion.div
-                    initial={{ y: 30, opacity: 0 }}
+                    initial={{ y: 25, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.25 }}
                     className="flex flex-col items-center"
                   >
-                    <ParticipantAvatar seed={rankedFinalists[2]?.avatarSeed || 'f3'} size="lg" className="mb-2 ring-2 ring-amber-700" />
-                    <span className="font-bold text-slate-200 text-sm truncate max-w-[120px]">
+                    <ParticipantAvatar seed={rankedFinalists[2]?.avatarSeed || 'f3'} size="lg" className="mb-2 ring-2 ring-[#d97706]" />
+                    <span className="font-black text-slate-100 text-xs md:text-sm truncate max-w-[110px]">
                       {rankedFinalists[2]?.name || 'Finalist 3'}
                     </span>
-                    <span className="font-mono font-bold text-emerald-400 text-sm mb-2">{rankedFinalists[2]?.score || 0} pts</span>
-                    <div className="w-full h-20 rounded-t-2xl bg-gradient-to-b from-amber-800 to-amber-900 border-t-2 border-amber-600 flex flex-col items-center justify-center text-amber-200">
-                      <Award className="w-6 h-6 text-amber-400 mb-1" />
-                      <span className="font-black text-base">3rd Place</span>
+                    <span className="font-mono font-black text-[#00d2ff] text-xs md:text-sm mb-1.5">{rankedFinalists[2]?.score || 0} pts</span>
+                    <div className="w-full h-18 md:h-20 rounded-t-2xl bg-[#d97706] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] flex flex-col items-center justify-center text-white">
+                      <Award className="w-5 h-5 mb-0.5" />
+                      <span className="font-black text-xs md:text-sm">3rd Place</span>
                     </div>
                   </motion.div>
                 </div>
 
                 {/* Qualifiers 4 to 6 */}
-                <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
+                <div className="flex items-center justify-center gap-3 text-xs text-[#7dd3fc] font-bold">
                   {rankedFinalists.slice(3, 6).map((f, i) => (
-                    <div key={f.id} className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
-                      #{i + 4} <strong className="text-slate-200">{f.name}</strong>: {f.score} pts
+                    <div key={f.id} className="px-3 py-1 rounded-xl notebook-card">
+                      #{i + 4} <strong className="text-white">{f.name}</strong>: {f.score} pts
                     </div>
                   ))}
                 </div>
@@ -1380,19 +1381,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       </main>
 
       {/* Presentation Footer Navigation */}
-      <footer className="relative z-20 flex items-center justify-between px-6 py-3 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+      <footer className="relative z-20 flex items-center justify-between px-5 py-2.5 border-t-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_-4px_0px_#04101d]">
         <div className="flex items-center gap-2">
           <button
             onClick={prevSlide}
             disabled={currentSlide === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 text-xs font-black text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition"
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
           <button
             onClick={nextSlide}
             disabled={currentSlide === slides.length - 1}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white disabled:opacity-40 disabled:pointer-events-none transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-xs font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition"
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>
@@ -1405,26 +1406,26 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`h-1.5 rounded-full transition-all duration-200 ${
-                currentSlide === i ? 'w-6 bg-blue-500' : 'w-1.5 bg-slate-800 hover:bg-slate-700'
+                currentSlide === i ? 'w-6 bg-[#00d2ff]' : 'w-1.5 bg-[#0f355c] hover:bg-[#00d2ff]/60'
               }`}
               title={`Jump to Slide ${i + 1}`}
             />
           ))}
         </div>
 
-        <div className="text-xs text-slate-500 font-mono hidden sm:inline">
+        <div className="text-xs text-[#7dd3fc] font-mono font-bold hidden sm:inline">
           Use &larr; &rarr; keys or Space to navigate
         </div>
       </footer>
 
-      {/* Interactive Scoreboard Drawer (Toggle with 'S' key or Scoreboard button) */}
+      {/* Interactive Scoreboard Drawer */}
       <AnimatePresence>
         {showScoreboard && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex justify-end"
+            className="fixed inset-0 z-50 bg-[#04101d]/85 backdrop-blur-sm flex justify-end"
             onClick={() => setShowScoreboard(false)}
           >
             <motion.div
@@ -1432,18 +1433,18 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               animate={{ x: 0 }}
               exit={{ x: 400 }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="w-full max-w-md h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl"
+              className="w-full max-w-md h-full notebook-paper border-l-2 border-[#00d2ff] p-6 flex flex-col justify-between shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                <div className="flex items-center justify-between pb-3.5 border-b-2 border-[#00d2ff]/40 mb-4">
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-amber-400" />
-                    <h3 className="font-bold text-white text-lg">Stage Leaderboard</h3>
+                    <Trophy className="w-5 h-5 text-[#fbbf24]" />
+                    <h3 className="font-black text-white text-lg">Stage Leaderboard</h3>
                   </div>
                   <button
                     onClick={() => setShowScoreboard(false)}
-                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                    className="p-1 rounded-lg hover:bg-[#0e2e4e] text-slate-300 hover:text-white"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -1453,38 +1454,38 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   {rankedFinalists.map((f, rank) => (
                     <div
                       key={f.id}
-                      className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3"
+                      className="p-3.5 rounded-2xl notebook-card flex items-center justify-between gap-3"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5">
                         <span
                           className={`font-black text-sm w-5 text-center ${
-                            rank === 0 ? 'text-amber-400' : rank === 1 ? 'text-slate-300' : rank === 2 ? 'text-amber-600' : 'text-slate-500'
+                            rank === 0 ? 'text-[#fbbf24]' : rank === 1 ? 'text-slate-200' : rank === 2 ? 'text-[#d97706]' : 'text-slate-400'
                           }`}
                         >
                           #{rank + 1}
                         </span>
                         <ParticipantAvatar seed={f.avatarSeed} size="sm" />
                         <div>
-                          <span className="font-bold text-slate-100 text-sm block">{f.name}</span>
-                          <span className="text-[10px] text-slate-500">
+                          <span className="font-black text-white text-sm block">{f.name}</span>
+                          <span className="text-[10px] text-[#7dd3fc] font-bold">
                             R1: {f.roundScores.r1} • R2: {f.roundScores.r2} • R3: {f.roundScores.r3} • R4: {f.roundScores.r4}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-black text-emerald-400 text-base">{f.score}</span>
+                        <span className="font-mono font-black text-[#00d2ff] text-base">{f.score}</span>
                         <div className="flex flex-col gap-0.5">
                           <button
                             onClick={() => adjustScore(f.id, 5)}
-                            className="p-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-400 text-[10px]"
+                            className="p-1 rounded bg-[#00d2ff] text-[#081a2e] font-black text-[10px] hover:scale-105"
                             title="Add 5 pts"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
                           <button
                             onClick={() => adjustScore(f.id, -5)}
-                            className="p-1 rounded bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-400 text-[10px]"
+                            className="p-1 rounded bg-[#f43f5e] text-white font-black text-[10px] hover:scale-105"
                             title="Deduct 5 pts"
                           >
                             <Minus className="w-3 h-3" />
@@ -1496,16 +1497,16 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+              <div className="pt-3.5 border-t-2 border-[#00d2ff]/40 flex items-center justify-between">
                 <button
                   onClick={resetScores}
-                  className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold"
+                  className="text-xs text-[#f43f5e] hover:text-[#fb7185] flex items-center gap-1 font-black"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Reset All Scores
                 </button>
                 <button
                   onClick={() => setShowScoreboard(false)}
-                  className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-500"
+                  className="px-5 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs hover:bg-[#38bdf8] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]"
                 >
                   Close
                 </button>
