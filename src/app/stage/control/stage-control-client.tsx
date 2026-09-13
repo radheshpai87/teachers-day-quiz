@@ -471,7 +471,41 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [isImporting, setIsImporting] = useState(false)
   const [importNotice, setImportNotice] = useState<string | null>(null)
 
-  // Import Top 6 Qualifiers from Live Audience Quiz
+  // Auto-import finalists from Live Audience Quiz on mount if still using default placeholders
+  useEffect(() => {
+    const isUsingPlaceholders =
+      !finalists ||
+      finalists.length === 0 ||
+      finalists.some(
+        (f) =>
+          f.name.startsWith('Team ') ||
+          f.name.startsWith('Finalist ') ||
+          f.name === 'Team Alpha' ||
+          f.name === 'Finalist 1',
+      )
+
+    if (isUsingPlaceholders) {
+      fetch('/api/stage/qualifiers', { method: 'POST' })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.ok && Array.isArray(data.finalists) && data.finalists.length > 0) {
+            const hasRealNames = data.finalists.some(
+              (f: StageFinalist) =>
+                !f.name.startsWith('Team ') &&
+                !f.name.startsWith('Finalist '),
+            )
+            if (hasRealNames) {
+              updateFinalists(data.finalists)
+              setImportNotice('Auto-synced Top 6 Qualifiers')
+              setTimeout(() => setImportNotice(null), 3500)
+            }
+          }
+        })
+        .catch(() => {})
+    }
+  }, [])
+
+  // Manual Import Top 6 Qualifiers from Live Audience Quiz
   const handleImportQualifiers = async () => {
     setIsImporting(true)
     setImportNotice(null)
@@ -481,7 +515,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       if (data.ok && Array.isArray(data.finalists)) {
         updateFinalists(data.finalists)
         sound.ting()
-        setImportNotice('✓ Top 6 Imported!')
+        setImportNotice('Top 6 Qualifiers Imported')
         setTimeout(() => setImportNotice(null), 4000)
       } else {
         alert('Could not import qualifiers: ' + (data.error || 'No participants found'))

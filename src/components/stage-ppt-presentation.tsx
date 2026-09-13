@@ -284,6 +284,41 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     }
   }, [playAudio, pauseAudio])
 
+  // Auto-sync Top 6 Qualifiers on mount if currently using default placeholders
+  useEffect(() => {
+    const isUsingPlaceholders =
+      !finalists ||
+      finalists.length === 0 ||
+      finalists.some(
+        (f) =>
+          f.name.startsWith('Team ') ||
+          f.name.startsWith('Finalist ') ||
+          f.name === 'Team Alpha' ||
+          f.name === 'Finalist 1',
+      )
+
+    if (isUsingPlaceholders) {
+      fetch('/api/stage/qualifiers', { method: 'POST' })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.ok && Array.isArray(data.finalists) && data.finalists.length > 0) {
+            const hasRealNames = data.finalists.some(
+              (f: StageFinalist) =>
+                !f.name.startsWith('Team ') &&
+                !f.name.startsWith('Finalist '),
+            )
+            if (hasRealNames) {
+              setFinalists(data.finalists)
+              try {
+                localStorage.setItem('ingenium_stage_finalists_v2', JSON.stringify(data.finalists))
+              } catch {}
+            }
+          }
+        })
+        .catch(() => {})
+    }
+  }, [])
+
   // Broadcast helper
   const broadcast = useCallback((msg: StageSyncMessage) => {
     if (channelRef.current) {
