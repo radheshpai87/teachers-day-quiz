@@ -113,6 +113,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isRevealed, setIsRevealed] = useState(false)
+  const [mcqOptionStep, setMcqOptionStep] = useState(0)
 
   // Rapid Fire State
   const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
@@ -189,10 +190,15 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         if (type === 'CHANGE_SLIDE') {
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
+          setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
         } else if (type === 'UPDATE_FINALISTS') {
           setFinalists(payload.finalists)
         } else if (type === 'TOGGLE_REVEAL') {
           setIsRevealed(payload.isRevealed)
+        } else if (type === 'MCQ_OPTION_STEP') {
+          if (typeof payload.step === 'number') {
+            setMcqOptionStep(payload.step)
+          }
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
           if (payload.seconds !== undefined) setRapidSeconds(payload.seconds)
@@ -229,6 +235,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           }
           if (typeof state.isRevealed === 'boolean') {
             setIsRevealed(state.isRevealed)
+          }
+          if (typeof state.mcqOptionStep === 'number') {
+            setMcqOptionStep(state.mcqOptionStep)
           }
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
@@ -428,37 +437,64 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   // Navigation handlers
   const nextSlide = useCallback(() => {
+    const currentSlideObj = slides[currentSlide]
+    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed) {
+      const nextStep = mcqOptionStep + 1
+      setMcqOptionStep(nextStep)
+      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
+      sendStageNetworkSync({ mcqOptionStep: nextStep })
+      sound.tap()
+      return
+    }
+
     if (currentSlide < slides.length - 1) {
       const nextIdx = currentSlide + 1
       setCurrentSlide(nextIdx)
       setIsRevealed(false)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx } })
-      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false })
+      setMcqOptionStep(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx, mcqOptionStep: 0 } })
+      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0 })
       sound.tap()
     }
-  }, [currentSlide, slides.length, broadcast])
+  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
 
   const prevSlide = useCallback(() => {
+    const currentSlideObj = slides[currentSlide]
+    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep > 0 && !isRevealed) {
+      const prevStep = mcqOptionStep - 1
+      setMcqOptionStep(prevStep)
+      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: prevStep } })
+      sendStageNetworkSync({ mcqOptionStep: prevStep })
+      sound.tap()
+      return
+    }
+
     if (currentSlide > 0) {
       const prevIdx = currentSlide - 1
+      const prevSlideObj = slides[prevIdx]
+      const targetStep = prevSlideObj?.type === 'r1_mcq' ? 4 : 0
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx } })
-      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false })
+      setMcqOptionStep(targetStep)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep } })
+      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep })
       sound.tap()
     }
-  }, [currentSlide, broadcast])
+  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
 
   // Toggle reveal
   const toggleReveal = useCallback(() => {
     setIsRevealed((prev) => {
       const next = !prev
+      if (next) {
+        setMcqOptionStep(4)
+      }
       broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: next } })
-      sendStageNetworkSync({ isRevealed: next })
+      sendStageNetworkSync({ isRevealed: next, mcqOptionStep: next ? 4 : mcqOptionStep })
       if (next) sound.correct()
       return next
     })
-  }, [broadcast])
+  }, [broadcast, mcqOptionStep])
 
   // Fullscreen toggle
   const toggleFullscreen = () => {
@@ -815,12 +851,32 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </h2>
                   </div>
 
-                  {/* 4 Kahoot-Style Vibrant Options Grid */}
+                  {/* 4 Kahoot-Style Vibrant Options Grid (Revealed One by One with Next) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-4">
                     {slide.data.options.map((opt: string, idx: number) => {
+                      const isOptionRevealed = idx < mcqOptionStep || isRevealed
                       const isCorrect = idx === slide.data.correctIndex
                       const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
                       const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
+                      const optionLetter = ['A', 'B', 'C', 'D'][idx]
+
+                      if (!isOptionRevealed) {
+                        return (
+                          <div
+                            key={idx}
+                            className="w-full min-h-[4.25rem] p-4 rounded-2xl border-2 border-dashed border-[#00d2ff]/25 bg-[#081a2e]/50 flex items-center justify-between transition-all duration-300 select-none text-left"
+                          >
+                            <div className="flex items-center gap-3.5 opacity-35">
+                              <div className="shrink-0 w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-sm text-[#7dd3fc]">
+                                {optionLetter}
+                              </div>
+                              <span className="font-bold text-sm text-slate-400 italic">
+                                Option {optionLetter}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      }
 
                       let buttonStyles = `${theme.bg} ${theme.border} shadow-md`
                       if (isRevealed) {
@@ -832,8 +888,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       }
 
                       return (
-                        <div
+                        <motion.div
                           key={idx}
+                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{ duration: 0.22, ease: 'easeOut' }}
                           className={`relative w-full min-h-[4.25rem] p-4 rounded-2xl border-b-4 flex items-center justify-between transition-all duration-200 select-none text-left cursor-default ${buttonStyles}`}
                         >
                           <div className="flex items-center gap-3.5 pr-2 min-w-0">
@@ -852,7 +911,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                               </span>
                             )}
                           </div>
-                        </div>
+                        </motion.div>
                       )
                     })}
                   </div>

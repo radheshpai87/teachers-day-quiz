@@ -3,6 +3,7 @@ import type { StageFinalist } from '@/lib/stage-sync'
 export interface StageServerState {
   slideIndex: number
   isRevealed: boolean
+  mcqOptionStep: number
   rapidSeconds: number
   timerRunning: boolean
   finalists: StageFinalist[]
@@ -28,6 +29,7 @@ if (!global.__stageState) {
   global.__stageState = {
     slideIndex: 0,
     isRevealed: false,
+    mcqOptionStep: 0,
     rapidSeconds: 40,
     timerRunning: false,
     finalists: [

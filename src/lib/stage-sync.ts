@@ -23,7 +23,7 @@ export const DEFAULT_STAGE_FINALISTS: StageFinalist[] = [
 ]
 
 export interface StageSyncMessage {
-  type: 'CHANGE_SLIDE' | 'UPDATE_FINALISTS' | 'TOGGLE_REVEAL' | 'TIMER_ACTION' | 'AUDIO_ACTION' | 'REQUEST_SYNC' | 'SYNC_STATE'
+  type: 'CHANGE_SLIDE' | 'UPDATE_FINALISTS' | 'TOGGLE_REVEAL' | 'TIMER_ACTION' | 'AUDIO_ACTION' | 'MCQ_OPTION_STEP' | 'REQUEST_SYNC' | 'SYNC_STATE'
   payload?: any
 }
 

@@ -40,6 +40,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [rapidSeconds, setRapidSeconds] = useState(40)
   const [timerRunning, setTimerRunning] = useState(false)
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null)
+  const [mcqOptionStep, setMcqOptionStep] = useState(0)
 
   // Stage Scoreboard State (Persisted in localStorage & BroadcastChannel)
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
@@ -66,10 +67,15 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
           setPlayingAudioId(null)
+          setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
         } else if (type === 'UPDATE_FINALISTS') {
           setFinalists(payload.finalists)
         } else if (type === 'TOGGLE_REVEAL') {
           setIsRevealed(payload.isRevealed)
+        } else if (type === 'MCQ_OPTION_STEP') {
+          if (typeof payload.step === 'number') {
+            setMcqOptionStep(payload.step)
+          }
         } else if (type === 'TIMER_ACTION') {
           setTimerRunning(payload.running)
           if (payload.seconds !== undefined) setRapidSeconds(payload.seconds)
@@ -101,6 +107,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           }
           if (typeof state.isRevealed === 'boolean') {
             setIsRevealed(state.isRevealed)
+          }
+          if (typeof state.mcqOptionStep === 'number') {
+            setMcqOptionStep(state.mcqOptionStep)
           }
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
@@ -243,16 +252,65 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setCurrentSlide(clamped)
       setIsRevealed(false)
       setPlayingAudioId(null)
-      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped } })
+      setMcqOptionStep(0)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped, mcqOptionStep: 0 } })
       sendStageNetworkSync({
         slideIndex: clamped,
         isRevealed: false,
+        mcqOptionStep: 0,
         audioState: { playing: false, audioId: null, timestamp: Date.now() },
       })
       sound.tap()
     },
     [broadcast, slides.length],
   )
+
+  // Step-by-step navigation helper (Reveals MCQ options one-by-one or advances slide)
+  const handleNext = useCallback(() => {
+    const currentSlideObj = slides[currentSlide]
+    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed) {
+      const nextStep = mcqOptionStep + 1
+      setMcqOptionStep(nextStep)
+      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
+      sendStageNetworkSync({ mcqOptionStep: nextStep })
+      sound.tap()
+      return
+    }
+
+    if (currentSlide < slides.length - 1) {
+      setSlide(currentSlide + 1)
+    }
+  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast, setSlide])
+
+  const handlePrev = useCallback(() => {
+    const currentSlideObj = slides[currentSlide]
+    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep > 0 && !isRevealed) {
+      const prevStep = mcqOptionStep - 1
+      setMcqOptionStep(prevStep)
+      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: prevStep } })
+      sendStageNetworkSync({ mcqOptionStep: prevStep })
+      sound.tap()
+      return
+    }
+
+    if (currentSlide > 0) {
+      const prevIdx = currentSlide - 1
+      const prevSlideObj = slides[prevIdx]
+      const targetStep = prevSlideObj?.type === 'r1_mcq' ? 4 : 0
+      setCurrentSlide(prevIdx)
+      setIsRevealed(false)
+      setPlayingAudioId(null)
+      setMcqOptionStep(targetStep)
+      broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep } })
+      sendStageNetworkSync({
+        slideIndex: prevIdx,
+        isRevealed: false,
+        mcqOptionStep: targetStep,
+        audioState: { playing: false, audioId: null, timestamp: Date.now() },
+      })
+      sound.tap()
+    }
+  }, [currentSlide, slides, mcqOptionStep, isRevealed, broadcast])
 
   // Toggle stage audio playback
   const toggleStageAudio = useCallback(
@@ -289,12 +347,15 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const toggleReveal = useCallback(() => {
     setIsRevealed((prev) => {
       const next = !prev
+      if (next) {
+        setMcqOptionStep(4)
+      }
       broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: next } })
-      sendStageNetworkSync({ isRevealed: next })
+      sendStageNetworkSync({ isRevealed: next, mcqOptionStep: next ? 4 : mcqOptionStep })
       if (next) sound.correct()
       return next
     })
-  }, [broadcast])
+  }, [broadcast, mcqOptionStep])
 
   // Timer controls for Rapid Fire
   const toggleTimer = useCallback(() => {
@@ -457,18 +518,83 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                       <span className="text-[#fbbf24] font-bold">+5 Correct</span>
                     </div>
                     <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
-                    <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">
-                          Correct Option ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}):
+
+                    {/* Options Step-by-Step Status & Grid */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-[11px] text-[#7dd3fc] font-bold">
+                        <span>
+                          Options on Stage: <strong className="text-white">{isRevealed ? 4 : mcqOptionStep}/4</strong>
                         </span>
-                        <strong className="text-white text-sm">{currentSlideObj.data.options[currentSlideObj.data.correctIndex]}</strong>
-                        {currentSlideObj.data.explanation && (
-                          <p className="text-emerald-200/90 text-xs font-normal mt-1">{currentSlideObj.data.explanation}</p>
+                        {mcqOptionStep < 4 && !isRevealed && (
+                          <button
+                            onClick={() => {
+                              setMcqOptionStep(4)
+                              broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: 4 } })
+                              sendStageNetworkSync({ mcqOptionStep: 4 })
+                              sound.tap()
+                            }}
+                            className="text-[10px] text-[#00d2ff] hover:underline font-black cursor-pointer"
+                          >
+                            Reveal All 4 Options
+                          </button>
                         )}
                       </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        {currentSlideObj.data.options.map((opt: string, optIdx: number) => {
+                          const isOptRevealed = optIdx < mcqOptionStep || isRevealed
+                          const isCorrect = optIdx === currentSlideObj.data.correctIndex
+                          const optLetter = ['A', 'B', 'C', 'D'][optIdx]
+
+                          return (
+                            <div
+                              key={optIdx}
+                              className={`p-2 rounded-xl border text-xs flex items-center justify-between gap-1.5 transition ${
+                                isCorrect && isRevealed
+                                  ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-black'
+                                  : isOptRevealed
+                                  ? 'bg-[#0e2e4e] border-[#00d2ff]/40 text-slate-200'
+                                  : 'bg-[#081a2e]/60 border-dashed border-slate-700 text-slate-500'
+                              }`}
+                            >
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span
+                                  className={`w-5 h-5 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 ${
+                                    isCorrect && isRevealed
+                                      ? 'bg-emerald-500 text-[#081a2e]'
+                                      : isOptRevealed
+                                      ? 'bg-[#00d2ff]/20 text-[#00d2ff]'
+                                      : 'bg-slate-800 text-slate-500'
+                                  }`}
+                                >
+                                  {optLetter}
+                                </span>
+                                <span className="truncate font-bold">{opt}</span>
+                              </div>
+
+                              <span className="text-[10px] shrink-0 font-bold">
+                                {isCorrect && isRevealed ? (
+                                  <strong className="text-emerald-400">✓ Correct</strong>
+                                ) : isOptRevealed ? (
+                                  <span className="text-[#7dd3fc]">Shown</span>
+                                ) : (
+                                  <span className="text-slate-600">Hidden</span>
+                                )}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
+
+                    {currentSlideObj.data.explanation && (
+                      <div className="p-2 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-medium">
+                        <span className="text-emerald-400 font-black uppercase tracking-wider block text-[10px]">
+                          Correct: ({['A', 'B', 'C', 'D'][currentSlideObj.data.correctIndex]}) {currentSlideObj.data.options[currentSlideObj.data.correctIndex]}
+                        </span>
+                        <p className="text-[11px] text-emerald-200/80 mt-0.5">{currentSlideObj.data.explanation}</p>
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -611,19 +737,29 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             {/* Slide Navigation Buttons (Hidden on mobile — floating thumb bar handles it) */}
             <div className="hidden lg:flex items-center justify-between gap-3 pt-1">
               <button
-                onClick={() => setSlide(currentSlide - 1)}
-                disabled={currentSlide === 0}
-                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-xs sm:text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d] active:scale-95"
+                onClick={handlePrev}
+                disabled={currentSlide === 0 && mcqOptionStep === 0}
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-xs sm:text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d] active:scale-95 cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Previous Slide
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Previous
               </button>
 
               <button
-                onClick={() => setSlide(currentSlide + 1)}
-                disabled={currentSlide === slides.length - 1}
-                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs sm:text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95"
+                onClick={handleNext}
+                disabled={currentSlide === slides.length - 1 && (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4)}
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs sm:text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                Next Slide <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
+                  <>
+                    <span>Reveal Option {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4)</span>
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </>
+                ) : (
+                  <>
+                    <span>Next Slide</span>
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </>
+                )}
               </button>
             </div>
 
@@ -792,16 +928,16 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       {/* 3. ERGONOMIC FLOATING THUMB CONTROLS ON PHONE (Solves the scroll issue!) */}
       <div className="fixed bottom-2 left-2 right-2 z-40 lg:hidden flex items-center justify-between gap-2 p-2 rounded-2xl bg-[#081a2e]/95 backdrop-blur-md border-2 border-[#00d2ff]/60 shadow-[0_4px_16px_rgba(0,0,0,0.7)]">
         <button
-          onClick={() => setSlide(currentSlide - 1)}
-          disabled={currentSlide === 0}
-          className="px-3.5 py-2.5 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/50 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm"
+          onClick={handlePrev}
+          disabled={currentSlide === 0 && mcqOptionStep === 0}
+          className="px-3 py-2.5 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/50 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
           <ChevronLeft className="w-4 h-4" /> Prev
         </button>
 
         <button
           onClick={toggleReveal}
-          className={`flex-1 py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-sm transition flex items-center justify-center gap-1 active:scale-95 text-center ${
+          className={`flex-1 py-2.5 px-2.5 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-sm transition flex items-center justify-center gap-1 active:scale-95 text-center truncate ${
             isRevealed
               ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
               : 'bg-[#fbbf24] text-[#081a2e]'
@@ -812,11 +948,19 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         </button>
 
         <button
-          onClick={() => setSlide(currentSlide + 1)}
-          disabled={currentSlide === slides.length - 1}
-          className="px-3.5 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm"
+          onClick={handleNext}
+          disabled={currentSlide === slides.length - 1 && (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4)}
+          className="px-3 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
-          Next <ChevronRight className="w-4 h-4" />
+          {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
+            <>
+              Opt {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4) <ChevronRight className="w-4 h-4" />
+            </>
+          ) : (
+            <>
+              Next <ChevronRight className="w-4 h-4" />
+            </>
+          )}
         </button>
       </div>
     </div>
