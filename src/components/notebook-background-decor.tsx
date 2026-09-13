@@ -200,8 +200,8 @@ export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean
           {/* 9. Side Blueprint Sticky Specs (Desktop Large Viewports Only) */}
           <div className="absolute top-[42%] left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
             <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
-            <p className="text-xs font-black text-[#081a2e]">Engineers' Day 2026</p>
-            <p className="text-[10px] font-bold text-[#081a2e]/80">Honoring Sir M. Visvesvaraya</p>
+            <p className="text-xs font-black text-[#081a2e]">INGENIUM 2026</p>
+            <p className="text-[10px] font-bold text-[#081a2e]/80">Engineers' Day Live Quiz</p>
           </div>
 
           <div className="absolute top-1/2 right-6 sticky-note-lavender p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">

@@ -85,11 +85,11 @@ export function getQuiz(): Quiz {
   if (row) {
     if (row.name.includes("Teachers'") || row.name.includes('Teachers')) {
       db.prepare('UPDATE quizzes SET name = ?, description = ? WHERE id = ?').run(
-        "Engineers' Day Quiz",
+        "INGENIUM 2026 — Engineers' Day Quiz",
         'A celebration of innovation, engineering, and the minds shaping our future.',
         row.id,
       )
-      row.name = "Engineers' Day Quiz"
+      row.name = "INGENIUM 2026 — Engineers' Day Quiz"
       row.description =
         'A celebration of innovation, engineering, and the minds shaping our future.'
     }
@@ -125,7 +125,7 @@ export function getQuiz(): Quiz {
      VALUES (?, ?, ?, 15, 3, 3, 3, ?, ?)`,
   ).run(
     id,
-    "Engineers' Day Quiz",
+    "INGENIUM 2026 — Engineers' Day Quiz",
     'A celebration of innovation, engineering, and the minds shaping our future.',
     now,
     now,

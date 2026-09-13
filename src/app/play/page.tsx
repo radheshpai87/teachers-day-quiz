@@ -149,8 +149,11 @@ export default function PlayPage() {
             width={200}
             height={60}
             priority
-            className="h-8 sm:h-12 max-w-[55vw] w-auto object-contain"
+            className="h-8 sm:h-12 max-w-[45vw] w-auto object-contain"
           />
+          <span className="hidden xs:inline-block sm:inline-block px-2.5 py-0.5 rounded-lg bg-[#00d2ff] text-[#081a2e] font-black text-[10px] sm:text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            INGENIUM 2026
+          </span>
         </div>
 
         {/* Status Indicator & Sound Toggle */}

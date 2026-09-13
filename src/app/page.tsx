@@ -73,7 +73,10 @@ export default function HomePage() {
         </div>
 
         {/* Title */}
-        <div className="space-y-0.5 sm:space-y-1">
+        <div className="space-y-1.5 sm:space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs sm:text-sm uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            <span>INGENIUM 2026</span>
+          </div>
           <h1 className="text-2xl sm:text-4xl font-black text-ink tracking-tight leading-tight">
             Engineers' Day Live Quiz
           </h1>

@@ -151,7 +151,7 @@ export default function ResultsPage() {
           <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
             <PaperClip className="w-4 h-4 text-[#081a2e]" />
             <Trophy className="w-4 h-4 text-[#081a2e]" />
-            <span>All Questions Completed!</span>
+            <span>INGENIUM 2026 • Quiz Completed!</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-ink">
             Great Job, {session.name}!
@@ -240,7 +240,7 @@ export default function ResultsPage() {
           {/* Engineers' Day Message */}
           <div className="pt-2 text-center space-y-1">
             <p className="font-black text-[#00d2ff] text-base sm:text-lg">
-              Happy Engineers' Day!
+              INGENIUM 2026 • Happy Engineers' Day!
             </p>
             <p className="text-xs text-ink-soft font-extrabold">
               Thank you for celebrating innovation, engineering, and the minds shaping our future.

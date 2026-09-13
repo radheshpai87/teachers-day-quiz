@@ -36,12 +36,17 @@ export default function LeaderboardPage() {
             className="h-10 sm:h-12 w-auto object-contain"
           />
           <div className="hidden sm:block border-l-2 border-[#00d2ff]/30 pl-3.5 py-0.5">
-            <h1 className="text-xl sm:text-2xl font-black text-ink">
-              Engineers' Day Quiz
-            </h1>
-            <p className="text-xs sm:text-sm text-ink-soft font-extrabold flex items-center gap-1">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded-md bg-[#00d2ff] text-[#081a2e] font-black text-[10px] uppercase tracking-wider border border-[#081a2e]">
+                INGENIUM 2026
+              </span>
+              <h1 className="text-xl sm:text-2xl font-black text-ink">
+                Engineers' Day Quiz
+              </h1>
+            </div>
+            <p className="text-xs sm:text-sm text-ink-soft font-extrabold flex items-center gap-1 mt-0.5">
               <PaperClip className="w-3.5 h-3.5 text-ink" />
-              <span>Hall of Fame</span>
+              <span>Hall of Fame & Stage Qualifiers</span>
             </p>
           </div>
         </div>

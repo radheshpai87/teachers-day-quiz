@@ -17,9 +17,9 @@ const sans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Engineers' Day Quiz",
+  title: "INGENIUM 2026 — Engineers' Day Live Quiz",
   description:
-    'A live quiz celebrating innovation, engineering, and the minds shaping our future. Scan, join, and play together.',
+    'INGENIUM 2026 — A live quiz celebrating innovation, engineering, and the minds shaping our future. Scan, join, and play together.',
   robots: { index: false, follow: false },
 }
 

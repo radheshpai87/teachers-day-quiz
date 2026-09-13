@@ -45,7 +45,7 @@ export function LeaderboardView({
         <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-ink -rotate-1">
           <PaperClip className="w-4 h-4 text-ink" />
           <Trophy className="w-4 h-4 text-[#d32f2f]" />
-          <span>Round 1 Results & Stage Qualifiers</span>
+          <span>INGENIUM 2026 • Stage Qualifiers</span>
         </div>
         <h2 className={`font-black text-ink ${displayMode ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-3xl'}`}>
           Hall of Fame

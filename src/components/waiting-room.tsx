@@ -12,8 +12,8 @@ interface WaitingRoomProps {
   quizName?: string
 }
 
-export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engineers' Day Quiz" }: WaitingRoomProps) {
-  const displayTitle = (quizName || "Engineers' Day Quiz")
+export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENIUM 2026 — Engineers' Day Quiz" }: WaitingRoomProps) {
+  const displayTitle = (quizName || "INGENIUM 2026 — Engineers' Day Quiz")
     .replace(/Teachers'?\s*Day/gi, "Engineers' Day")
     .replace(/Teachers?/gi, "Engineers")
 
@@ -104,7 +104,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "Engine
         </div>
         <div className="flex items-center gap-1.5 text-xs">
           <Book className="w-4 h-4 text-[#1976d2]" />
-          <span>Engineers' Day</span>
+          <span>INGENIUM 2026</span>
         </div>
       </div>
     </div>

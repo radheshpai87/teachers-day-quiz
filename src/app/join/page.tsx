@@ -113,8 +113,11 @@ export default function JoinPage() {
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain"
             />
           </div>
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            <span>INGENIUM 2026</span>
+          </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink">
-            Join the Celebration
+            Join the Live Quiz
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft font-bold">
             Enter your details to participate in the Engineers' Day Live Quiz
