@@ -366,32 +366,39 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         {/* LEFT 2 COLUMNS: Slide Controller & Quick Scoring Matrix */}
         <div className="lg:col-span-2 space-y-5">
           {/* CARD 1: ACTIVE PROJECTOR SLIDE & LIVE Q&A */}
-          <div className="notebook-card p-4 sm:p-6 space-y-4">
+          <div className="notebook-card p-3 sm:p-6 space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-[#7dd3fc]">
-                Active Projector Slide ({currentSlide + 1} / {slides.length})
+                Slide {currentSlide + 1}/{slides.length}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
-                {currentSlideObj?.round ? `Round ${currentSlideObj.round}` : currentSlideObj?.type}
-              </span>
+              <div className="flex items-center gap-2">
+                {isRevealed && (
+                  <span className="lg:hidden px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-black border border-emerald-500/40">
+                    ✓ Revealed
+                  </span>
+                )}
+                <span className="px-2.5 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
+                  {currentSlideObj?.round ? `Round ${currentSlideObj.round}` : currentSlideObj?.type}
+                </span>
+              </div>
             </div>
 
             {/* Slide Title & Reveal Button */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-3 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
               <div>
                 <span className="text-[11px] text-[#7dd3fc] font-bold block">Current Screen</span>
-                <h3 className="text-base sm:text-lg font-black text-white">{currentSlideObj?.title}</h3>
+                <h3 className="text-sm sm:text-lg font-black text-white">{currentSlideObj?.title}</h3>
               </div>
 
               <button
                 onClick={toggleReveal}
-                className={`px-5 py-2.5 rounded-xl sm:rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 text-center ${
+                className={`hidden lg:flex px-5 py-2.5 rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 items-center gap-1.5 ${
                   isRevealed
                     ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
                     : 'bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e]'
                 }`}
               >
-                {isRevealed ? <EyeOff className="w-4 h-4 inline mr-1.5" /> : <Eye className="w-4 h-4 inline mr-1.5" />}
+                {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 {isRevealed ? 'Hide Answer on Stage (R)' : 'Reveal Answer on Stage (R)'}
               </button>
             </div>
@@ -510,8 +517,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
               </div>
             )}
 
-            {/* Slide Navigation Buttons (Visible in Card) */}
-            <div className="flex items-center justify-between gap-3 pt-1">
+            {/* Slide Navigation Buttons (Hidden on mobile — floating thumb bar handles it) */}
+            <div className="hidden lg:flex items-center justify-between gap-3 pt-1">
               <button
                 onClick={() => setSlide(currentSlide - 1)}
                 disabled={currentSlide === 0}
@@ -529,8 +536,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
               </button>
             </div>
 
-            {/* Quick Slide Jump Dropdown */}
-            <div className="pt-1">
+            {/* Quick Slide Jump Dropdown (Desktop only — phone uses thumb bar) */}
+            <div className="hidden lg:block pt-1">
               <label className="text-[11px] font-black uppercase text-[#7dd3fc] block mb-1">
                 Jump Direct to Slide
               </label>
@@ -549,70 +556,70 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           </div>
 
           {/* CARD 2: QUICK SCORE ASSIGNER (6 FINALISTS) */}
-          <div className="notebook-card p-4 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
+          <div className="notebook-card p-3 sm:p-6 space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-2 sm:pb-3">
               <div className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-[#fbbf24]" />
-                <h3 className="font-black text-white text-base">Quick Score Assigner (6 Finalists)</h3>
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#fbbf24]" />
+                <h3 className="font-black text-white text-sm sm:text-base">Score Assigner</h3>
               </div>
               <span className="text-xs text-[#7dd3fc] font-bold">Instant Sync</span>
             </div>
 
-            {/* Finalist Cards Grid (2 cols on desktop/tablet, 1 col on phone) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+            {/* Finalist Cards Grid (Always 2 cols — compact on phone) */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
               {finalists.map((f, i) => (
-                <div key={f.id} className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-2.5 sm:space-y-3 shadow-[2px_2px_0px_#04101d]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs flex items-center justify-center shrink-0">
+                <div key={f.id} className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-2 sm:space-y-3 shadow-[2px_2px_0px_#04101d]">
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+                      <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-[10px] sm:text-xs flex items-center justify-center shrink-0">
                         #{i + 1}
                       </span>
-                      <ParticipantAvatar seed={f.avatarSeed} size="sm" />
+                      <span className="hidden sm:block"><ParticipantAvatar seed={f.avatarSeed} size="sm" /></span>
                       <input
                         type="text"
                         defaultValue={f.name}
                         onBlur={(e) => handleRename(f.id, e.target.value)}
-                        className="bg-transparent font-black text-white text-sm focus:bg-[#0e2e4e] rounded px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[120px] sm:max-w-[140px]"
+                        className="bg-transparent font-black text-white text-xs sm:text-sm focus:bg-[#0e2e4e] rounded px-1 sm:px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[70px] sm:max-w-[140px]"
                         title="Click to rename"
                       />
                     </div>
-                    <span className="font-mono font-black text-base sm:text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                    <span className="font-mono font-black text-sm sm:text-lg text-[#00d2ff] shrink-0">{f.score}</span>
                   </div>
 
                   {/* Cohesive Point Awarding Buttons */}
-                  <div className="grid grid-cols-4 gap-1.5 text-xs font-black">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-1.5 text-xs font-black">
                     <button
                       onClick={() => adjustScore(f.id, 10, 'r2')}
-                      className="py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
+                      className="py-1 sm:py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black border border-emerald-500/60 shadow-sm transition active:scale-95"
                       title="Direct Correct / Rapid Fire (+10)"
                     >
                       +10
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, 5, 'r1')}
-                      className="py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
+                      className="py-1 sm:py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white font-black border border-sky-500/60 shadow-sm transition active:scale-95"
                       title="MCQ / Passed (+5)"
                     >
                       +5
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, -5, 'r2')}
-                      className="py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
+                      className="py-1 sm:py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black border border-rose-500/60 shadow-sm transition active:scale-95"
                       title="Wrong Penalty (-5)"
                     >
                       −5
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, 15, 'r4')}
-                      className="py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
+                      className="py-1 sm:py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black border border-amber-400 shadow-sm transition active:scale-95"
                       title="Fastest Fingers First (+15)"
                     >
                       +15
                     </button>
                   </div>
 
-                  {/* Fine Adjustment Buttons */}
-                  <div className="flex items-center gap-2 text-xs font-bold pt-0.5">
+                  {/* Fine Adjustment Buttons (Desktop only) */}
+                  <div className="hidden sm:flex items-center gap-2 text-xs font-bold pt-0.5">
                     <button
                       onClick={() => adjustScore(f.id, 1)}
                       className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition active:scale-95"
@@ -632,8 +639,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           </div>
         </div>
 
-        {/* RIGHT 1 COLUMN: LIVE STAGE STANDINGS (Always visible on PC, stacks below on phone) */}
-        <div className="lg:col-span-1 space-y-5">
+        {/* RIGHT 1 COLUMN: LIVE STAGE STANDINGS (Desktop only — scores visible in scorer above on mobile) */}
+        <div className="hidden lg:block lg:col-span-1 space-y-5">
           <div className="notebook-card p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
               <div className="flex items-center gap-2">
