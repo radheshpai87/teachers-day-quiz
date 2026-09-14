@@ -71,7 +71,7 @@ export interface StageData {
     timerSeconds: number
     sets: RapidFireSet[]
   }
-  round4: {
+  round4?: {
     name: string
     points: { correct: number; wrong: number }
     ruleText: string
