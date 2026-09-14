@@ -100,11 +100,16 @@ export function updateStageState(patch: Partial<StageServerState>): StageServerS
     updatedAt: Date.now(),
   }
 
-  // If slide changed to a different slide, reset timer
+  // If slide changed to a different slide, reset timer & stop audio
   if (patch.slideIndex !== undefined && patch.slideIndex !== previousSlide) {
     stopServerTimer()
     global.__stageState.timerRunning = false
     global.__stageState.rapidSeconds = 60
+    global.__stageState.audioState = {
+      playing: false,
+      audioId: null,
+      timestamp: Date.now(),
+    }
   } else if (patch.timerRunning !== undefined) {
     if (patch.timerRunning) {
       if (global.__stageState.rapidSeconds <= 0) {
