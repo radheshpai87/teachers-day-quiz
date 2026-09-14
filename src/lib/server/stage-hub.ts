@@ -7,7 +7,6 @@ export interface StageServerState {
   rapidQuestionIdx: number
   rapidSeconds: number
   timerRunning: boolean
-  timerExpiresAt?: number | null
   finalists: StageFinalist[]
   audioState?: {
     playing: boolean
@@ -21,6 +20,7 @@ export interface StageServerState {
 declare global {
   var __stageState: StageServerState | undefined
   var __stageClients: Set<(data: string) => void> | undefined
+  var __stageTimerInterval: NodeJS.Timeout | undefined
 }
 
 if (!global.__stageClients) {
@@ -35,7 +35,6 @@ if (!global.__stageState) {
     rapidQuestionIdx: 0,
     rapidSeconds: 60,
     timerRunning: false,
-    timerExpiresAt: null,
     finalists: [
       { id: 'f1', name: 'Finalist 1', avatarSeed: 'finalist-1', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },
       { id: 'f2', name: 'Finalist 2', avatarSeed: 'finalist-2', score: 0, roundScores: { r1: 0, r2: 0, r3: 0, r4: 0 } },
@@ -48,16 +47,75 @@ if (!global.__stageState) {
   }
 }
 
+function startServerTimer() {
+  if (global.__stageTimerInterval) {
+    clearInterval(global.__stageTimerInterval)
+    global.__stageTimerInterval = undefined
+  }
+
+  global.__stageTimerInterval = setInterval(() => {
+    if (!global.__stageState || !global.__stageState.timerRunning) {
+      if (global.__stageTimerInterval) {
+        clearInterval(global.__stageTimerInterval)
+        global.__stageTimerInterval = undefined
+      }
+      return
+    }
+
+    if (global.__stageState.rapidSeconds <= 1) {
+      global.__stageState.rapidSeconds = 0
+      global.__stageState.timerRunning = false
+      global.__stageState.updatedAt = Date.now()
+      if (global.__stageTimerInterval) {
+        clearInterval(global.__stageTimerInterval)
+        global.__stageTimerInterval = undefined
+      }
+      broadcastStageState(global.__stageState)
+      return
+    }
+
+    global.__stageState.rapidSeconds -= 1
+    global.__stageState.updatedAt = Date.now()
+    broadcastStageState(global.__stageState)
+  }, 1000)
+}
+
+function stopServerTimer() {
+  if (global.__stageTimerInterval) {
+    clearInterval(global.__stageTimerInterval)
+    global.__stageTimerInterval = undefined
+  }
+}
+
 export function getStageState(): StageServerState {
   return global.__stageState!
 }
 
 export function updateStageState(patch: Partial<StageServerState>): StageServerState {
+  const previousSlide = global.__stageState?.slideIndex
+
   global.__stageState = {
     ...global.__stageState!,
     ...patch,
     updatedAt: Date.now(),
   }
+
+  // If slide changed to a different slide, reset timer
+  if (patch.slideIndex !== undefined && patch.slideIndex !== previousSlide) {
+    stopServerTimer()
+    global.__stageState.timerRunning = false
+    global.__stageState.rapidSeconds = 60
+  } else if (patch.timerRunning !== undefined) {
+    if (patch.timerRunning) {
+      if (global.__stageState.rapidSeconds <= 0) {
+        global.__stageState.rapidSeconds = 60
+      }
+      startServerTimer()
+    } else {
+      stopServerTimer()
+    }
+  }
+
   broadcastStageState(global.__stageState)
   return global.__stageState
 }

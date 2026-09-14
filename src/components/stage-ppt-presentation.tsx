@@ -141,7 +141,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   // Broadcast channel for sync with /stage/control
   const channelRef = useRef<BroadcastChannel | null>(null)
   const lastAudioTimestamp = useRef<number>(0)
-  const timerExpiresAtRef = useRef<number | null>(null)
 
   const pauseAudio = useCallback(() => {
     if (audioRef.current) {
@@ -198,7 +197,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           setCurrentSlide(payload.slideIndex)
           setIsRevealed(false)
           setTimerRunning(false)
-          timerExpiresAtRef.current = null
           setRapidSeconds(60)
           setMcqOptionStep(typeof payload.mcqOptionStep === 'number' ? payload.mcqOptionStep : 0)
           setRapidQuestionIdx(typeof payload.rapidQuestionIdx === 'number' ? payload.rapidQuestionIdx : 0)
@@ -215,11 +213,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             setRapidQuestionIdx(payload.rapidQuestionIdx)
           }
         } else if (type === 'TIMER_ACTION') {
-          setTimerRunning(payload.running)
-          if (payload.expiresAt !== undefined) {
-            timerExpiresAtRef.current = payload.expiresAt
+          if (typeof payload.running === 'boolean') {
+            setTimerRunning(payload.running)
           }
-          if (payload.seconds !== undefined && !payload.running) {
+          if (typeof payload.seconds === 'number') {
             setRapidSeconds(payload.seconds)
           }
         } else if (type === 'AUDIO_ACTION') {
@@ -265,13 +262,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           if (Array.isArray(state.finalists)) {
             setFinalists(state.finalists)
           }
-          if (state.timerExpiresAt !== undefined) {
-            timerExpiresAtRef.current = state.timerExpiresAt
-          }
           if (typeof state.timerRunning === 'boolean') {
             setTimerRunning(state.timerRunning)
           }
-          if (typeof state.rapidSeconds === 'number' && !state.timerRunning) {
+          if (typeof state.rapidSeconds === 'number') {
             setRapidSeconds(state.rapidSeconds)
           }
           if (state.audioState) {
@@ -453,68 +447,32 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   // Rapid Fire Timer toggle / reset actions
   const toggleRapidTimer = useCallback(() => {
-    if (timerRunning) {
-      // Pause
-      const remaining = timerExpiresAtRef.current
-        ? Math.max(0, Math.ceil((timerExpiresAtRef.current - Date.now()) / 1000))
-        : rapidSeconds
-      setTimerRunning(false)
-      timerExpiresAtRef.current = null
-      setRapidSeconds(remaining)
-      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: remaining } })
-      sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: remaining })
-    } else {
-      // Start 60s countdown (or resume remaining)
-      const currentSecs = rapidSeconds <= 0 ? 60 : rapidSeconds
-      const expiresAt = Date.now() + currentSecs * 1000
-      timerExpiresAtRef.current = expiresAt
-      setRapidSeconds(currentSecs)
-      setTimerRunning(true)
-      broadcast({ type: 'TIMER_ACTION', payload: { running: true, expiresAt, seconds: currentSecs } })
-      sendStageNetworkSync({ timerRunning: true, timerExpiresAt: expiresAt, rapidSeconds: currentSecs })
-    }
+    const nextRunning = !timerRunning
+    const secs = rapidSeconds <= 0 ? 60 : rapidSeconds
+    setTimerRunning(nextRunning)
+    setRapidSeconds(secs)
+    broadcast({ type: 'TIMER_ACTION', payload: { running: nextRunning, seconds: secs } })
+    sendStageNetworkSync({ timerRunning: nextRunning, rapidSeconds: secs })
   }, [timerRunning, rapidSeconds, broadcast])
 
   const resetRapidTimer = useCallback(() => {
     setTimerRunning(false)
-    timerExpiresAtRef.current = null
     setRapidSeconds(60)
     setRapidQuestionIdx(0)
     broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-    sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 60, rapidQuestionIdx: 0 })
+    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60, rapidQuestionIdx: 0 })
   }, [broadcast])
 
-  // Rapid Fire Timer Interval (Uninterrupted 60s Countdown)
+  // Sound FX cues for timer countdown
+  const prevRapidSecs = useRef(rapidSeconds)
   useEffect(() => {
-    if (!timerRunning) return
-
-    const tick = () => {
-      if (timerExpiresAtRef.current) {
-        const remaining = Math.max(0, Math.ceil((timerExpiresAtRef.current - Date.now()) / 1000))
-        setRapidSeconds(remaining)
-        if (remaining <= 0) {
-          setTimerRunning(false)
-          timerExpiresAtRef.current = null
-          sound.wrong()
-          sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 0 })
-        }
-      } else {
-        setRapidSeconds((prev) => {
-          if (prev <= 1) {
-            setTimerRunning(false)
-            sound.wrong()
-            sendStageNetworkSync({ timerRunning: false, timerExpiresAt: null, rapidSeconds: 0 })
-            return 0
-          }
-          return prev - 1
-        })
-      }
+    if (prevRapidSecs.current > 0 && rapidSeconds === 0) {
+      sound.wrong()
+    } else if (rapidSeconds <= 5 && rapidSeconds > 0 && timerRunning && prevRapidSecs.current !== rapidSeconds) {
+      sound.tick()
     }
-
-    tick()
-    const interval = setInterval(tick, 250)
-    return () => clearInterval(interval)
-  }, [timerRunning])
+    prevRapidSecs.current = rapidSeconds
+  }, [rapidSeconds, timerRunning])
 
   // Confetti on Podium slide (2 Prizes Finale)
   useEffect(() => {
