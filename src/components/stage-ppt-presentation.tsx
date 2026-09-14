@@ -1027,21 +1027,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                       return (
                         <div key={idx} className="relative w-full min-h-[4.5rem]">
-                          {/* Sleek Dark Placeholder Slot */}
-                          {!isOptionRevealed && (
-                            <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-[#00d2ff]/20 bg-[#081a2e]/50 flex items-center justify-between p-4">
-                              <div className="flex items-center gap-3.5">
-                                <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-500">
-                                  <Shape className="w-5 h-5 fill-current opacity-40" />
-                                </div>
-                                <span className="font-mono font-bold text-xs text-[#7dd3fc]/40 uppercase tracking-wider">
-                                  Option {theme.label}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Fall-Into-Place Smooth Option Card */}
+                          {/* Fall-Into-Place Smooth Option Card (Invisible until revealed) */}
                           <AnimatePresence mode="wait">
                             {isOptionRevealed && (
                               <motion.div
