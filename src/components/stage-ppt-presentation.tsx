@@ -1016,50 +1016,77 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
                       const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
 
-                      if (!isOptionRevealed) {
-                        return (
-                          <div
-                            key={idx}
-                            className="w-full min-h-[4.25rem] invisible pointer-events-none"
-                            aria-hidden="true"
-                          />
-                        )
-                      }
-
                       let buttonStyles = `${theme.bg} ${theme.border} shadow-md`
                       if (isRevealed) {
                         if (isCorrect) {
-                          buttonStyles = 'bg-[#10b981] text-white ring-4 ring-emerald-300 scale-[1.02] shadow-xl border-b-[#059669]'
+                          buttonStyles = 'bg-[#10b981] text-white ring-4 ring-emerald-300 shadow-xl border-b-[#059669]'
                         } else {
                           buttonStyles = 'bg-[#0a2239]/80 text-[#64748b] opacity-35 border-[#1e3a5f]'
                         }
                       }
 
                       return (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          transition={{ duration: 0.22, ease: 'easeOut' }}
-                          className={`relative w-full min-h-[4.25rem] p-4 rounded-2xl border-b-4 flex items-center justify-between transition-all duration-200 select-none text-left cursor-default ${buttonStyles}`}
-                        >
-                          <div className="flex items-center gap-3.5 pr-2 min-w-0">
-                            <div className="shrink-0 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
-                              <Shape className="w-5 h-5 fill-current" />
+                        <div key={idx} className="relative w-full min-h-[4.5rem]">
+                          {/* Sleek Unrevealed Placeholder Slot */}
+                          <div
+                            className={`absolute inset-0 rounded-2xl border-2 border-dashed border-[#00d2ff]/20 bg-[#081a2e]/40 flex items-center justify-between p-4 transition-opacity duration-300 ${
+                              isOptionRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3.5">
+                              <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-500">
+                                <Shape className="w-5 h-5 fill-current opacity-40" />
+                              </div>
+                              <span className="font-mono font-bold text-xs text-[#7dd3fc]/40 uppercase tracking-wider">
+                                Option {theme.label}
+                              </span>
                             </div>
-                            <span className="font-bold text-base sm:text-lg leading-snug">
-                              {opt}
-                            </span>
                           </div>
 
-                          <div className="shrink-0 ml-2">
-                            {isRevealed && isCorrect && (
-                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md">
-                                <Check className="w-4 h-4 stroke-[3]" />
-                              </span>
+                          {/* Smooth Spring Animated Option Card */}
+                          <AnimatePresence>
+                            {isOptionRevealed && (
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.94, y: 16 }}
+                                animate={{
+                                  opacity: isRevealed && !isCorrect ? 0.35 : 1,
+                                  scale: isRevealed && isCorrect ? 1.02 : 1,
+                                  y: 0,
+                                }}
+                                exit={{ opacity: 0, scale: 0.94, y: 10 }}
+                                transition={{
+                                  type: 'spring',
+                                  stiffness: 240,
+                                  damping: 22,
+                                  mass: 0.8,
+                                }}
+                                className={`relative w-full h-full min-h-[4.5rem] p-4 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
+                              >
+                                <div className="flex items-center gap-3.5 pr-2 min-w-0">
+                                  <div className="shrink-0 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
+                                    <Shape className="w-5 h-5 fill-current" />
+                                  </div>
+                                  <span className="font-bold text-base sm:text-lg leading-snug">
+                                    {opt}
+                                  </span>
+                                </div>
+
+                                <div className="shrink-0 ml-2">
+                                  {isRevealed && isCorrect && (
+                                    <motion.span
+                                      initial={{ scale: 0, rotate: -25 }}
+                                      animate={{ scale: 1, rotate: 0 }}
+                                      transition={{ type: 'spring', stiffness: 350, damping: 18 }}
+                                      className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
+                                    >
+                                      <Check className="w-4 h-4 stroke-[3]" />
+                                    </motion.span>
+                                  )}
+                                </div>
+                              </motion.div>
                             )}
-                          </div>
-                        </motion.div>
+                          </AnimatePresence>
+                        </div>
                       )
                     })}
                   </div>
