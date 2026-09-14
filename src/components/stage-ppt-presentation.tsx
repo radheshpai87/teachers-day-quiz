@@ -1008,7 +1008,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </h2>
                   </div>
 
-                  {/* 4 Kahoot-Style Vibrant Options Grid (Revealed One by One with Next) */}
+                  {/* 4 Kahoot-Style Vibrant Options Grid (Smooth Drop-In Reveal One by One) */}
                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {slide.data.options.map((opt: string, idx: number) => {
                       const isOptionRevealed = idx < mcqOptionStep || isRevealed
@@ -1027,39 +1027,36 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                       return (
                         <div key={idx} className="relative w-full min-h-[4.5rem]">
-                          {/* Sleek Unrevealed Placeholder Slot */}
-                          <div
-                            className={`absolute inset-0 rounded-2xl border-2 border-dashed border-[#00d2ff]/20 bg-[#081a2e]/40 flex items-center justify-between p-4 transition-opacity duration-300 ${
-                              isOptionRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3.5">
-                              <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-500">
-                                <Shape className="w-5 h-5 fill-current opacity-40" />
+                          {/* Sleek Dark Placeholder Slot */}
+                          {!isOptionRevealed && (
+                            <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-[#00d2ff]/20 bg-[#081a2e]/50 flex items-center justify-between p-4">
+                              <div className="flex items-center gap-3.5">
+                                <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-500">
+                                  <Shape className="w-5 h-5 fill-current opacity-40" />
+                                </div>
+                                <span className="font-mono font-bold text-xs text-[#7dd3fc]/40 uppercase tracking-wider">
+                                  Option {theme.label}
+                                </span>
                               </div>
-                              <span className="font-mono font-bold text-xs text-[#7dd3fc]/40 uppercase tracking-wider">
-                                Option {theme.label}
-                              </span>
                             </div>
-                          </div>
+                          )}
 
-                          {/* Smooth Spring Animated Option Card */}
-                          <AnimatePresence>
+                          {/* Fall-Into-Place Smooth Option Card */}
+                          <AnimatePresence mode="wait">
                             {isOptionRevealed && (
                               <motion.div
-                                initial={{ opacity: 0, scale: 0.94, y: 16 }}
+                                initial={{ opacity: 0, y: -30, scale: 0.98 }}
                                 animate={{
                                   opacity: isRevealed && !isCorrect ? 0.35 : 1,
                                   scale: isRevealed && isCorrect ? 1.02 : 1,
                                   y: 0,
                                 }}
-                                exit={{ opacity: 0, scale: 0.94, y: 10 }}
+                                exit={{ opacity: 0, y: 15 }}
                                 transition={{
-                                  type: 'spring',
-                                  stiffness: 240,
-                                  damping: 22,
-                                  mass: 0.8,
+                                  duration: 0.38,
+                                  ease: [0.16, 1, 0.3, 1], // Deceleration curve (smooth touchdown with zero jerk)
                                 }}
+                                style={{ willChange: 'transform, opacity' }}
                                 className={`relative w-full h-full min-h-[4.5rem] p-4 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
                               >
                                 <div className="flex items-center gap-3.5 pr-2 min-w-0">
@@ -1074,9 +1071,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                                 <div className="shrink-0 ml-2">
                                   {isRevealed && isCorrect && (
                                     <motion.span
-                                      initial={{ scale: 0, rotate: -25 }}
-                                      animate={{ scale: 1, rotate: 0 }}
-                                      transition={{ type: 'spring', stiffness: 350, damping: 18 }}
+                                      initial={{ opacity: 0, scale: 0.6 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      transition={{ duration: 0.25, ease: 'easeOut' }}
                                       className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
                                     >
                                       <Check className="w-4 h-4 stroke-[3]" />
