@@ -1568,41 +1568,63 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               </div>
             )}
 
-            {/* SLIDE TYPE: Grand Podium (EXACTLY 2 PRIZES: 1st & 2nd) */}
+            {/* SLIDE TYPE: Grand Podium (EXACTLY 2 PRIZES: 1st on LEFT, 2nd on RIGHT, All Finalists Honored) */}
             {slide.type === 'podium' && (
-              <div className="flex flex-col items-center justify-center h-full text-center py-4">
-                <motion.div
-                  initial={{ scale: 0.85, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-widest mb-3 -rotate-1 shadow-[2px_2px_0px_#04101d]"
-                >
-                  <Sparkles className="w-4 h-4 text-[#081a2e]" /> INGENIUM 2026 Champion Ceremony
-                </motion.div>
-
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-1">Grand Victory Podium</h2>
-                <p className="text-sm font-bold text-[#7dd3fc] mb-6">Celebrating the 1st & 2nd Prize Winners</p>
+              <div className="w-full max-w-5xl mx-auto flex flex-col items-center justify-between h-full py-1 sm:py-3 px-2 sm:px-4 text-center">
+                {/* Header Badge & Title */}
+                <div className="shrink-0 mb-1">
+                  <motion.div
+                    initial={{ scale: 0.85, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-widest mb-1 -rotate-1 shadow-[2px_2px_0px_#04101d]"
+                  >
+                    <Sparkles className="w-4 h-4 text-[#081a2e]" /> INGENIUM 2026 Champion Ceremony
+                  </motion.div>
+                  <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                    Grand Victory Podium
+                  </h2>
+                  <p className="text-xs sm:text-sm font-bold text-[#7dd3fc]">
+                    Celebrating the 1st & 2nd Prize Winners
+                  </p>
+                </div>
 
                 {/* 2 Prizes Stage Layout (1st on the Left, 2nd on the Right) */}
-                <div className="grid grid-cols-2 gap-6 md:gap-12 w-full max-w-2xl items-end mb-6">
+                <div className="grid grid-cols-2 gap-4 sm:gap-8 md:gap-12 w-full max-w-2xl items-end my-auto pt-6 pb-2">
                   {/* Rank 1 (Champion / 1st Prize) - LEFT */}
                   <motion.div
-                    initial={{ y: 35, opacity: 0 }}
+                    initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="flex flex-col items-center"
+                    className="flex flex-col items-center w-full"
                   >
+                    {/* Avatar with Floating Crown */}
                     <div className="relative mb-2">
-                      <ParticipantAvatar seed={rankedFinalists[0]?.avatarSeed || 'f1'} size="xl" className="ring-4 ring-[#fbbf24] shadow-2xl" />
-                      <Crown className="w-9 h-9 text-[#fbbf24] absolute -top-6 left-1/2 -translate-x-1/2 animate-bounce" />
+                      <ParticipantAvatar
+                        seed={rankedFinalists[0]?.avatarSeed || 'f1'}
+                        size="xl"
+                        className="ring-4 ring-[#fbbf24] shadow-2xl"
+                      />
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2">
+                        <Crown className="w-9 h-9 text-[#fbbf24] drop-shadow-[0_4px_12px_rgba(251,191,36,0.8)]" />
+                      </div>
                     </div>
-                    <span className="font-black text-white text-xl md:text-2xl truncate max-w-[200px]">
-                      {rankedFinalists[0]?.name || 'Finalist 1'}
-                    </span>
-                    <span className="font-mono font-black text-[#fbbf24] text-lg md:text-xl mb-2">{rankedFinalists[0]?.score || 0} pts</span>
-                    <div className="w-full h-40 md:h-48 rounded-2xl bg-[#fbbf24] border-2 border-[#081a2e] shadow-[6px_6px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
-                      <Trophy className="w-10 h-10 mb-1 text-[#081a2e]" />
-                      <span className="font-black text-xl md:text-2xl tracking-tight">1st Prize</span>
-                      <span className="text-xs font-black uppercase tracking-widest text-[#081a2e]">GRAND CHAMPION</span>
+
+                    <div className="text-center w-full mb-2">
+                      <h3 className="font-black text-white text-lg sm:text-xl md:text-2xl truncate max-w-[220px] mx-auto leading-tight">
+                        {rankedFinalists[0]?.name || 'Finalist 1'}
+                      </h3>
+                      <div className="inline-flex items-center gap-1 px-3 py-0.5 mt-1 rounded-full bg-[#fbbf24]/20 border border-[#fbbf24]/60 font-mono font-black text-[#fbbf24] text-sm sm:text-base shadow-sm">
+                        {rankedFinalists[0]?.score || 0} pts
+                      </div>
+                    </div>
+
+                    {/* Gold Podium Pedestal */}
+                    <div className="w-full h-36 sm:h-44 rounded-3xl bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] border-2 border-[#081a2e] shadow-[5px_5px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
+                      <Trophy className="w-9 h-9 sm:w-11 sm:h-11 mb-1 text-[#081a2e]" />
+                      <span className="font-black text-xl sm:text-2xl tracking-tight leading-none">1st Prize</span>
+                      <span className="text-[11px] sm:text-xs font-black uppercase tracking-widest text-[#081a2e] mt-1">
+                        GRAND CHAMPION
+                      </span>
                     </div>
                   </motion.div>
 
@@ -1611,50 +1633,74 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     initial={{ y: 25, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.35 }}
-                    className="flex flex-col items-center"
+                    className="flex flex-col items-center w-full"
                   >
-                    <ParticipantAvatar seed={rankedFinalists[1]?.avatarSeed || 'f2'} size="lg" className="mb-2 ring-4 ring-slate-300 shadow-lg" />
-                    <span className="font-black text-white text-lg md:text-xl truncate max-w-[180px]">
-                      {rankedFinalists[1]?.name || 'Finalist 2'}
-                    </span>
-                    <span className="font-mono font-black text-[#00d2ff] text-base md:text-lg mb-2">{rankedFinalists[1]?.score || 0} pts</span>
-                    <div className="w-full h-32 md:h-36 rounded-2xl bg-slate-200 border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
-                      <Medal className="w-8 h-8 mb-1 text-[#081a2e]" />
-                      <span className="font-black text-lg md:text-xl tracking-tight">2nd Prize</span>
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-800">RUNNER-UP</span>
+                    {/* Avatar */}
+                    <div className="relative mb-2">
+                      <ParticipantAvatar
+                        seed={rankedFinalists[1]?.avatarSeed || 'f2'}
+                        size="lg"
+                        className="ring-4 ring-slate-300 shadow-xl"
+                      />
+                    </div>
+
+                    <div className="text-center w-full mb-2">
+                      <h3 className="font-black text-white text-base sm:text-lg md:text-xl truncate max-w-[200px] mx-auto leading-tight">
+                        {rankedFinalists[1]?.name || 'Finalist 2'}
+                      </h3>
+                      <div className="inline-flex items-center gap-1 px-3 py-0.5 mt-1 rounded-full bg-slate-300/20 border border-slate-300/60 font-mono font-black text-[#7dd3fc] text-xs sm:text-sm shadow-sm">
+                        {rankedFinalists[1]?.score || 0} pts
+                      </div>
+                    </div>
+
+                    {/* Silver Podium Pedestal */}
+                    <div className="w-full h-28 sm:h-34 rounded-3xl bg-gradient-to-b from-slate-200 to-slate-300 border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
+                      <Medal className="w-8 h-8 sm:w-9 sm:h-9 mb-1 text-[#081a2e]" />
+                      <span className="font-black text-lg sm:text-xl tracking-tight leading-none">2nd Prize</span>
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 mt-0.5">
+                        RUNNER-UP
+                      </span>
                     </div>
                   </motion.div>
                 </div>
 
-                {/* Qualifiers #3 to #6 */}
-                <div className="w-full max-w-4xl bg-[#0e2e4e]/90 p-4 md:p-5 rounded-3xl border-2 border-[#00d2ff]/40 shadow-[4px_4px_0px_#04101d]">
-                  <div className="flex items-center justify-between mb-3 px-1">
+                {/* Qualifiers #3 to #6 Full Visibility Showcase */}
+                <div className="w-full max-w-4xl bg-[#0e2e4e]/90 p-3 sm:p-4 rounded-3xl border-2 border-[#00d2ff]/40 shadow-[4px_4px_0px_#04101d] shrink-0 mt-1">
+                  <div className="flex items-center justify-between mb-2 px-1">
                     <span className="text-xs font-black uppercase tracking-wider text-[#7dd3fc] flex items-center gap-1.5">
                       <Award className="w-4 h-4 text-[#fbbf24]" /> Stage Finalists & Honorable Mentions
                     </span>
                     <span className="text-[11px] font-bold text-[#7dd3fc]/80">Ranks #3 to #6</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                     {rankedFinalists.slice(2, 6).map((f, i) => (
                       <motion.div
                         key={f.id}
-                        initial={{ opacity: 0, y: 15 }}
+                        initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.45 + i * 0.08 }}
-                        className="p-3.5 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/30 shadow-md flex flex-col items-center text-center relative group hover:border-[#00d2ff] transition-all"
+                        className="p-3 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/30 shadow-md flex flex-col items-center text-center relative hover:border-[#00d2ff] transition-all"
                       >
-                        <div className="flex items-center justify-between w-full mb-2">
+                        <div className="flex items-center justify-between w-full mb-1.5">
                           <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-black bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40">
                             #{i + 3}
                           </span>
                           <span className="text-[10px] font-bold uppercase text-slate-400">Finalist</span>
                         </div>
-                        <ParticipantAvatar seed={f.avatarSeed || `f${i + 3}`} size="md" className="ring-2 ring-[#00d2ff]/50 mb-2 shadow-md" />
-                        <strong className="text-white text-sm md:text-base font-bold truncate w-full mb-1.5" title={f.name}>
+
+                        <ParticipantAvatar
+                          seed={f.avatarSeed || `f${i + 3}`}
+                          size="md"
+                          className="ring-2 ring-[#00d2ff]/50 mb-1.5 shadow-md"
+                        />
+
+                        <strong className="text-white text-xs sm:text-sm font-bold truncate w-full mb-1" title={f.name}>
                           {f.name}
                         </strong>
-                        <div className="w-full py-1 px-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 font-mono font-black text-[#00d2ff] text-sm md:text-base shadow-inner">
-                          {f.score} <span className="text-[11px] font-semibold text-[#7dd3fc]">pts</span>
+
+                        <div className="w-full py-0.5 px-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 font-mono font-black text-[#00d2ff] text-xs sm:text-sm shadow-inner">
+                          {f.score} <span className="text-[10px] font-semibold text-[#7dd3fc]">pts</span>
                         </div>
                       </motion.div>
                     ))}
