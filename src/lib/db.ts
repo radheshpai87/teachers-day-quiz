@@ -109,6 +109,8 @@ function open(): DatabaseSync {
   // flushed, and `synchronous = NORMAL` keeps those flushes cheap.
   db.exec('PRAGMA journal_mode = WAL;')
   db.exec('PRAGMA synchronous = NORMAL;')
+  db.exec('PRAGMA journal_size_limit = 67108864;') // Cap WAL file at 64MB to prevent runaway disk growth
+  db.exec('PRAGMA wal_autocheckpoint = 1000;')
   db.exec('PRAGMA foreign_keys = ON;')
   db.exec(SCHEMA)
   try { db.exec('ALTER TABLE participants ADD COLUMN year TEXT;') } catch {}

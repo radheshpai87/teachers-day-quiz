@@ -48,3 +48,10 @@ __pycache__/
 *.doc
 *.zip
 
+# quiz question scripts and generated artifacts
+scripts/generate-technova-questions.mjs
+scripts/update-stage-questions.mjs
+scripts/generate-quizmaster-pdf.mjs
+scripts/quizmaster_key.html
+scripts/extracted_images/
+

@@ -3,11 +3,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      network: host
+    image: technova-quiz:latest
 
-    container_name: teachers_day_quiz
+    container_name: technova_quiz
 
     restart: unless-stopped
+
+    ports:
+      - "${PORT:-3004}:3000"
 
     env_file:
       - .env.local
@@ -20,22 +23,17 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
     ulimits:
-          nofile:
-            soft: 65536
-            hard: 65536
-            
-    networks:
-      - quiz
-      - monitoring
+      nofile:
+        soft: 65536
+        hard: 65536
 
     labels:
       kuma.monitor: "true"
-      kuma.url: "http://teachers_day_quiz:3000"
-
-networks:
-  quiz:
-    driver: bridge
-
-  monitoring:
-    external: true
+      kuma.url: "http://technova_quiz:3000"

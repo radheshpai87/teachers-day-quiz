@@ -83,15 +83,15 @@ export function getQuiz(): Quiz {
     .get() as unknown as QuizRow | undefined
 
   if (row) {
-    if (row.name.includes("Teachers'") || row.name.includes('Teachers')) {
+    if (row.name.includes("Teachers'") || row.name.includes('Teachers') || row.name.includes('INGENIUM') || row.name.includes("Engineers'")) {
       db.prepare('UPDATE quizzes SET name = ?, description = ? WHERE id = ?').run(
-        "INGENIUM 2026 — Engineers' Day Quiz",
-        'A celebration of innovation, engineering, and the minds shaping our future.',
+        'TECHNOVA 2026 — AI and Innovation Quiz',
+        'Youth Convention for NSS Volunteers on AI and Innovation. Test Your Technology IQ.',
         row.id,
       )
-      row.name = "INGENIUM 2026 — Engineers' Day Quiz"
+      row.name = 'TECHNOVA 2026 — AI and Innovation Quiz'
       row.description =
-        'A celebration of innovation, engineering, and the minds shaping our future.'
+        'Youth Convention for NSS Volunteers on AI and Innovation. Test Your Technology IQ.'
     }
 
     if (!isSeeding) {
@@ -106,7 +106,11 @@ export function getQuiz(): Quiz {
           )
           .get(row.id) as unknown as { prompt: string } | undefined
 
-        if (qCount.count === 0) {
+        if (
+          qCount.count === 0 ||
+          (firstQ && !firstQ.prompt.includes('2024 Nobel Prize in Physics'))
+        ) {
+          db.prepare('DELETE FROM questions WHERE quiz_id = ?').run(row.id)
           seedQuestions(row.id)
         }
       } finally {
@@ -125,8 +129,8 @@ export function getQuiz(): Quiz {
      VALUES (?, ?, ?, 15, 3, 3, 3, ?, ?)`,
   ).run(
     id,
-    "INGENIUM 2026 — Engineers' Day Quiz",
-    'A celebration of innovation, engineering, and the minds shaping our future.',
+    'TECHNOVA 2026 — AI and Innovation Quiz',
+    'Youth Convention for NSS Volunteers on AI and Innovation. Test Your Technology IQ.',
     now,
     now,
   )
