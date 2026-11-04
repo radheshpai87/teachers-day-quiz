@@ -1059,7 +1059,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl sticky-note-lavender border-2 border-[#1e0e38] text-[#1e0e38] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214]">
                       <Trophy className="w-4 h-4 text-[#1e0e38]" />
-                      <span>+{stageData?.round1?.points?.correct || 5} Points</span>
+                      <span>+{stageData?.round1?.points?.correct || 10} Points</span>
                     </div>
                   </div>
 
@@ -1270,46 +1270,121 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
             {/* SLIDE TYPE: Round 2 Image Question */}
             {slide.type === 'r2_image' && (
-              <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-4xl mx-auto w-full">
-                <div className="flex flex-col w-full">
-                  <div className="w-full flex items-center justify-between mb-2">
-                    <span className="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] shadow-[2px_2px_0px_#090214]">
-                      Round 2 — Image {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
+              <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full select-none">
+                <div className="flex flex-col w-full space-y-3">
+                  <div className="w-full flex items-center justify-between gap-3">
+                    <span className="px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] shadow-[2px_2px_0px_#090214]">
+                      Round 2 — Visual Clue {slide.qIndex! + 1} of {slide.totalInRound} • 4 Options
                     </span>
-                    <span className="text-xs sm:text-sm text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
+                    <span className="px-3 py-1 rounded-xl sticky-note-lavender border-2 border-[#1e0e38] text-[#1e0e38] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214]">
+                      Correct: +10 | Wrong: −5 Pts
+                    </span>
                   </div>
 
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white mb-3 leading-snug">
+                  <h2 className="text-base sm:text-lg md:text-xl font-black text-white leading-snug">
                     {slide.data.question}
                   </h2>
 
-                  {/* Large Center Clue Image */}
-                  <div className="relative w-full h-[42vh] sm:h-[48vh] max-h-[440px] rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-3 mb-3 border-2 border-[#8b5cf6]/40 shadow-[4px_4px_0px_#090214]">
-                    <Image
-                      src={slide.data.imageUrl}
-                      alt="Clue Image"
-                      fill
-                      className="object-contain p-2"
-                      priority
-                    />
+                  {/* Two-Column: Image on Left, 4 Kahoot Options on Right */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+                    {/* Clue Image */}
+                    <div className="md:col-span-6 relative w-full h-[28vh] sm:h-[36vh] max-h-[340px] rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-2 border-2 border-[#8b5cf6]/40 shadow-[4px_4px_0px_#090214]">
+                      <Image
+                        src={slide.data.imageUrl}
+                        alt="Clue Image"
+                        fill
+                        className="object-contain p-2"
+                        priority
+                      />
+                    </div>
+
+                    {/* 4 Kahoot Options Grid */}
+                    <div className="md:col-span-6 flex flex-col justify-center gap-2">
+                      {slide.data.options && slide.data.options.length > 0 ? (
+                        slide.data.options.map((opt: string, idx: number) => {
+                          const isOptionRevealed = idx < mcqOptionStep || isRevealed
+                          const isCorrect = idx === slide.data.correctIndex
+                          const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
+                          const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
+
+                          let buttonStyles = `${theme.bg} ${theme.border} shadow-md`
+                          if (isRevealed) {
+                            if (isCorrect) {
+                              buttonStyles = 'bg-[#10b981] text-white ring-4 ring-emerald-300 shadow-xl border-b-[#059669]'
+                            } else {
+                              buttonStyles = 'bg-[#1e0e38]/80 text-[#64748b] opacity-35 border-[#3b0764]'
+                            }
+                          }
+
+                          return (
+                            <div key={idx} className="relative w-full min-h-[3.6rem]">
+                              <AnimatePresence mode="wait">
+                                {isOptionRevealed && (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: -15, scale: 0.98 }}
+                                    animate={{
+                                      opacity: isRevealed && !isCorrect ? 0.35 : 1,
+                                      scale: isRevealed && isCorrect ? 1.02 : 1,
+                                      y: 0,
+                                    }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    transition={{
+                                      duration: 0.35,
+                                      ease: [0.16, 1, 0.3, 1],
+                                    }}
+                                    style={{ willChange: 'transform, opacity' }}
+                                    className={`relative w-full h-full min-h-[3.6rem] px-3.5 py-2 rounded-xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
+                                  >
+                                    <div className="flex items-center gap-2.5 pr-2 min-w-0">
+                                      <div className="shrink-0 w-7 h-7 rounded-lg bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-sm">
+                                        <Shape className="w-3.5 h-3.5 fill-current" />
+                                      </div>
+                                      <span className="font-bold text-sm sm:text-base leading-snug">
+                                        {opt}
+                                      </span>
+                                    </div>
+
+                                    <div className="shrink-0 ml-1.5">
+                                      {isRevealed && isCorrect && (
+                                        <motion.span
+                                          initial={{ opacity: 0, scale: 0.6 }}
+                                          animate={{ opacity: 1, scale: 1 }}
+                                          transition={{ duration: 0.25, ease: 'easeOut' }}
+                                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-emerald-700 font-extrabold text-xs shadow-md"
+                                        >
+                                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                        </motion.span>
+                                      )}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          )
+                        })
+                      ) : (
+                        <div className="p-4 rounded-xl notebook-card text-center text-slate-400 font-bold">
+                          Identify the image shown on screen
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Answer Revealed Below Image */}
+                  {/* Verified Answer & Explanation Revealed Below */}
                   <AnimatePresence>
                     {isRevealed && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="w-full p-4 sm:p-5 rounded-2xl sticky-note-mint text-[#1e0e38] shadow-[4px_4px_0px_#090214] text-left border-2 border-[#1e0e38]"
+                        initial={{ opacity: 0, y: 8, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: 8, height: 0 }}
+                        className="w-full p-3 rounded-2xl sticky-note-mint text-[#1e0e38] shadow-[4px_4px_0px_#090214] text-left border-2 border-[#1e0e38]"
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-800" />
-                          <span className="text-xs font-black uppercase tracking-wider text-emerald-900">
-                            Verified Answer
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-800" />
+                          <span className="text-[11px] font-black uppercase tracking-wider text-emerald-900">
+                            Verified Answer: {slide.data.answer}
                           </span>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-[#1e0e38] mb-1">{slide.data.answer}</h3>
                         {slide.data.explanation && (
                           <p className="text-xs sm:text-sm font-bold text-[#1e0e38]/90 leading-relaxed">{slide.data.explanation}</p>
                         )}
@@ -1319,7 +1394,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Clean Bottom Bar */}
-                <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between w-full">
+                <div className="pt-2.5 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between w-full">
                   <button
                     onClick={toggleReveal}
                     className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105 active:scale-95 ${
@@ -1330,7 +1405,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
                   </button>
 
-                  <span className="text-xs text-[#7dd3fc] font-bold">Direct / Pass score awarded from Host Deck</span>
+                  <span className="text-xs text-[#7dd3fc] font-bold">Scored on Quizmaster Control Panel (+10 / −5)</span>
                 </div>
               </div>
             )}

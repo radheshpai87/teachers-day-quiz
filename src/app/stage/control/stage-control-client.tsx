@@ -720,10 +720,40 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                 {currentSlideObj.type === 'r1_mcq' && (
                   <>
                     <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-mono">
-                      <span>Question #{currentSlideObj.qIndex! + 1} of 12</span>
-                      <span className="text-[#fbbf24] font-bold">+5 Correct</span>
+                      <span>Question #{currentSlideObj.qIndex! + 1} of 12 (Finalist {Math.floor((currentSlideObj.qIndex || 0) / 2) + 1})</span>
+                      <span className="text-[#fbbf24] font-bold">+10 Correct • No Negative</span>
                     </div>
                     <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
+
+                    {/* Quick 1-click scoring for Target Finalist */}
+                    {finalists.length > 0 && (() => {
+                      const fIndex = Math.floor((currentSlideObj.qIndex || 0) / 2) % finalists.length
+                      const targetFinalist = finalists[fIndex]
+                      if (!targetFinalist) return null
+                      return (
+                        <div className="p-2 rounded-xl bg-[#1e0e38] border border-[#8b5cf6]/40 flex items-center justify-between gap-2">
+                          <div className="text-[11px] font-bold text-slate-300">
+                            Finalist: <strong className="text-white font-black">{targetFinalist.name}</strong>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => adjustScore(targetFinalist.id, 10, 'r1')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400 active:scale-95"
+                              title="Award +10 points"
+                            >
+                              +10 Correct
+                            </button>
+                            <button
+                              onClick={() => adjustScore(targetFinalist.id, 0, 'r1')}
+                              className="px-2 py-1 rounded-lg text-xs font-bold bg-[#16082b] text-slate-400 border border-[#8b5cf6]/30 hover:text-white"
+                              title="0 points (No penalty)"
+                            >
+                              0 pts
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })()}
 
                     {/* Options Step-by-Step Status & Grid */}
                     <div className="space-y-1.5 pt-1">
@@ -808,10 +838,111 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                 {currentSlideObj.type === 'r2_image' && (
                   <>
                     <div className="flex items-center justify-between text-xs text-[#7dd3fc] font-mono">
-                      <span>Image #{currentSlideObj.qIndex! + 1} of 6</span>
-                      <span className="text-[#fbbf24] font-bold">Dir +10 | −5 | Pass +5</span>
+                      <span>Image #{currentSlideObj.qIndex! + 1} of 6 (Finalist {(currentSlideObj.qIndex || 0) + 1})</span>
+                      <span className="text-[#fbbf24] font-bold">Correct +10 | Wrong −5</span>
                     </div>
                     <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
+
+                    {/* Quick 1-click scoring for Target Finalist */}
+                    {finalists.length > 0 && (() => {
+                      const fIndex = (currentSlideObj.qIndex || 0) % finalists.length
+                      const targetFinalist = finalists[fIndex]
+                      if (!targetFinalist) return null
+                      return (
+                        <div className="p-2 rounded-xl bg-[#1e0e38] border border-[#8b5cf6]/40 flex items-center justify-between gap-2">
+                          <div className="text-[11px] font-bold text-slate-300">
+                            Finalist: <strong className="text-white font-black">{targetFinalist.name}</strong>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => adjustScore(targetFinalist.id, 10, 'r2')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400 active:scale-95"
+                              title="Award +10 points (Correct)"
+                            >
+                              +10 Correct
+                            </button>
+                            <button
+                              onClick={() => adjustScore(targetFinalist.id, -5, 'r2')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-600 hover:bg-rose-500 text-white border border-rose-400 active:scale-95"
+                              title="Deduct -5 points (Wrong)"
+                            >
+                              −5 Wrong
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })()}
+
+                    {/* 4 Options Grid */}
+                    {currentSlideObj.data.options && currentSlideObj.data.options.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <div className="flex items-center justify-between text-[11px] text-[#7dd3fc] font-bold">
+                          <span>
+                            Options on Stage: <strong className="text-white">{isRevealed ? 4 : mcqOptionStep}/4</strong>
+                          </span>
+                          {mcqOptionStep < 4 && !isRevealed && (
+                            <button
+                              onClick={() => {
+                                setMcqOptionStep(4)
+                                broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: 4 } })
+                                sendStageNetworkSync({ mcqOptionStep: 4 })
+                                sound.tap()
+                              }}
+                              className="text-[10px] text-[#c084fc] hover:underline font-black cursor-pointer"
+                            >
+                              Reveal All 4 Options
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                          {currentSlideObj.data.options.map((opt: string, optIdx: number) => {
+                            const isOptRevealed = optIdx < mcqOptionStep || isRevealed
+                            const isCorrect = optIdx === currentSlideObj.data.correctIndex
+                            const optLetter = ['A', 'B', 'C', 'D'][optIdx]
+
+                            return (
+                              <div
+                                key={optIdx}
+                                className={`p-2 rounded-xl border text-xs flex items-center justify-between gap-1.5 transition ${
+                                  isCorrect && isRevealed
+                                    ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-black'
+                                    : isOptRevealed
+                                    ? 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
+                                    : 'bg-[#16082b]/60 border-dashed border-slate-700 text-slate-500'
+                                }`}
+                              >
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span
+                                    className={`w-5 h-5 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 ${
+                                      isCorrect && isRevealed
+                                        ? 'bg-emerald-500 text-[#1e0e38]'
+                                        : isOptRevealed
+                                        ? 'bg-[#7c3aed]/20 text-[#c084fc]'
+                                        : 'bg-slate-800 text-slate-500'
+                                    }`}
+                                  >
+                                    {optLetter}
+                                  </span>
+                                  <span className="truncate font-bold">{opt}</span>
+                                </div>
+
+                                <span className="text-[10px] shrink-0 font-bold">
+                                  {isCorrect && isRevealed ? (
+                                    <strong className="text-emerald-400">✓ Correct</strong>
+                                  ) : isOptRevealed ? (
+                                    <span className="text-[#7dd3fc]">Shown</span>
+                                  ) : (
+                                    <span className="text-slate-600">Hidden</span>
+                                  )}
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>

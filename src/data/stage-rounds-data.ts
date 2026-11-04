@@ -18,6 +18,8 @@ export interface StageImageQuestion {
   type: 'image'
   question: string
   imageUrl: string
+  options?: string[]
+  correctIndex?: number
   answer: string
   explanation: string
 }
