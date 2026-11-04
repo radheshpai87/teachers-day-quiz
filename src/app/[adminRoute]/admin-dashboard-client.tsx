@@ -35,7 +35,7 @@ export function AdminDashboardClient() {
               Admin Overview
             </span>
             <h1 className="text-3xl font-black text-ink mt-2">
-              {current?.quiz?.name || "Engineers' Day Quiz"}
+              {current?.quiz?.name || "TECHNOVA 2026 Quiz"}
             </h1>
             <p className="text-sm text-ink-soft mt-0.5 font-medium">
               {current?.quiz?.description || 'Event control room & analytics.'}
@@ -45,7 +45,7 @@ export function AdminDashboardClient() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={adminPath('live')}
-              className="px-6 py-3 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl bg-[#7c3aed] text-white font-black text-sm border-2 border-[#c084fc] shadow-[3px_3px_0px_#090214] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
             >
               <Play className="w-4 h-4 fill-current" />
               <span>Open Live Control</span>
@@ -67,7 +67,7 @@ export function AdminDashboardClient() {
                   }
                 }
               }}
-              className="px-5 py-3 rounded-xl sticky-note-yellow text-[#081a2e] font-extrabold text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 rounded-xl sticky-note-yellow text-[#1e0e38] font-extrabold text-sm border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4 text-[#d32f2f]" />
               <span>Reset Event</span>
@@ -81,7 +81,7 @@ export function AdminDashboardClient() {
         <div className="notebook-card p-4 space-y-1">
           <div className="flex items-center justify-between text-ink-soft">
             <span className="text-xs font-bold uppercase tracking-wider">Players</span>
-            <Users className="w-4 h-4 text-[#0284c7]" />
+            <Users className="w-4 h-4 text-[#7c3aed]" />
           </div>
           <div className="text-2xl font-black text-ink tnum">{playersCount}</div>
         </div>
@@ -117,7 +117,7 @@ export function AdminDashboardClient() {
           href={adminPath('live')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#00d2ff] text-[#081a2e] flex items-center justify-center font-bold border-2 border-[#081a2e]">
+          <div className="w-10 h-10 rounded-xl bg-[#7c3aed] text-white flex items-center justify-center font-bold border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214]">
             <Play className="w-5 h-5 fill-current" />
           </div>
           <div className="flex items-center justify-between">
@@ -125,7 +125,7 @@ export function AdminDashboardClient() {
             <ArrowRight className="w-4 h-4 text-ink-soft group-hover:translate-x-1 transition-transform" />
           </div>
           <p className="text-xs text-ink-soft font-medium">
-            Status: <span className="font-black text-[#00d2ff] uppercase">{status}</span>. Single-click start & monitor.
+            Status: <span className="font-black text-[#c084fc] uppercase">{status}</span>. Single-click start & monitor.
           </p>
         </Link>
 
@@ -133,7 +133,7 @@ export function AdminDashboardClient() {
           href={adminPath('questions')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#1976d2] text-white flex items-center justify-center font-bold border-2 border-[#081a2e]">
+          <div className="w-10 h-10 rounded-xl bg-[#1e0e38] text-[#c084fc] flex items-center justify-center font-bold border-2 border-[#8b5cf6] shadow-[2px_2px_0px_#090214]">
             <Edit className="w-5 h-5" />
           </div>
           <div className="flex items-center justify-between">
@@ -149,7 +149,7 @@ export function AdminDashboardClient() {
           href={adminPath('results')}
           className="notebook-card-interactive p-5 space-y-2 group"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#388e3c] text-white flex items-center justify-center font-bold border-2 border-[#081a2e]">
+          <div className="w-10 h-10 rounded-xl bg-[#388e3c] text-white flex items-center justify-center font-bold border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214]">
             <FileText className="w-5 h-5" />
           </div>
           <div className="flex items-center justify-between">

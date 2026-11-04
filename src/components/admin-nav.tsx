@@ -33,7 +33,7 @@ export function AdminNav() {
   }
 
   return (
-    <header className="w-full bg-[#0c2340] border-b-3 border-[#00d2ff] sticky top-0 z-50 shadow-[0_4px_0px_#04101d]">
+    <header className="w-full bg-[#16082b] border-b-3 border-[#8b5cf6] sticky top-0 z-50 shadow-[0_4px_0px_#090214]">
       <div className="max-w-7xl 2xl:max-w-[95rem] mx-auto px-3 sm:px-4 h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand */}
         <Link
@@ -49,12 +49,12 @@ export function AdminNav() {
             priority
             className="h-8 sm:h-10 w-auto object-contain"
           />
-          <div className="hidden sm:flex flex-col border-l-2 border-[#00d2ff]/30 pl-2.5">
+          <div className="hidden sm:flex flex-col border-l-2 border-[#8b5cf6]/40 pl-2.5">
             <span className="font-extrabold text-ink text-xs sm:text-sm leading-none">
               Host Console
             </span>
             <span className="text-[10px] text-ink-soft uppercase font-black tracking-wider mt-0.5">
-              Engineers' Day Quiz
+              TECHNOVA 2026
             </span>
           </div>
         </Link>
@@ -74,10 +74,10 @@ export function AdminNav() {
               <Link
                 key={tab.href}
                 href={fullPath}
-                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all border-2 border-[#00d2ff] flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all border-2 border-[#8b5cf6] flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-[#00d2ff] text-[#081a2e] shadow-[2px_2px_0px_#04101d]'
-                    : 'bg-[#0e2e4e] text-ink hover:bg-[#00d2ff] hover:text-[#081a2e]'
+                    ? 'bg-[#7c3aed] text-white shadow-[2px_2px_0px_#090214]'
+                    : 'bg-[#1e0e38] text-ink hover:bg-[#7c3aed] hover:text-white'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -92,7 +92,7 @@ export function AdminNav() {
           type="button"
           onClick={handleLogout}
           disabled={loggingOut}
-          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-[#00d2ff] bg-[#f97316] text-white text-xs font-extrabold hover:bg-orange-600 transition-all cursor-pointer disabled:opacity-50 shrink-0 shadow-[2px_2px_0px_#04101d]"
+          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-[#8b5cf6] bg-[#f97316] text-white text-xs font-extrabold hover:bg-orange-600 transition-all cursor-pointer disabled:opacity-50 shrink-0 shadow-[2px_2px_0px_#090214]"
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Logout</span>
@@ -103,17 +103,17 @@ export function AdminNav() {
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black shadow-[2px_2px_0px_#04101d] hover:scale-105 transition-all cursor-pointer"
+            className="p-2 rounded-xl sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] font-black shadow-[2px_2px_0px_#090214] hover:scale-105 transition-all cursor-pointer"
             aria-label="Toggle navigation menu"
           >
-            {menuOpen ? <X className="w-5 h-5 text-[#081a2e]" /> : <Menu className="w-5 h-5 text-[#081a2e]" />}
+            {menuOpen ? <X className="w-5 h-5 text-[#1e0e38]" /> : <Menu className="w-5 h-5 text-[#1e0e38]" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Slide-down Menu Drawer (< md) */}
       {menuOpen && (
-        <div className="md:hidden border-t-2 border-[#00d2ff] bg-[#0c2340] p-4 space-y-2.5 shadow-[0_6px_12px_rgba(0,0,0,0.3)]">
+        <div className="md:hidden border-t-2 border-[#8b5cf6] bg-[#16082b] p-4 space-y-2.5 shadow-[0_6px_12px_rgba(0,0,0,0.5)]">
           <div className="text-[10px] font-black uppercase tracking-wider text-ink-soft px-1">
             Host Navigation
           </div>
@@ -132,13 +132,13 @@ export function AdminNav() {
                   key={tab.href}
                   href={fullPath}
                   onClick={() => setMenuOpen(false)}
-                  className={`p-3 rounded-xl font-extrabold text-xs flex items-center gap-2 border-2 border-[#00d2ff] transition-all shadow-[2px_2px_0px_#04101d] ${
+                  className={`p-3 rounded-xl font-extrabold text-xs flex items-center gap-2 border-2 border-[#8b5cf6] transition-all shadow-[2px_2px_0px_#090214] ${
                     isActive
-                      ? 'bg-[#00d2ff] text-[#081a2e] font-black'
-                      : 'bg-[#0e2e4e] text-ink hover:bg-[#00d2ff] hover:text-[#081a2e]'
+                      ? 'bg-[#7c3aed] text-white font-black'
+                      : 'bg-[#1e0e38] text-ink hover:bg-[#7c3aed] hover:text-white'
                   }`}
                 >
-                  <Icon className="w-4 h-4 text-[#00d2ff]" />
+                  <Icon className="w-4 h-4 text-[#c084fc]" />
                   <span>{tab.label}</span>
                 </Link>
               )
@@ -150,7 +150,7 @@ export function AdminNav() {
               type="button"
               onClick={handleLogout}
               disabled={loggingOut}
-              className="w-full py-2.5 px-4 rounded-xl border-2 border-[#00d2ff] bg-[#f97316] text-white text-xs font-black hover:bg-orange-600 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-2.5 px-4 rounded-xl border-2 border-[#8b5cf6] bg-[#f97316] text-white text-xs font-black hover:bg-orange-600 transition-all cursor-pointer shadow-[2px_2px_0px_#090214] flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout Host Session</span>

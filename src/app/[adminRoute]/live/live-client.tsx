@@ -17,7 +17,7 @@ export function AdminLiveClient() {
   if (!snapshot) {
     return (
       <div className="flex items-center justify-center min-h-[50vh] p-8 text-ink font-extrabold">
-        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] shadow-[3px_3px_0px_#04101d] animate-pulse">
+        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] shadow-[3px_3px_0px_#090214] animate-pulse">
           <Trophy className="w-5 h-5 text-[#d32f2f]" />
           <span>Connecting to live host engine...</span>
         </div>
@@ -32,14 +32,14 @@ export function AdminLiveClient() {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6 pb-20 lg:pb-6">
       {/* Mobile Tab Switcher (Visible only on < lg screens) */}
-      <div className="lg:hidden grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-paper-warm border-2 border-[#00d2ff]/40 shadow-[3px_3px_0px_#04101d]">
+      <div className="lg:hidden grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-paper-warm border-2 border-[#8b5cf6]/40 shadow-[3px_3px_0px_#090214]">
         <button
           type="button"
           onClick={() => setMobileTab('controls')}
-          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#00d2ff]/30 transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#8b5cf6]/30 transition-all cursor-pointer ${
             mobileTab === 'controls'
-              ? 'sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]'
-              : 'bg-paper-cream text-ink-soft hover:text-ink'
+              ? 'sticky-note-yellow text-[#1e0e38] shadow-[2px_2px_0px_#090214]'
+              : 'bg-[#120726] text-ink-soft hover:text-ink'
           }`}
         >
           <span>Host Console & Roster</span>
@@ -48,10 +48,10 @@ export function AdminLiveClient() {
         <button
           type="button"
           onClick={() => setMobileTab('leaderboard')}
-          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#00d2ff]/30 transition-all cursor-pointer ${
+          className={`py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border border-[#8b5cf6]/30 transition-all cursor-pointer ${
             mobileTab === 'leaderboard'
-              ? 'sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]'
-              : 'bg-paper-cream text-ink-soft hover:text-ink'
+              ? 'sticky-note-yellow text-[#1e0e38] shadow-[2px_2px_0px_#090214]'
+              : 'bg-[#120726] text-ink-soft hover:text-ink'
           }`}
         >
           <Trophy className="w-4 h-4 text-[#d32f2f]" />
@@ -68,11 +68,11 @@ export function AdminLiveClient() {
 
         {/* Right Column: Tailored Admin Live Leaderboard & Stage Qualifiers */}
         <div className={`lg:col-span-5 space-y-4 sm:space-y-6 lg:sticky lg:top-6 ${mobileTab === 'leaderboard' ? 'block' : 'hidden lg:block'}`}>
-          <div className="notebook-card p-4 sm:p-5 space-y-4 bg-[#0e2e4e]">
+          <div className="notebook-card p-4 sm:p-5 space-y-4 bg-[#1e0e38]">
             {/* Header */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl sticky-note-yellow border-2 border-[#081a2e] flex items-center justify-center -rotate-2 shrink-0 shadow-[2px_2px_0px_#04101d]">
+                <div className="w-8 h-8 rounded-xl sticky-note-yellow border-2 border-[#1e0e38] flex items-center justify-center -rotate-2 shrink-0 shadow-[2px_2px_0px_#090214]">
                   <Trophy className="w-4 h-4 text-[#d32f2f]" />
                 </div>
                 <div>
@@ -88,25 +88,25 @@ export function AdminLiveClient() {
               <Link
                 href="/leaderboard"
                 target="_blank"
-                className="px-3 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] border-2 border-[#081a2e] font-black text-xs hover:-translate-y-0.5 transition-all flex items-center gap-1.5 shadow-[2px_2px_0px_#04101d] shrink-0"
+                className="px-3 py-1.5 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white border-2 border-[#c084fc] font-black text-xs hover:-translate-y-0.5 transition-all flex items-center gap-1.5 shadow-[2px_2px_0px_#090214] shrink-0"
               >
                 <span>Projector</span>
-                <ExternalLink className="w-3.5 h-3.5 text-[#081a2e]" />
+                <ExternalLink className="w-3.5 h-3.5 text-white" />
               </Link>
             </div>
 
-            <div className="w-full border-t border-[#00d2ff]/30" />
+            <div className="w-full border-t border-[#8b5cf6]/30" />
 
             {topEntries.length === 0 ? (
-              <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-paper-cream rounded-xl border border-[#00d2ff]/30">
+              <div className="p-6 text-center text-xs font-extrabold text-ink-soft bg-[#120726] rounded-xl border border-[#8b5cf6]/30">
                 No scores recorded yet. Start the quiz to display live standings and qualifiers!
               </div>
             ) : (
               <div className="space-y-4">
                 {/* Top 6 Stage Qualifiers Card */}
                 {topSix.length > 0 && (
-                  <div className="space-y-2.5 bg-[#081f37] p-3 sm:p-3.5 rounded-2xl border-2 border-[#00d2ff] shadow-[3px_3px_0px_#04101d]">
-                    <div className="flex items-center justify-between border-b border-[#00d2ff]/30 pb-2 px-0.5">
+                  <div className="space-y-2.5 bg-[#16082b] p-3 sm:p-3.5 rounded-2xl border-2 border-[#8b5cf6] shadow-[3px_3px_0px_#090214]">
+                    <div className="flex items-center justify-between border-b border-[#8b5cf6]/30 pb-2 px-0.5">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                         <Award className="w-3.5 h-3.5 text-yellow-300" />
@@ -114,7 +114,7 @@ export function AdminLiveClient() {
                           Top 6 Stage Finalists
                         </span>
                       </div>
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#10b981] text-[#081a2e] border border-[#081a2e] uppercase">
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-[#10b981] text-[#120726] border border-[#120726] uppercase">
                         Stage Round
                       </span>
                     </div>
@@ -136,25 +136,25 @@ export function AdminLiveClient() {
                           <div
                             key={entry.id}
                             onClick={() => setSelectedStudent(entry)}
-                            className={`p-2 rounded-xl border-2 border-[#081a2e] ${styleClass} shadow-[2px_2px_0px_#04101d] flex items-center justify-between gap-2.5 transition-all cursor-pointer hover:scale-[1.02]`}
+                            className={`p-2 rounded-xl border-2 border-[#1e0e38] ${styleClass} shadow-[2px_2px_0px_#090214] flex items-center justify-between gap-2.5 transition-all cursor-pointer hover:scale-[1.02]`}
                           >
                             <div className="flex items-center gap-2 min-w-0 flex-1">
-                              <span className="w-5 h-5 rounded-md bg-[#081a2e] text-white font-black text-[10px] flex items-center justify-center shrink-0">
+                              <span className="w-5 h-5 rounded-md bg-[#1e0e38] text-white font-black text-[10px] flex items-center justify-center shrink-0">
                                 #{rankNum}
                               </span>
-                              <ParticipantAvatar seed={entry.avatarSeed} size="sm" className="shrink-0 border border-[#081a2e]/40" />
+                              <ParticipantAvatar seed={entry.avatarSeed} size="sm" className="shrink-0 border border-[#1e0e38]/40" />
                               <div className="min-w-0 flex-1">
-                                <span className="font-black text-[#081a2e] text-xs block truncate leading-tight">
+                                <span className="font-black text-[#1e0e38] text-xs block truncate leading-tight">
                                   {entry.name}
                                 </span>
                                 <div className="flex items-center gap-1 mt-0.5">
                                   {entry.year && (
-                                    <span className="text-[9px] font-black text-[#081a2e]/80 uppercase">
+                                    <span className="text-[9px] font-black text-[#1e0e38]/80 uppercase">
                                       {entry.year}
                                     </span>
                                   )}
                                   {entry.edutechPartner && (
-                                    <span className="text-[9px] font-extrabold text-[#081a2e]/80 uppercase">
+                                    <span className="text-[9px] font-extrabold text-[#1e0e38]/80 uppercase">
                                       • {entry.edutechPartner}
                                     </span>
                                   )}
@@ -163,10 +163,10 @@ export function AdminLiveClient() {
                             </div>
 
                             <div className="text-right shrink-0">
-                              <span className="tnum font-black text-[#081a2e] text-xs block">
+                              <span className="tnum font-black text-[#1e0e38] text-xs block">
                                 {entry.score.toLocaleString()} pts
                               </span>
-                              <span className="text-[8px] font-black uppercase text-[#081a2e]/70">
+                              <span className="text-[8px] font-black uppercase text-[#1e0e38]/70">
                                 Qualifier #{rankNum}
                               </span>
                             </div>
@@ -190,7 +190,7 @@ export function AdminLiveClient() {
                         <div
                           key={entry.id}
                           onClick={() => setSelectedStudent(entry)}
-                          className="p-2 rounded-xl bg-[#0a233c] hover:bg-[#103456] border border-[#00d2ff]/30 flex items-center justify-between gap-2 transition-all cursor-pointer shadow-[1px_1px_0px_#04101d]"
+                          className="p-2 rounded-xl bg-[#16082b] hover:bg-[#200d3d] border border-[#8b5cf6]/30 flex items-center justify-between gap-2 transition-all cursor-pointer shadow-[1px_1px_0px_#090214]"
                         >
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <span className="tnum font-black text-ink-soft text-xs w-5 text-center shrink-0">
@@ -202,7 +202,7 @@ export function AdminLiveClient() {
                             </span>
                           </div>
 
-                          <span className="tnum font-black text-[#00d2ff] text-xs shrink-0">
+                          <span className="tnum font-black text-[#c084fc] text-xs shrink-0">
                             {entry.score.toLocaleString()}
                           </span>
                         </div>
@@ -219,40 +219,40 @@ export function AdminLiveClient() {
       {/* Interactive Student Details Modal */}
       <AnimatePresence>
         {selectedStudent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#031324]/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#090214]/85 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="w-full max-w-sm sticky-note-yellow p-6 rounded-3xl border-3 border-[#081a2e] shadow-[8px_8px_0px_#04101d] flex flex-col items-center gap-4 text-center relative"
+              className="w-full max-w-sm sticky-note-yellow p-6 rounded-3xl border-3 border-[#1e0e38] shadow-[8px_8px_0px_#090214] flex flex-col items-center gap-4 text-center relative"
             >
               <button
                 type="button"
                 onClick={() => setSelectedStudent(null)}
-                className="absolute top-4 right-4 p-1.5 rounded-xl bg-white border-2 border-[#081a2e] text-[#081a2e] hover:scale-105 transition-all cursor-pointer"
+                className="absolute top-4 right-4 p-1.5 rounded-xl bg-white border-2 border-[#1e0e38] text-[#1e0e38] hover:scale-105 transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <ParticipantAvatar seed={selectedStudent.avatarSeed} size="xl" className="border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d]" />
+              <ParticipantAvatar seed={selectedStudent.avatarSeed} size="xl" className="border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214]" />
 
               <div className="space-y-1">
-                <span className="px-3 py-1 rounded-full bg-white text-[#081a2e] border border-[#081a2e] font-black text-xs uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full bg-white text-[#1e0e38] border border-[#1e0e38] font-black text-xs uppercase tracking-wider">
                   Rank #{selectedStudent.rank} • {selectedStudent.score.toLocaleString()} Pts
                 </span>
-                <h3 className="text-xl font-black text-[#081a2e]">{selectedStudent.name}</h3>
+                <h3 className="text-xl font-black text-[#1e0e38]">{selectedStudent.name}</h3>
               </div>
 
-              <div className="w-full bg-white p-4 rounded-2xl border-2 border-[#081a2e] text-left space-y-3 font-bold text-xs sm:text-sm text-[#081a2e] shadow-[3px_3px_0px_#04101d]">
+              <div className="w-full bg-white p-4 rounded-2xl border-2 border-[#1e0e38] text-left space-y-3 font-bold text-xs sm:text-sm text-[#1e0e38] shadow-[3px_3px_0px_#090214]">
                 <div className="flex items-center gap-2.5">
-                  <User className="w-4 h-4 text-[#0284c7] shrink-0" />
+                  <User className="w-4 h-4 text-[#7c3aed] shrink-0" />
                   <div>
                     <span className="block text-[10px] text-ink-soft uppercase font-black">Full Name</span>
                     <span>{selectedStudent.name}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 border-t border-[#081a2e]/20 pt-2">
+                <div className="flex items-center gap-2.5 border-t border-[#1e0e38]/20 pt-2">
                   <GraduationCap className="w-4 h-4 text-[#43a047] shrink-0" />
                   <div>
                     <span className="block text-[10px] text-ink-soft uppercase font-black">Year of Study</span>
@@ -260,7 +260,7 @@ export function AdminLiveClient() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 border-t border-[#081a2e]/20 pt-2">
+                <div className="flex items-center gap-2.5 border-t border-[#1e0e38]/20 pt-2">
                   <Building2 className="w-4 h-4 text-[#e53935] shrink-0" />
                   <div>
                     <span className="block text-[10px] text-ink-soft uppercase font-black">Edutech Partner / Program</span>

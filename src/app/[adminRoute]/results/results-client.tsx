@@ -51,9 +51,9 @@ export function AdminResultsClient() {
         <button
           type="button"
           onClick={handleExportCsv}
-          className="px-5 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
+          className="px-5 py-2.5 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-xs border-2 border-[#c084fc] shadow-[3px_3px_0px_#090214] hover:-translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
         >
-          <Download className="w-4 h-4 text-[#081a2e]" />
+          <Download className="w-4 h-4 text-white" />
           <span>Export CSV</span>
         </button>
       </div>
@@ -61,31 +61,31 @@ export function AdminResultsClient() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="sticky-note-lavender p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-[#081a2e] text-xs font-black uppercase">
-            <Users className="w-4 h-4 text-[#081a2e]" />
+          <div className="flex items-center gap-2 text-[#1e0e38] text-xs font-black uppercase">
+            <Users className="w-4 h-4 text-[#1e0e38]" />
             <span>Participants</span>
           </div>
-          <div className="tnum text-3xl font-black text-[#081a2e]">
+          <div className="tnum text-3xl font-black text-[#1e0e38]">
             {results.participants}
           </div>
         </div>
 
         <div className="sticky-note-mint p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-[#081a2e] text-xs font-black uppercase">
-            <CheckCircle className="w-4 h-4 text-[#081a2e]" />
+          <div className="flex items-center gap-2 text-[#1e0e38] text-xs font-black uppercase">
+            <CheckCircle className="w-4 h-4 text-[#1e0e38]" />
             <span>Completed</span>
           </div>
-          <div className="tnum text-3xl font-black text-[#081a2e]">
+          <div className="tnum text-3xl font-black text-[#1e0e38]">
             {results.completed}
           </div>
         </div>
 
         <div className="sticky-note-yellow p-5 rounded-2xl space-y-1">
-          <div className="flex items-center gap-2 text-[#081a2e] text-xs font-black uppercase">
-            <Trophy className="w-4 h-4 text-[#081a2e]" />
+          <div className="flex items-center gap-2 text-[#1e0e38] text-xs font-black uppercase">
+            <Trophy className="w-4 h-4 text-[#1e0e38]" />
             <span>Avg. Score</span>
           </div>
-          <div className="tnum text-3xl font-black text-[#081a2e]">
+          <div className="tnum text-3xl font-black text-[#1e0e38]">
             {results.averageScore.toLocaleString()}
           </div>
         </div>
@@ -107,7 +107,7 @@ export function AdminResultsClient() {
 
         <table className="w-full text-left text-xs sm:text-sm border-collapse">
           <thead>
-            <tr className="border-b-2 border-[#00d2ff]/30 text-ink-soft uppercase text-[10px] font-black tracking-wider">
+            <tr className="border-b-2 border-[#8b5cf6]/30 text-ink-soft uppercase text-[10px] font-black tracking-wider">
               <th className="py-3 px-2 text-center w-12">Rank</th>
               <th className="py-3 px-3">Participant</th>
               <th className="py-3 px-3">Year of Study</th>
@@ -118,9 +118,9 @@ export function AdminResultsClient() {
               <th className="py-3 px-3 text-right">Avg Response</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#00d2ff]/20">
+          <tbody className="divide-y divide-[#8b5cf6]/20">
             {results.rows.map((row) => (
-              <tr key={row.id} className="hover:bg-note-yellow/30 transition-colors">
+              <tr key={row.id} className="hover:bg-[#1e0e38]/50 transition-colors">
                 <td className="py-3 px-2 text-center font-black tnum text-ink">
                   #{row.rank}
                 </td>
@@ -130,17 +130,17 @@ export function AdminResultsClient() {
                     <span>{row.name}</span>
                   </div>
                 </td>
-                <td className="py-3 px-3 font-black text-[#081a2e]">
-                  <span className="px-2 py-0.5 rounded-md sticky-note-yellow text-[#081a2e] text-xs border border-[#081a2e] shadow-[1px_1px_0px_#04101d]">
+                <td className="py-3 px-3 font-black text-[#1e0e38]">
+                  <span className="px-2 py-0.5 rounded-md sticky-note-yellow text-[#1e0e38] text-xs border border-[#1e0e38] shadow-[1px_1px_0px_#090214]">
                     {row.year || 'N/A'}
                   </span>
                 </td>
-                <td className="py-3 px-3 font-black text-[#081a2e]">
-                  <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[#081a2e] text-xs border border-[#081a2e] shadow-[1px_1px_0px_#04101d]">
+                <td className="py-3 px-3 font-black text-[#1e0e38]">
+                  <span className="px-2 py-0.5 rounded-md sticky-note-mint text-[#1e0e38] text-xs border border-[#1e0e38] shadow-[1px_1px_0px_#090214]">
                     {row.edutechPartner || 'N/A'}
                   </span>
                 </td>
-                <td className="py-3 px-3 text-right font-black tnum text-[#00d2ff]">
+                <td className="py-3 px-3 text-right font-black tnum text-[#c084fc]">
                   {row.score.toLocaleString()}
                 </td>
                 <td className="py-3 px-3 text-right font-bold tnum text-ink-soft">

@@ -47,8 +47,8 @@ export default function AdminLoginPage() {
             priority
             className="h-14 sm:h-18 w-auto object-contain"
           />
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full sticky-note-lavender text-[#081a2e] font-black text-xs -rotate-1">
-            <PaperClip className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#7c3aed] text-white font-black text-xs border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214] -rotate-1">
+            <PaperClip className="w-4 h-4 text-white" />
             <span>Host Authentication</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink">
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-[#8b5cf6]/40 bg-[#120726] text-ink text-sm font-extrabold focus:outline-hidden focus:border-[#c084fc] focus:ring-2 focus:ring-[#c084fc]/30"
               />
             </div>
           </div>
@@ -89,13 +89,13 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink text-sm font-extrabold focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-[#8b5cf6]/40 bg-[#120726] text-ink text-sm font-extrabold focus:outline-hidden focus:border-[#c084fc] focus:ring-2 focus:ring-[#c084fc]/30"
               />
             </div>
           </div>
 
           {error && (
-            <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl">
+            <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl border-2 border-[#f43f5e] shadow-[2px_2px_0px_#090214]">
               {error}
             </div>
           )}
@@ -104,10 +104,10 @@ export default function AdminLoginPage() {
             suppressHydrationWarning
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-sm border-2 border-[#c084fc] shadow-[3px_3px_0px_#090214] hover:-translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <span>{loading ? 'Authenticating...' : 'Login to Console'}</span>
-            {!loading && <ArrowRight className="w-4 h-4 text-[#081a2e]" />}
+            {!loading && <ArrowRight className="w-4 h-4 text-white" />}
           </button>
         </form>
       </div>

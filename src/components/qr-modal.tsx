@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { QrFrame, HardHat, Cross, PaperClip } from '@/components/icons'
+import { QrFrame, Cross, PaperClip } from '@/components/icons'
 import { apiGet } from '@/lib/client/api'
 
 interface QrModalProps {
@@ -38,38 +38,37 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#031324]/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-lg notebook-card bg-[#0b2440] p-6 sm:p-8 space-y-6 text-center relative border-2 border-[#00d2ff] shadow-[6px_6px_0px_#04101d] animate-pop">
+    <div className="fixed inset-0 z-50 bg-[#090214]/85 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="w-full max-w-lg notebook-card bg-[#1e0e38] p-6 sm:p-8 space-y-6 text-center relative border-2 border-[#8b5cf6] shadow-[6px_6px_0px_#090214] animate-pop">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-[#081a2e] text-white font-bold hover:scale-105 transition-transform cursor-pointer"
+          className="absolute top-4 right-4 p-2 rounded-xl sticky-note-rose border-2 border-[#1e0e38] text-white font-bold hover:scale-105 transition-transform cursor-pointer"
         >
           <Cross className="w-5 h-5" />
         </button>
 
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1">
-            <PaperClip className="w-4 h-4 text-[#081a2e]" />
-            <HardHat className="w-4 h-4 text-[#081a2e]" />
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full sticky-note-lavender text-white font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214]">
+            <PaperClip className="w-4 h-4 text-white" />
             <span>Scan QR Code to Join</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-ink">
-            INGENIUM 2026 — Engineers' Day Quiz
+            TECHNOVA 2026 — AI & Innovation Quiz
           </h2>
           <p className="text-xs sm:text-sm font-extrabold text-ink-soft">
-            Scan with any smartphone camera to open the quiz instantly!
+            Youth Convention for NSS Volunteers • Test Your Technology IQ
           </p>
         </div>
 
         {/* Big QR Code Frame */}
-        <div className="w-72 h-72 sm:w-80 sm:h-80 mx-auto bg-white p-4 rounded-2xl border-3 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex items-center justify-center relative">
+        <div className="w-72 h-72 sm:w-80 sm:h-80 mx-auto bg-white p-4 rounded-2xl border-3 border-[#1e0e38] shadow-[4px_4px_0px_#090214] flex items-center justify-center relative">
           {qrDataUrl ? (
             /* eslint-disable-next-html-element-suppression */
             <img src={qrDataUrl} alt="Scan to Join Quiz" className="w-full h-full object-contain" />
           ) : (
             <div className="flex flex-col items-center gap-3 text-ink">
-              <QrFrame className="w-16 h-16 animate-bounce text-[#0284c7]" />
+              <QrFrame className="w-16 h-16 animate-bounce text-[#c084fc]" />
               <span className="text-sm font-black">Generating QR Code...</span>
             </div>
           )}
@@ -77,7 +76,7 @@ export function QrModal({ isOpen, onClose }: QrModalProps) {
 
         {/* Join URL Display */}
         {joinUrl && (
-          <div className="p-3.5 rounded-xl sticky-note-mint border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm truncate">
+          <div className="p-3.5 rounded-xl sticky-note-mint border-2 border-[#1e0e38] text-[#1e0e38] font-black text-xs sm:text-sm truncate">
             {joinUrl}
           </div>
         )}
