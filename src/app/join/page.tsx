@@ -12,7 +12,7 @@ import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
 const YEAR_OPTIONS = ['1st Year', '2nd Year', '3rd Year']
-const EDUTECH_OPTIONS = ['Kavium', 'Proxima', 'NxtWave']
+const EDUTECH_OPTIONS = ['Kalvium', 'Proxima', 'NxtWave']
 
 export default function JoinPage() {
   const router = useRouter()
@@ -113,22 +113,22 @@ export default function JoinPage() {
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain"
             />
           </div>
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-            <span>INGENIUM 2026</span>
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#7c3aed] text-white font-black text-xs uppercase tracking-wider border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214]">
+            <span>TECHNOVA 2026</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-ink">
-            Join the Live Quiz
+            Join TECHNOVA Quiz
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft font-bold">
-            Enter your details to participate in the Engineers' Day Live Quiz
+            Test Your Technology IQ • NSS Youth Convention on AI & Innovation
           </p>
         </div>
 
         {/* Join Form Card */}
-        <div className="w-full notebook-card p-6 sm:p-8 space-y-5 bg-[#0e2e4e]">
+        <div className="w-full notebook-card p-6 sm:p-8 space-y-5 bg-[#1e0e38]">
           {/* Avatar Preview */}
           <div className="flex flex-col items-center space-y-1.5">
-            <ParticipantAvatar seed={previewSeed} size="xl" className="shadow-[3px_3px_0px_#04101d] border-2 border-[#00d2ff]" />
+            <ParticipantAvatar seed={previewSeed} size="xl" className="shadow-[3px_3px_0px_#090214] border-2 border-[#8b5cf6]" />
             <span className="text-xs font-black text-ink-soft">
               Your Avatar
             </span>
@@ -153,7 +153,7 @@ export default function JoinPage() {
                 placeholder="Enter your full name"
                 maxLength={32}
                 autoFocus
-                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-base focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all placeholder:text-ink-faint shadow-[2px_2px_0px_#04101d]"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#8b5cf6]/50 bg-[#140628] text-ink font-extrabold text-base focus:outline-hidden focus:border-[#c084fc] focus:ring-2 focus:ring-[#c084fc]/30 transition-all placeholder:text-ink-faint shadow-[2px_2px_0px_#090214]"
               />
             </div>
 
@@ -171,7 +171,7 @@ export default function JoinPage() {
                   setYear(e.target.value)
                   if (error) setError(null)
                 }}
-                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all shadow-[2px_2px_0px_#04101d] cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#8b5cf6]/50 bg-[#140628] text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#c084fc] focus:ring-2 focus:ring-[#c084fc]/30 transition-all shadow-[2px_2px_0px_#090214] cursor-pointer"
               >
                 <option value="">-- Choose Year of Study --</option>
                 {YEAR_OPTIONS.map((y) => (
@@ -196,7 +196,7 @@ export default function JoinPage() {
                   setEdutechPartner(e.target.value)
                   if (error) setError(null)
                 }}
-                className="w-full px-4 py-3 rounded-xl border-2 border-[#00d2ff]/40 bg-paper-cream text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/30 transition-all shadow-[2px_2px_0px_#04101d] cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border-2 border-[#8b5cf6]/50 bg-[#140628] text-ink font-extrabold text-sm focus:outline-hidden focus:border-[#c084fc] focus:ring-2 focus:ring-[#c084fc]/30 transition-all shadow-[2px_2px_0px_#090214] cursor-pointer"
               >
                 <option value="">-- Choose Edutech Partner / Program --</option>
                 {EDUTECH_OPTIONS.map((opt) => (
@@ -208,7 +208,7 @@ export default function JoinPage() {
             </div>
 
             {error && (
-              <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl border border-[#00d2ff] shadow-[2px_2px_0px_#04101d]">
+              <div className="text-xs font-black text-white sticky-note-rose p-3 rounded-xl border border-[#f43f5e] shadow-[2px_2px_0px_#090214]">
                 {error}
               </div>
             )}
@@ -217,7 +217,7 @@ export default function JoinPage() {
               suppressHydrationWarning
               type="submit"
               disabled={loading || !name.trim() || !year || !edutechPartner}
-              className="w-full py-4 px-6 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-lg border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#7c3aed] to-[#9333ea] hover:from-[#6d28d9] hover:to-[#7c3aed] text-white font-black text-lg border-2 border-[#c084fc] shadow-[4px_4px_0px_#090214] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
             >
               <span>{loading ? 'Joining...' : 'Join Quiz'}</span>
               {!loading && <ArrowUp className="w-5 h-5 rotate-90 stroke-[3]" />}

@@ -61,10 +61,10 @@ export function AnswerButton({
     } else if (selected) {
       variantStyles = 'bg-[#e53935] text-white opacity-85 ring-4 ring-rose-400 border-b-[#b71c1c]'
     } else {
-      variantStyles = 'bg-[#0a2239]/80 text-[#64748b] opacity-40 border-[#1e3a5f]'
+      variantStyles = 'bg-[#140628]/85 text-[#64748b] opacity-40 border-[#2a134e]'
     }
   } else if (selected) {
-    variantStyles = `${theme.bg} ring-4 ring-[#00d2ff] scale-[1.02] shadow-xl`
+    variantStyles = `${theme.bg} ring-4 ring-[#c084fc] scale-[1.02] shadow-xl`
   }
 
   return (

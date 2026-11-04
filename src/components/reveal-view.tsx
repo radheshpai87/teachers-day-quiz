@@ -47,25 +47,25 @@ export function RevealView({ reveal, self }: RevealViewProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className={`w-full p-6 text-center space-y-2 rounded-2xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] ${
+        className={`w-full p-6 text-center space-y-2 rounded-2xl border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] ${
           yourCorrect
-            ? 'sticky-note-mint text-[#081a2e]'
+            ? 'sticky-note-mint text-[#1e0e38]'
             : yourChoice !== null
             ? 'sticky-note-rose text-white'
-            : 'sticky-note-yellow text-[#081a2e]'
+            : 'sticky-note-yellow text-[#1e0e38]'
         }`}
       >
         <div className="flex items-center justify-center gap-2">
           {yourCorrect ? (
-            <div className="w-12 h-12 rounded-xl bg-[#081a2e] text-[#10b981] border-2 border-[#081a2e] flex items-center justify-center shadow-[2px_2px_0px_#04101d]">
+            <div className="w-12 h-12 rounded-xl bg-[#1e0e38] text-[#10b981] border-2 border-[#1e0e38] flex items-center justify-center shadow-[2px_2px_0px_#090214]">
               <Check className="w-7 h-7 stroke-[3]" />
             </div>
           ) : yourChoice !== null ? (
-            <div className="w-12 h-12 rounded-xl bg-[#081a2e] text-[#f43f5e] border-2 border-[#081a2e] flex items-center justify-center shadow-[2px_2px_0px_#04101d]">
+            <div className="w-12 h-12 rounded-xl bg-[#1e0e38] text-[#f43f5e] border-2 border-[#1e0e38] flex items-center justify-center shadow-[2px_2px_0px_#090214]">
               <Cross className="w-7 h-7 stroke-[3]" />
             </div>
           ) : (
-            <div className="w-12 h-12 rounded-xl bg-[#081a2e] text-[#fbbf24] border-2 border-[#081a2e] flex items-center justify-center shadow-[2px_2px_0px_#04101d]">
+            <div className="w-12 h-12 rounded-xl bg-[#1e0e38] text-[#fbbf24] border-2 border-[#1e0e38] flex items-center justify-center shadow-[2px_2px_0px_#090214]">
               <Bolt className="w-7 h-7" />
             </div>
           )}
@@ -80,7 +80,7 @@ export function RevealView({ reveal, self }: RevealViewProps) {
         </h2>
 
         {yourCorrect && (
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#081a2e] text-[#00d2ff] font-black text-sm border border-[#081a2e] tnum">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#1e0e38] text-[#c084fc] font-black text-sm border border-[#8b5cf6] tnum shadow-[2px_2px_0px_#090214]">
             <Bolt className="w-4 h-4 fill-current text-[#fbbf24]" />
             <span>+{yourPoints.toLocaleString()} points</span>
           </div>
@@ -94,7 +94,7 @@ export function RevealView({ reveal, self }: RevealViewProps) {
       </motion.div>
 
       {/* Answer Distribution Breakdown */}
-      <div className="w-full notebook-card p-5 space-y-4 bg-[#0e2e4e] border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]">
+      <div className="w-full notebook-card p-5 space-y-4 bg-[#1e0e38] border-2 border-[#8b5cf6] shadow-[4px_4px_0px_#090214]">
         <h3 className="text-xs uppercase font-black tracking-wider text-ink-soft text-center">
           Answer Distribution ({totalAnswers} answers)
         </h3>
@@ -112,7 +112,7 @@ export function RevealView({ reveal, self }: RevealViewProps) {
               <div key={idx} className="space-y-1">
                 <div className="flex items-center justify-between gap-2 text-xs font-black text-ink">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className={`w-5 h-5 shrink-0 rounded-md ${ANSWER_COLORS[idx]} text-white flex items-center justify-center text-[10px] border border-[#081a2e]`}>
+                    <span className={`w-5 h-5 shrink-0 rounded-md ${ANSWER_COLORS[idx]} text-white flex items-center justify-center text-[10px] border border-[#1e0e38]`}>
                       <Shape className="w-3.5 h-3.5 fill-current" />
                     </span>
                     <span className="truncate min-w-0">{optText}</span>
@@ -120,12 +120,12 @@ export function RevealView({ reveal, self }: RevealViewProps) {
 
                   <div className="flex items-center gap-1.5 shrink-0">
                     {isCorrect && (
-                      <span className="px-1.5 py-0.5 rounded bg-[#10b981] text-[#081a2e] text-[10px] font-black border border-[#081a2e] shrink-0">
+                      <span className="px-1.5 py-0.5 rounded bg-[#10b981] text-[#1e0e38] text-[10px] font-black border border-[#1e0e38] shrink-0">
                         CORRECT
                       </span>
                     )}
                     {isYourChoice && (
-                      <span className="px-1.5 py-0.5 rounded sticky-note-yellow text-[#081a2e] text-[10px] font-black border border-[#081a2e] shrink-0 shadow-xs">
+                      <span className="px-1.5 py-0.5 rounded sticky-note-yellow text-[#1e0e38] text-[10px] font-black border border-[#1e0e38] shrink-0 shadow-xs">
                         YOU
                       </span>
                     )}
@@ -135,7 +135,7 @@ export function RevealView({ reveal, self }: RevealViewProps) {
                   </div>
                 </div>
 
-                <div className="h-4 w-full bg-[#082038] rounded-full overflow-hidden p-0.5 border border-[#00d2ff]/30">
+                <div className="h-4 w-full bg-[#120726] rounded-full overflow-hidden p-0.5 border border-[#8b5cf6]/30">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${barWidth}%` }}
@@ -152,8 +152,8 @@ export function RevealView({ reveal, self }: RevealViewProps) {
 
         {/* Explanation text if present */}
         {explanation && (
-          <div className="mt-4 pt-3 border-t-2 border-[#00d2ff]/30 text-xs sm:text-sm text-[#081a2e] font-semibold sticky-note-yellow p-3.5 rounded-xl border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-            <span className="font-black text-[#081a2e] block mb-0.5">Did you know?</span>
+          <div className="mt-4 pt-3 border-t-2 border-[#8b5cf6]/30 text-xs sm:text-sm text-[#1e0e38] font-semibold sticky-note-yellow p-3.5 rounded-xl border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214]">
+            <span className="font-black text-[#1e0e38] block mb-0.5">Did you know?</span>
             {explanation}
           </div>
         )}

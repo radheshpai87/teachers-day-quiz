@@ -11,7 +11,7 @@ import { RevealView } from '@/components/reveal-view'
 import { LeaderboardView } from '@/components/leaderboard-view'
 import { ExamCard } from '@/components/exam-card'
 import Image from 'next/image'
-import { HardHat, PaperClip } from '@/components/icons'
+import { CircuitBoard, PaperClip } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { ReactionOverlayAndBar } from '@/components/reaction-bar'
 import { sound } from '@/lib/client/sound'
@@ -126,8 +126,8 @@ export default function PlayPage() {
       <main className="min-h-screen notebook-paper flex items-center justify-center p-4 select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
-          <HardHat className="w-10 h-10 text-[#00d2ff] animate-bounce" />
-          <span className="text-sm font-black">Loading your session...</span>
+          <CircuitBoard className="w-10 h-10 text-[#c084fc] animate-pulse" />
+          <span className="text-sm font-black text-ink-soft">Loading TECHNOVA session...</span>
         </div>
       </main>
     )
@@ -151,15 +151,15 @@ export default function PlayPage() {
             priority
             className="h-8 sm:h-12 max-w-[45vw] w-auto object-contain"
           />
-          <span className="hidden xs:inline-block sm:inline-block px-2.5 py-0.5 rounded-lg bg-[#00d2ff] text-[#081a2e] font-black text-[10px] sm:text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-            INGENIUM 2026
+          <span className="hidden xs:inline-block sm:inline-block px-2.5 py-0.5 rounded-lg bg-[#7c3aed] text-white font-black text-[10px] sm:text-xs uppercase tracking-wider border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214]">
+            TECHNOVA 2026
           </span>
         </div>
 
         {/* Status Indicator & Sound Toggle */}
         <div className="flex items-center gap-2">
           {showReconnecting && status === 'reconnecting' && (
-            <span className="px-3 py-1 rounded-full sticky-note-rose text-white font-black text-xs border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] animate-pulse">
+            <span className="px-3 py-1 rounded-full sticky-note-rose text-white font-black text-xs border-2 border-[#f43f5e] shadow-[2px_2px_0px_#090214] animate-pulse">
               Reconnecting...
             </span>
           )}
@@ -168,14 +168,14 @@ export default function PlayPage() {
             type="button"
             title={soundEnabled ? 'Mute sound effects' : 'Unmute sound effects'}
             onClick={() => setSoundEnabled(sound.toggle())}
-            className={`p-2 rounded-xl border-2 transition-all cursor-pointer shadow-[2px_2px_0px_#04101d] hover:-translate-y-0.5 ${
+            className={`p-2 rounded-xl border-2 transition-all cursor-pointer shadow-[2px_2px_0px_#090214] hover:-translate-y-0.5 ${
               soundEnabled
-                ? 'bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] border-[#081a2e]'
-                : 'bg-[#ef4444] hover:bg-[#dc2626] text-white border-[#081a2e]'
+                ? 'bg-[#7c3aed] hover:bg-[#8b5cf6] text-white border-[#c084fc]'
+                : 'bg-[#ef4444] hover:bg-[#dc2626] text-white border-[#120726]'
             }`}
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-[#081a2e]" />
+              <Volume2 className="w-4 h-4 text-white" />
             ) : (
               <VolumeX className="w-4 h-4 text-white" />
             )}
@@ -230,13 +230,13 @@ export default function PlayPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full sticky-note-yellow p-8 rounded-3xl border-3 border-[#081a2e] shadow-[6px_6px_0px_#04101d] flex flex-col items-center justify-center gap-4 text-center"
+              className="w-full sticky-note-kraft p-8 rounded-3xl border-3 border-[#120726] shadow-[6px_6px_0px_#090214] flex flex-col items-center justify-center gap-4 text-center"
             >
-              <div className="w-16 h-16 rounded-2xl bg-[#081a2e] text-[#fbbf24] border-2 border-[#081a2e] flex items-center justify-center shadow-[3px_3px_0px_#04101d]">
+              <div className="w-16 h-16 rounded-2xl bg-[#120726] text-[#c084fc] border-2 border-[#8b5cf6] flex items-center justify-center shadow-[3px_3px_0px_#090214]">
                 <Pause className="w-8 h-8 fill-current animate-pulse" />
               </div>
-              <h2 className="text-2xl font-black text-[#081a2e]">Quiz Paused by Host</h2>
-              <p className="text-sm font-bold text-[#081a2e]/90 max-w-md">
+              <h2 className="text-2xl font-black text-[#120726]">TECHNOVA Paused by Host</h2>
+              <p className="text-sm font-bold text-[#120726]/90 max-w-md">
                 The event host has temporarily paused the quiz session. Take a quick breather — your progress is saved and answering will resume shortly!
               </p>
             </motion.div>

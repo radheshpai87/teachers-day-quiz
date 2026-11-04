@@ -141,7 +141,7 @@ export function ExamCard({
     }
   }, [])
 
-  // Live 5-minute countdown timer calculation
+  // Live 8-minute countdown timer calculation
   useEffect(() => {
     const updateTimer = () => {
       const serverNow = Date.now() + clockOffsetMs
@@ -185,17 +185,17 @@ export function ExamCard({
 
   return (
     <div className="w-full flex flex-col gap-4 select-none">
-      {/* Sticky Header with 5-Minute Global Timer & Progress */}
-      <div className="w-full flex items-center justify-between sticky-note-yellow p-3.5 sm:p-4 rounded-2xl border-2 sm:border-3 border-[#081a2e] shadow-[4px_4px_0px_#04101d]">
+      {/* Sticky Header with 8-Minute Global Timer & Progress */}
+      <div className="w-full flex items-center justify-between sticky-note-yellow p-3.5 sm:p-4 rounded-2xl border-2 sm:border-3 border-[#1e0e38] shadow-[4px_4px_0px_#090214]">
         <div className="flex items-center gap-2">
-          <Clock className="w-5 h-5 text-[#081a2e] animate-pulse" />
-          <span className="font-black text-lg sm:text-xl tracking-wider text-[#081a2e] tnum">
+          <Clock className="w-5 h-5 text-[#1e0e38] animate-pulse" />
+          <span className="font-black text-lg sm:text-xl tracking-wider text-[#1e0e38] tnum">
             {timeFormatted}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#081a2e]/10 px-3 py-1 rounded-lg border border-[#081a2e]/20">
-          <span className="text-xs sm:text-sm font-black text-[#081a2e] uppercase tracking-wider">
+        <div className="flex items-center gap-2 bg-[#1e0e38]/10 px-3 py-1 rounded-lg border border-[#1e0e38]/20">
+          <span className="text-xs sm:text-sm font-black text-[#1e0e38] uppercase tracking-wider">
             Answered: {answeredCount} / {totalQ}
           </span>
         </div>
@@ -217,14 +217,14 @@ export function ExamCard({
               }}
               className={`px-3.5 py-2 rounded-xl font-black text-xs border-2 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
                 isCurrent
-                  ? 'bg-[#00d2ff] text-[#081a2e] border-[#081a2e] shadow-[3px_3px_0px_#04101d] scale-105'
+                  ? 'bg-[#c084fc] text-[#1e0e38] border-[#1e0e38] shadow-[3px_3px_0px_#090214] scale-105'
                   : isAnswered
-                  ? 'bg-[#10b981] text-[#081a2e] border-[#081a2e] shadow-[2px_2px_0px_#04101d]'
-                  : 'bg-[#0e2e4e] text-[#f8fafc] border-[#00d2ff]/50 hover:border-[#00d2ff]'
+                  ? 'bg-[#10b981] text-[#1e0e38] border-[#1e0e38] shadow-[2px_2px_0px_#090214]'
+                  : 'bg-[#1e0e38] text-[#f8fafc] border-[#8b5cf6]/50 hover:border-[#8b5cf6]'
               }`}
             >
               Q{idx + 1}
-              {isAnswered && <CheckCircle2 className="w-3.5 h-3.5 text-[#081a2e] inline" />}
+              {isAnswered && <CheckCircle2 className="w-3.5 h-3.5 text-[#1e0e38] inline" />}
             </button>
           )
         })}
@@ -238,10 +238,10 @@ export function ExamCard({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -25 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
-          className="w-full notebook-card bg-[#0e2e4e] p-5 sm:p-6 rounded-3xl border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d] flex flex-col gap-5"
+          className="w-full notebook-card bg-[#1e0e38] p-5 sm:p-6 rounded-3xl border-2 border-[#8b5cf6] shadow-[4px_4px_0px_#090214] flex flex-col gap-5"
         >
           {/* Question Counter Header */}
-          <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
+          <div className="flex items-center justify-between border-b-2 border-[#8b5cf6]/30 pb-3">
             <span className="text-xs font-black uppercase text-ink-soft tracking-wider">
               Question {currentIndex + 1} of {totalQ}
             </span>
@@ -259,7 +259,7 @@ export function ExamCard({
 
           {/* Optional Image */}
           {currentQ.imageUrl && (
-            <div className="relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-[#00d2ff]/40 bg-[#06192d] flex items-center justify-center p-2">
+            <div className="relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden border-2 border-[#8b5cf6]/40 bg-[#120726] flex items-center justify-center p-2">
               <Image
                 src={currentQ.imageUrl}
                 alt="Question diagram"
@@ -302,7 +302,7 @@ export function ExamCard({
                       <motion.span
                         initial={{ scale: 0, rotate: -15 }}
                         animate={{ scale: 1, rotate: 0 }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-[#081a2e] font-black text-xs shadow-lg border border-[#081a2e]"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-[#1e0e38] font-black text-xs shadow-lg border border-[#1e0e38]"
                       >
                         <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
                         Locked In!

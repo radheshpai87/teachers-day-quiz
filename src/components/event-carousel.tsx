@@ -1,47 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-
-const CAROUSEL_IMAGES = [
-  { src: '/event.png', alt: 'Yenepoya Engineers Day Event Banner' },
-  { src: '/yiascm_kulur.png', alt: 'The Yenepoya Institute of Arts, Science, Commerce and Management (YIASCM, Kulur)' },
-  { src: '/yiascm_balmatta.png', alt: 'The Yenepoya Institute of Arts, Science, Commerce and Management (YIASCM, Balmatta)' },
-  { src: '/yenepoya_aerial.png', alt: 'Yenepoya Campus Aerial View' },
-  { src: '/yenepoya2image.webp', alt: 'Yenepoya Campus Image' },
-]
 
 export function EventImageCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % CAROUSEL_IMAGES.length)
-    }, 3500)
-    return () => clearInterval(timer)
-  }, [])
-
   return (
-    <div className="w-full overflow-hidden rounded-xl border-2 border-[#00d2ff] bg-[#06192d] relative aspect-[16/10] max-h-52 sm:max-h-64 shadow-[2px_2px_0px_#04101d] select-none">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="absolute inset-0 w-full h-full"
-        >
-          <Image
-            src={CAROUSEL_IMAGES[currentIndex].src}
-            alt={CAROUSEL_IMAGES[currentIndex].alt}
-            fill
-            priority={currentIndex === 0}
-            className="object-cover"
-          />
-        </motion.div>
-      </AnimatePresence>
+    <div className="w-full overflow-hidden rounded-xl border-2 border-[#8b5cf6] bg-[#120726] relative aspect-[16/10] max-h-52 sm:max-h-64 shadow-[2px_2px_0px_#090214] select-none">
+      <Image
+        src="/technova-hero.jpg"
+        alt="TECHNOVA 2026 — AI and Innovation"
+        fill
+        priority
+        className="object-cover"
+      />
     </div>
   )
 }

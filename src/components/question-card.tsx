@@ -51,10 +51,10 @@ export function QuestionCard({
     <div className="w-full max-w-2xl mx-auto flex flex-col space-y-4 px-3 py-2 sm:px-4 select-none">
       {/* Header bar: Round badge, Timer, Score pill */}
       <div className="w-full flex items-center justify-between gap-2 sm:gap-3">
-        <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d] shrink-0 whitespace-nowrap">
-          <PaperClip className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#081a2e] shrink-0" />
+        <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl sticky-note-lavender border-2 border-[#c084fc] text-white font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214] shrink-0 whitespace-nowrap">
+          <PaperClip className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
           <span className="whitespace-nowrap">Question</span>
-          <span className="tnum font-black text-[#081a2e] whitespace-nowrap ml-0.5">
+          <span className="tnum font-black text-white whitespace-nowrap ml-0.5">
             {roundIndex + 1}/{totalRounds}
           </span>
         </div>
@@ -70,9 +70,9 @@ export function QuestionCard({
 
         {/* Score pill */}
         {self && (
-          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d] shrink-0 whitespace-nowrap">
-            <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#081a2e] shrink-0" />
-            <span className="tnum font-black">{self.score.toLocaleString()}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-[#261247] border-2 border-[#8b5cf6] text-[#c084fc] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214] shrink-0 whitespace-nowrap">
+            <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#fbbf24] shrink-0" />
+            <span className="tnum font-black text-[#fdfbf7]">{self.score.toLocaleString()}</span>
           </div>
         )}
       </div>
@@ -81,11 +81,11 @@ export function QuestionCard({
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full notebook-card p-5 sm:p-7 text-center space-y-4"
+        className="w-full notebook-card p-5 sm:p-7 text-center space-y-4 bg-[#1e0e38] border-2 border-[#8b5cf6]"
       >
         {/* Optional Image */}
         {question.imageUrl && (
-          <div className="w-full max-h-56 overflow-hidden rounded-xl border-2 border-[#00d2ff]/40 bg-[#06192d] flex items-center justify-center p-2">
+          <div className="w-full max-h-56 overflow-hidden rounded-xl border-2 border-[#8b5cf6]/40 bg-[#140628] flex items-center justify-center p-2">
             {/* eslint-disable-next-html-element-suppression */}
             <img
               src={question.imageUrl}
@@ -128,7 +128,7 @@ export function QuestionCard({
         </div>
         {self && (
           <div className="flex items-center gap-1.5">
-            <ParticipantAvatar seed={self.avatarSeed} size="sm" className="border border-[#00d2ff]/40" />
+            <ParticipantAvatar seed={self.avatarSeed} size="sm" className="border border-[#8b5cf6]/50" />
             <span className="font-extrabold text-ink">{self.name}</span>
           </div>
         )}

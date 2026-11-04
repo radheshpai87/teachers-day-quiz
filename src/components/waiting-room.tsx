@@ -12,10 +12,12 @@ interface WaitingRoomProps {
   quizName?: string
 }
 
-export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENIUM 2026 — Engineers' Day Quiz" }: WaitingRoomProps) {
-  const displayTitle = (quizName || "INGENIUM 2026 — Engineers' Day Quiz")
-    .replace(/Teachers'?\s*Day/gi, "Engineers' Day")
-    .replace(/Teachers?/gi, "Engineers")
+export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "TECHNOVA 2026 — AI and Innovation Quiz" }: WaitingRoomProps) {
+  const displayTitle = (quizName || "TECHNOVA 2026 — AI and Innovation Quiz")
+    .replace(/Teachers'?\s*Day/gi, "TECHNOVA")
+    .replace(/Engineers'?\s*Day/gi, "TECHNOVA")
+    .replace(/Teachers?/gi, "Innovators")
+    .replace(/INGENIUM/gi, "TECHNOVA")
 
   return (
     <div className="w-full max-w-xl mx-auto flex flex-col items-center justify-center py-4 px-3 space-y-6 select-none">
@@ -23,11 +25,10 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full notebook-card p-6 text-center space-y-3 relative"
+        className="w-full notebook-card p-6 text-center space-y-3 relative bg-[#1e0e38]"
       >
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e]">
-          <PaperClip className="w-4 h-4 text-[#081a2e]" />
-          <HardHat className="w-4 h-4 text-[#081a2e]" />
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full sticky-note-lavender text-white font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#c084fc]">
+          <PaperClip className="w-4 h-4 text-white" />
           <span>{displayTitle}</span>
         </div>
 
@@ -36,7 +37,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
         </h1>
 
         <p className="text-ink-soft text-sm sm:text-base font-extrabold max-w-md mx-auto">
-          Celebrating innovation, precision, and the minds that build our future.
+          Youth Convention for NSS Volunteers on AI and Innovation. Test Your Technology IQ!
         </p>
       </motion.div>
 
@@ -48,7 +49,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
         className="w-full notebook-card p-6 flex flex-col items-center text-center space-y-4"
       >
         <div className="relative">
-          <ParticipantAvatar seed={avatarSeed} size="xl" className="border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]" />
+          <ParticipantAvatar seed={avatarSeed} size="xl" className="border-2 border-[#8b5cf6] shadow-[4px_4px_0px_#090214]" />
         </div>
 
         <div className="space-y-1">
@@ -58,12 +59,12 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
           <h2 className="text-2xl font-black text-ink">{name}</h2>
         </div>
 
-        <div className="w-full border-t-2 border-[#00d2ff]/30 my-1" />
+        <div className="w-full border-t-2 border-[#8b5cf6]/30 my-1" />
 
         {/* Live Players Pill */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-sm shadow-[2px_2px_0px_#04101d]">
-          <Users className="w-4 h-4 text-[#081a2e] animate-bounce" />
-          <span className="tnum font-black text-[#081a2e]">{playersCount}</span>
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] font-black text-sm shadow-[2px_2px_0px_#090214]">
+          <Users className="w-4 h-4 text-[#1e0e38] animate-bounce" />
+          <span className="tnum font-black text-[#1e0e38]">{playersCount}</span>
           <span>{playersCount === 1 ? 'player joined' : 'players joined'}</span>
         </div>
       </motion.div>
@@ -73,7 +74,7 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="w-full sticky-note-rose p-5 rounded-2xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] text-left space-y-3"
+        className="w-full sticky-note-rose p-5 rounded-2xl border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] text-left space-y-3"
       >
         <div className="flex items-center gap-2 text-white font-black text-sm sm:text-base uppercase tracking-wider border-b border-white/25 pb-2">
           <ShieldAlert className="w-5 h-5 shrink-0 text-yellow-300 animate-pulse" />
@@ -102,9 +103,9 @@ export function WaitingRoom({ name, avatarSeed, playersCount, quizName = "INGENI
           <Star className="w-4 h-4 text-[#fbc02d]" />
           <span>Live Scores</span>
         </div>
-        <div className="flex items-center gap-1.5 text-xs">
-          <Book className="w-4 h-4 text-[#1976d2]" />
-          <span>INGENIUM 2026</span>
+        <div className="flex items-center gap-1.5 text-xs text-[#c084fc]">
+          <Book className="w-4 h-4 text-[#a855f7]" />
+          <span>TECHNOVA 2026</span>
         </div>
       </div>
     </div>

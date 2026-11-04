@@ -7,14 +7,14 @@ import { apiGet } from '@/lib/client/api'
 import type { FinalSummary } from '@/lib/types'
 import { ParticipantAvatar } from '@/components/participant-avatar'
 import Image from 'next/image'
-import { Trophy, Target, Bolt, HardHat, Check, PaperClip, Star } from '@/components/icons'
+import { Trophy, Target, Bolt, Check, PaperClip, Star, CrownDoodle } from '@/components/icons'
 import { NotebookBackgroundDecor } from '@/components/notebook-background-decor'
 import { sound } from '@/lib/client/sound'
 import { motion } from 'framer-motion'
 import { YentechFooterCredit } from '@/components/yentech-branding'
 
 import confetti from 'canvas-confetti'
-import { ShieldAlert } from 'lucide-react'
+import { ShieldAlert, Bot, Cpu } from 'lucide-react'
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -104,7 +104,7 @@ export default function ResultsPage() {
       <main className="min-h-dvh notebook-paper flex items-center justify-center px-4 py-4 pb-safe select-none relative overflow-hidden">
         <NotebookBackgroundDecor />
         <div className="flex flex-col items-center gap-3 text-ink z-10">
-          <HardHat className="w-10 h-10 text-[#00d2ff] animate-bounce" />
+          <Bot className="w-10 h-10 text-[#c084fc] animate-bounce" />
           <span className="text-sm font-black">Loading your final results...</span>
         </div>
       </main>
@@ -126,9 +126,9 @@ export default function ResultsPage() {
       <motion.div
         animate={{ y: [0, 10, 0], rotate: [0, -8, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-12 right-10 text-[#0284c7] opacity-80 pointer-events-none hidden sm:block"
+        className="absolute top-12 right-10 text-[#c084fc] opacity-80 pointer-events-none hidden sm:block"
       >
-        <HardHat className="w-14 h-14" />
+        <Cpu className="w-14 h-14" />
       </motion.div>
 
       <motion.div
@@ -148,10 +148,10 @@ export default function ResultsPage() {
               className="h-14 sm:h-20 max-w-[85vw] w-auto object-contain"
             />
           </div>
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d]">
-            <PaperClip className="w-4 h-4 text-[#081a2e]" />
-            <Trophy className="w-4 h-4 text-[#081a2e]" />
-            <span>INGENIUM 2026 • Quiz Completed!</span>
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#7c3aed] text-white font-black text-xs uppercase tracking-wider -rotate-1 border-2 border-[#c084fc] shadow-[2px_2px_0px_#090214]">
+            <PaperClip className="w-4 h-4 text-white" />
+            <Trophy className="w-4 h-4 text-[#fbbf24]" />
+            <span>TECHNOVA 2026 • Quiz Completed!</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-ink">
             Great Job, {session.name}!
@@ -163,7 +163,7 @@ export default function ResultsPage() {
 
         {/* Anti-Cheat Tab Switch Warning Banner */}
         {wasTabSwitched && (
-          <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-[#00d2ff] shadow-[3px_3px_0px_#04101d] text-center space-y-1.5">
+          <div className="w-full sticky-note-rose p-4 rounded-2xl border-2 border-[#8b5cf6] shadow-[3px_3px_0px_#090214] text-center space-y-1.5">
             <span className="font-black text-sm sm:text-base text-white flex items-center justify-center gap-1.5 uppercase tracking-wider">
               <ShieldAlert className="w-5 h-5 text-white" />
               <span>Anti-Cheat Triggered: Quiz Auto-Submitted</span>
@@ -177,48 +177,48 @@ export default function ResultsPage() {
         {/* Profile & Main Stats Card */}
         <div className="w-full notebook-card p-6 sm:p-8 space-y-6">
           <div className="flex flex-col items-center">
-            <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-[#00d2ff] shadow-[4px_4px_0px_#04101d]" />
+            <ParticipantAvatar seed={session.avatarSeed} size="xl" className="border-2 border-[#8b5cf6] shadow-[4px_4px_0px_#090214]" />
             <h2 className="text-xl font-black text-ink mt-3">{session.name}</h2>
           </div>
 
-          <div className="w-full border-t-2 border-[#00d2ff]/30" />
+          <div className="w-full border-t-2 border-[#8b5cf6]/30" />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {/* Rank */}
-            <div className="p-4 rounded-2xl sticky-note-lavender border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
-              <span className="text-xs uppercase font-black text-[#081a2e]">Rank</span>
-              <span className="tnum font-black text-3xl text-[#081a2e] mt-1">
+            <div className="p-4 rounded-2xl sticky-note-lavender border-2 border-[#1e0e38] flex flex-col items-center justify-center shadow-[3px_3px_0px_#090214]">
+              <span className="text-xs uppercase font-black text-[#1e0e38]">Rank</span>
+              <span className="tnum font-black text-3xl text-[#1e0e38] mt-1">
                 #{results?.rank ?? '-'}
               </span>
             </div>
 
             {/* Score */}
-            <div className="p-4 rounded-2xl sticky-note-yellow border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
-              <span className="text-xs uppercase font-black text-[#081a2e]">Score</span>
-              <span className="tnum font-black text-3xl text-[#081a2e] mt-1">
+            <div className="p-4 rounded-2xl sticky-note-yellow border-2 border-[#1e0e38] flex flex-col items-center justify-center shadow-[3px_3px_0px_#090214]">
+              <span className="text-xs uppercase font-black text-[#1e0e38]">Score</span>
+              <span className="tnum font-black text-3xl text-[#1e0e38] mt-1">
                 {results?.score.toLocaleString() ?? 0}
               </span>
             </div>
 
             {/* Correct */}
-            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
-              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#081a2e]">
-                <Check className="w-3.5 h-3.5 stroke-[3] text-[#081a2e]" />
+            <div className="p-4 rounded-2xl sticky-note-mint border-2 border-[#1e0e38] flex flex-col items-center justify-center shadow-[3px_3px_0px_#090214]">
+              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#1e0e38]">
+                <Check className="w-3.5 h-3.5 stroke-[3] text-[#1e0e38]" />
                 <span>Correct</span>
               </div>
-              <span className="tnum font-black text-2xl text-[#081a2e] mt-1">
+              <span className="tnum font-black text-2xl text-[#1e0e38] mt-1">
                 {results?.correct ?? 0} / {results?.totalQuestions ?? 0}
               </span>
             </div>
 
             {/* Accuracy */}
-            <div className="p-4 rounded-2xl sticky-note-peach border-2 border-[#081a2e] flex flex-col items-center justify-center shadow-[3px_3px_0px_#04101d]">
-              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#081a2e]">
-                <Target className="w-3.5 h-3.5 text-[#081a2e]" />
+            <div className="p-4 rounded-2xl sticky-note-peach border-2 border-[#1e0e38] flex flex-col items-center justify-center shadow-[3px_3px_0px_#090214]">
+              <div className="flex items-center gap-1 text-xs uppercase font-black text-[#1e0e38]">
+                <Target className="w-3.5 h-3.5 text-[#1e0e38]" />
                 <span>Accuracy</span>
               </div>
-              <span className="tnum font-black text-2xl text-[#081a2e] mt-1">
+              <span className="tnum font-black text-2xl text-[#1e0e38] mt-1">
                 {results?.accuracy ?? 0}%
               </span>
             </div>
@@ -226,24 +226,24 @@ export default function ResultsPage() {
 
           {/* Response Speed */}
           {results && (
-            <div className="p-3.5 rounded-xl bg-[#081a2e] border-2 border-[#00d2ff] flex items-center justify-between text-xs font-extrabold text-ink shadow-[2px_2px_0px_#04101d]">
+            <div className="p-3.5 rounded-xl bg-[#1e0e38] border-2 border-[#8b5cf6] flex items-center justify-between text-xs font-extrabold text-ink shadow-[2px_2px_0px_#090214]">
               <div className="flex items-center gap-2">
                 <Bolt className="w-4 h-4 text-[#10b981]" />
                 <span>Avg. Response Speed</span>
               </div>
-              <span className="tnum font-black text-[#00d2ff] text-sm">
+              <span className="tnum font-black text-[#c084fc] text-sm">
                 {(results.averageResponseSeconds ?? 0).toFixed(1)}s
               </span>
             </div>
           )}
 
-          {/* Engineers' Day Message */}
+          {/* TECHNOVA Youth Convention Message */}
           <div className="pt-2 text-center space-y-1">
-            <p className="font-black text-[#00d2ff] text-base sm:text-lg">
-              INGENIUM 2026 • Happy Engineers' Day!
+            <p className="font-black text-[#c084fc] text-base sm:text-lg">
+              TECHNOVA 2026 • AI and Innovation Convention
             </p>
             <p className="text-xs text-ink-soft font-extrabold">
-              Thank you for celebrating innovation, engineering, and the minds shaping our future.
+              Youth Convention for NSS Volunteers • Test Your Technology IQ
             </p>
           </div>
         </div>

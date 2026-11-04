@@ -30,7 +30,7 @@ export function Timer({
           <span className="flex items-center gap-1.5">
             <span
               className={`w-2 h-2 rounded-full ${
-                isWarning ? 'bg-[#f43f5e] animate-ping' : 'bg-[#00d2ff]'
+                isWarning ? 'bg-[#f43f5e] animate-ping' : 'bg-[#c084fc]'
               }`}
             />
             Time Remaining
@@ -39,10 +39,10 @@ export function Timer({
             {secondsLeft}s
           </span>
         </div>
-        <div className="h-3 w-full bg-[#082038] rounded-full overflow-hidden p-0.5 border border-[#00d2ff]/30">
+        <div className="h-3 w-full bg-[#1e0e38] rounded-full overflow-hidden p-0.5 border border-[#8b5cf6]/30">
           <div
             className={`h-full rounded-full transition-all duration-100 ease-linear ${
-              isWarning ? 'bg-gradient-to-r from-[#fbbf24] to-[#f43f5e]' : 'bg-gradient-to-r from-[#0284c7] via-[#00d2ff] to-[#10b981]'
+              isWarning ? 'bg-gradient-to-r from-[#fbbf24] to-[#f43f5e]' : 'bg-gradient-to-r from-[#7c3aed] via-[#a855f7] to-[#c084fc]'
             }`}
             style={{ width: `${fraction * 100}%` }}
           />
@@ -68,7 +68,7 @@ export function Timer({
           cx={svgSize / 2}
           cy={svgSize / 2}
           r={radius}
-          className="stroke-[#00d2ff]/20 fill-none"
+          className="stroke-[#8b5cf6]/20 fill-none"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -76,7 +76,7 @@ export function Timer({
           cy={svgSize / 2}
           r={radius}
           className={`fill-none transition-all duration-100 ease-linear ${
-            isWarning ? 'stroke-[#f43f5e]' : 'stroke-[#00d2ff]'
+            isWarning ? 'stroke-[#f43f5e]' : 'stroke-[#c084fc]'
           }`}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
