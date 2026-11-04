@@ -1,12 +1,12 @@
-# Teachers' Day Live Quiz Web Application
+# TECHNOVA 2026 — AI & Innovation Live Quiz Platform
 
-Classroom Notebook Edition & Real-Time Event Platform
+Interactive Real-Time Quiz & Stage Finale Presentation Engine
 
 ```text
 +-----------------------------------------------------------------------+
 |                                                                       |
-|   TEACHERS' DAY LIVE QUIZ WEB APPLICATION                             |
-|   Classroom Notebook Edition & Event System                           |
+|   TECHNOVA 2026 LIVE QUIZ & STAGE FINALE SYSTEM                       |
+|   AI & Innovation Convention • Yenepoya School of Engineering         |
 |                                                                       |
 +-----------------------------------------------------------------------+
 ```
@@ -15,19 +15,17 @@ Classroom Notebook Edition & Real-Time Event Platform
 
 ## Overview & Essentials
 
-The Teachers' Day Live Quiz is a high-concurrency real-time event web application designed for college celebrations. Built with Next.js, TypeScript, and Server-Sent Events (SSE), it supports 1,000+ simultaneous campus participants over local Wi-Fi without server bottlenecks.
+**TECHNOVA 2026** is a high-concurrency real-time event web application designed for campus conventions and large-scale technical quizzes. Built with Next.js 15, TypeScript, Tailwind CSS, and Server-Sent Events (SSE), it supports 1,000+ simultaneous participants over local Wi-Fi without server bottlenecks.
 
-> **Sticky Note: Yellow**
-> 
-> **Core Features**:
-> - **Zero-PIN Instant Join**: Participants scan the live QR code to open the join page directly without typing 6-digit game PINs.
-> - **Pen & Notebook Aesthetic**: Tactile off-white ruled paper design, dark ink borders, paper drop-shadows, and yellow/mint/lavender cards.
-> - **Automatic Game Engine**: Host starts the quiz once; questions, timers, reveals, fun facts, and leaderboards progress automatically.
-> - **Custom Question Timers**: Set individualized time limits per question (5s, 10s, 15s, 20s, 30s, etc.) with automatic scoring curve scaling.
-> - **Live Floating Reactions**: Real-time interactive emoji bursts (❤️, 👏, 🔥, 🎓, 🌟) broadcast across participant and projector displays.
-> - **Web Audio SFX Engine**: Zero-asset synthesizer providing instant tap feedback, countdown ticks, correct/wrong chimes, and results fanfare with volume toggle.
-> - **Host Console Hotkeys & Kick Moderation**: Keyboard shortcuts (<kbd>Space</kbd>, <kbd>S</kbd>, <kbd>Q</kbd>) for stage operators and instant one-click removal of disruptive participants.
-> - **Projector-Ready Leaderboard**: Real-time Top 10 rankings display with podium visualization and rank shift movement badges.
+> **Key Capabilities**:
+> - **Zero-PIN Instant QR Join**: Participants scan the live screen QR code to jump straight into the waiting room without typing complex game PINs.
+> - **Cyber-Violet Tech Aesthetic**: Modern blueprint vector decorations, smooth animations, and responsive layouts tailored for auditorium projectors and mobile screens.
+> - **Two-Stage Tournament Structure**:
+>   1. **Online Preliminary Qualifier**: Fast-paced speed exam with dynamic countdown timers, instant client scoring, and live rank calculation.
+>   2. **Live Stage Finale**: Projector presentation system with interactive MCQ rounds, visual clue identification, and a 60-second rapid-fire arena.
+> - **Cross-Device Remote Stage Control**: Quizmasters can operate slides, reveal answers, manage rapid-fire timers, and adjust scores remotely from [`/stage/control`](file:///src/app/stage/control).
+> - **SQLite WAL High-Concurrency Architecture**: Low-latency answers ingestion with write-ahead logging (WAL), automated checkpoints, and 64 MB size caps to maintain server stability.
+> - **Web Audio Synthesizer**: Zero-asset sound engine providing real-time countdown ticks, chimes, and victory fanfare.
 
 ---
 
@@ -46,14 +44,12 @@ The Teachers' Day Live Quiz is a high-concurrency real-time event web applicatio
 +-------------------+                                    +---------------------+
 ```
 
-> **Sticky Note: Mint**
-> 
 > **Technology Stack**:
 > - **Framework**: Next.js 15 App Router (React 19)
 > - **Primary Language**: TypeScript
-> - **Styling**: Vanilla CSS & Tailwind CSS (Pen & Notebook Tokens)
-> - **Realtime Engine**: Server-Sent Events (SSE)
-> - **Server Database**: SQLite (better-sqlite3) with WAL Mode enabled
+> - **Styling**: Tailwind CSS & Framer Motion
+> - **Realtime Engine**: Server-Sent Events (SSE) & BroadcastChannel
+> - **Server Database**: SQLite (Node.js `node:sqlite` / `better-sqlite3`) with WAL Mode enabled
 > - **Client Storage**: IndexedDB (Local participant persistence)
 
 ---
@@ -64,16 +60,18 @@ The Teachers' Day Live Quiz is a high-concurrency real-time event web applicatio
 /
 |-- src/
 |   |-- app/
-|   |   |-- [adminRoute]/       Secret URL area for host management panel
-|   |   |-- api/                SSE stream, join, answer, and admin routes
+|   |   |-- [adminRoute]/       Secret host management panel & live controller
+|   |   |-- api/                SSE stream, join, answer, and stage sync routes
 |   |   |-- join/               Participant name & avatar join screen
 |   |   |-- play/               Live question prompt & choice controller
 |   |   |-- leaderboard/        Full screen projector rankings display
 |   |   |-- results/            Participant end-of-quiz final stats
-|   |   `-- globals.css         Notebook paper background & card rules
-|   |-- components/             Tactile UI components (Timer, Avatar, etc)
+|   |   |-- stage/              Auditorium presentation view (Projector-ready)
+|   |   |   `-- control/        Quizmaster remote control deck
+|   |   `-- globals.css         Cyber-violet theme tokens & animations
+|   |-- components/             Reusable UI components (Timer, Avatar, Stage PPT)
 |   `-- lib/                    QuizEngine, EventHub, Auth, & DB logic
-|-- public/                     Static vector assets
+|-- public/                     Static media and branding assets
 `-- data/                       Local SQLite database path (data/quiz.db)
 ```
 
@@ -96,8 +94,9 @@ Create a `.env.local` file in the project root:
 ```env
 ADMIN_ROUTE_SECRET=event-control-x7k92m
 ADMIN_USERNAME=host
-ADMIN_PASSWORD=teachersday2026
+ADMIN_PASSWORD=technova2026
 DATABASE_PATH=data/quiz.db
+QUIZ_SEED_KEY=your_aes_256_gcm_hex_key
 ```
 
 ### 3. Development Mode
@@ -109,7 +108,9 @@ npm run dev
 **Access URLs**:
 - **Participant Join**: `http://localhost:3000/join`
 - **Leaderboard**: `http://localhost:3000/leaderboard`
-- **Host Console**: `http://localhost:3000/event-control-x7k92m/login`
+- **Stage Presentation**: `http://localhost:3000/stage`
+- **Stage Host Controller**: `http://localhost:3000/stage/control`
+- **Host Admin Console**: `http://localhost:3000/event-control-x7k92m/login`
 
 ### 4. Production Build & Execution
 
@@ -118,26 +119,14 @@ npm run build
 npm start
 ```
 
----
+Or using Docker:
 
-## Environment Variables Reference
-
-| Variable Name | Required | Default Value | Description |
-|---|---|---|---|
-| `ADMIN_ROUTE_SECRET` | Yes | `event-control-x7k92m` | Secret URL segment for host panel |
-| `ADMIN_USERNAME` | Yes | `host` | Host login username |
-| `ADMIN_PASSWORD` | Yes | `teachersday2026` | Host login password |
-| `DATABASE_PATH` | No | `data/quiz.db` | Path to local SQLite file |
+```bash
+docker compose up -d --build
+```
 
 ---
 
-## Vercel Serverless Deployment
+## License
 
-1. Import the repository into your Vercel Dashboard.
-2. Configure Environment Variables (`ADMIN_ROUTE_SECRET`, `ADMIN_USERNAME`, etc.).
-3. Deploy. The database automatically resolves to `/tmp/quiz.db` on Vercel.
-
-> **Sticky Note: Lavender**
-> 
-> **License**:
-> This project is open-source under the MIT License.
+This project is open-source under the MIT License.
