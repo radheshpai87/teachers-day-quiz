@@ -27,7 +27,7 @@ export interface StageSyncMessage {
   payload?: any
 }
 
-const CHANNEL_NAME = 'ingenium_stage_sync_v1'
+const CHANNEL_NAME = 'technova_stage_sync_v1'
 
 export function getStageBroadcastChannel(): BroadcastChannel | null {
   if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {

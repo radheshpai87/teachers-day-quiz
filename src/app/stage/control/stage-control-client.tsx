@@ -48,7 +48,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('ingenium_stage_finalists_v2')
+        const saved = localStorage.getItem('technova_stage_finalists_v1')
         if (saved) return JSON.parse(saved)
       } catch {}
     }
@@ -99,7 +99,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     }
 
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'ingenium_stage_finalists_v2' && e.newValue) {
+      if (e.key === 'technova_stage_finalists_v1' && e.newValue) {
         try {
           setFinalists(JSON.parse(e.newValue))
         } catch {}
@@ -163,7 +163,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       setFinalists(newFinalists)
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem('ingenium_stage_finalists_v2', JSON.stringify(newFinalists))
+          localStorage.setItem('technova_stage_finalists_v1', JSON.stringify(newFinalists))
         } catch {}
       }
       broadcast({ type: 'UPDATE_FINALISTS', payload: { finalists: newFinalists } })
@@ -210,7 +210,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     list.push({ index: idx++, title: 'Round 1 Standings & Leaderboard', round: 'R1', type: 'round_leaderboard', data: { roundName: 'Round 1 (MCQ)' } })
 
     // Round 2
-    list.push({ index: idx++, title: 'Round 2: Audio & Image Intro', round: 'R2', type: 'round_intro', data: stageData.round2 })
+    list.push({ index: idx++, title: 'Round 2: Image Round Intro', round: 'R2', type: 'round_intro', data: stageData.round2 })
     stageData.round2.images.forEach((img, iIdx) => {
       list.push({
         index: idx++,
@@ -222,18 +222,20 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         totalInRound: stageData.round2.images.length,
       })
     })
-    stageData.round2.audios.forEach((aud, aIdx) => {
-      list.push({
-        index: idx++,
-        title: `R2 Audio ${aIdx + 1}: ${aud.answer}`,
-        round: 'R2',
-        type: 'r2_audio',
-        data: aud,
-        qIndex: aIdx,
-        totalInRound: stageData.round2.audios.length,
+    if (stageData.round2.audios && stageData.round2.audios.length > 0) {
+      stageData.round2.audios.forEach((aud, aIdx) => {
+        list.push({
+          index: idx++,
+          title: `R2 Audio ${aIdx + 1}: ${aud.answer}`,
+          round: 'R2',
+          type: 'r2_audio',
+          data: aud,
+          qIndex: aIdx,
+          totalInRound: stageData.round2.audios.length,
+        })
       })
-    })
-    list.push({ index: idx++, title: 'Round 2 Standings & Leaderboard', round: 'R2', type: 'round_leaderboard', data: { roundName: 'Round 2 (Audio & Image)' } })
+    }
+    list.push({ index: idx++, title: 'Round 2 Standings & Leaderboard', round: 'R2', type: 'round_leaderboard', data: { roundName: 'Round 2 (Image Round)' } })
 
     // Round 3
     list.push({ index: idx++, title: 'Round 3: Rapid Fire Intro', round: 'R3', type: 'round_intro', data: stageData.round3 })
@@ -549,7 +551,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           <AlertTriangle className="w-12 h-12 text-[#fbbf24] mx-auto mb-3 animate-bounce" />
           <h2 className="text-xl font-black mb-2">Stage Data Encrypted</h2>
           <p className="text-xs text-slate-300 mb-4">Please make sure QUIZ_SEED_KEY is configured.</p>
-          <Link href="/" className="px-4 py-2 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-xs">
+          <Link href="/" className="px-4 py-2 rounded-full bg-[#7c3aed] text-white font-black text-xs">
             Return Home
           </Link>
         </div>
@@ -563,7 +565,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   return (
     <div className="notebook-paper min-h-screen text-slate-100 flex flex-col font-sans select-none">
       {/* 1. TOP APP HEADER (Clean, uncrowded on mobile & desktop) */}
-      <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/95 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-[#8b5cf6]/40 bg-[#16082b]/95 backdrop-blur-md shadow-[0_4px_0px_#090214]">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Image
             src="/yenepoya-school-engineering-and-technology.svg"
@@ -573,14 +575,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             className="h-6 sm:h-7 w-auto object-contain brightness-110 shrink-0"
             priority
           />
-          <div className="h-4 sm:h-5 w-px bg-[#00d2ff]/40 shrink-0" />
+          <div className="h-4 sm:h-5 w-px bg-[#7c3aed]/40 shrink-0" />
           <span className="text-xs sm:text-sm font-black text-white truncate">
             Quizmaster Deck
           </span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden md:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[1px_1px_0px_#04101d]">
+          <span className="hidden md:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] shadow-[1px_1px_0px_#090214]">
             Live Stage Host
           </span>
 
@@ -588,7 +590,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             href="/stage"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-xs border border-[#1e0e38] shadow-[2px_2px_0px_#090214] transition active:scale-95"
             title="Open Projector Presentation in another tab/window"
           >
             <span>Stage View</span> <ExternalLink className="w-3.5 h-3.5" />
@@ -612,14 +614,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     ✓ Revealed
                   </span>
                 )}
-                <span className="px-2.5 py-0.5 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] text-xs font-black border border-[#00d2ff]/40">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#7c3aed]/20 text-[#c084fc] text-xs font-black border border-[#8b5cf6]/40">
                   {currentSlideObj?.round ? `Round ${currentSlideObj.round}` : currentSlideObj?.type}
                 </span>
               </div>
             </div>
 
             {/* Slide Title & Reveal Button */}
-            <div className="p-3 sm:p-4 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+            <div className="p-3 sm:p-4 rounded-2xl bg-[#16082b] border-2 border-[#8b5cf6]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
               <div>
                 <span className="text-[11px] text-[#7dd3fc] font-bold block">Current Screen</span>
                 <h3 className="text-sm sm:text-lg font-black text-white">{currentSlideObj?.title}</h3>
@@ -627,10 +629,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
               <button
                 onClick={toggleReveal}
-                className={`hidden lg:flex px-5 py-2.5 rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition shrink-0 hover:scale-105 active:scale-95 items-center gap-1.5 ${
+                className={`hidden lg:flex px-5 py-2.5 rounded-full font-black text-xs uppercase tracking-wider border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition shrink-0 hover:scale-105 active:scale-95 items-center gap-1.5 ${
                   isRevealed
-                    ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
-                    : 'bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e]'
+                    ? 'bg-[#1e0e38] text-slate-200 border-[#8b5cf6]/50'
+                    : 'bg-[#fbbf24] hover:bg-[#f59e0b] text-[#1e0e38]'
                 }`}
               >
                 {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -640,7 +642,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
             {/* Live Question & Verified Answer Peek */}
             {currentSlideObj?.data && (
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#081a2e]/90 border border-[#00d2ff]/30 space-y-2 text-left">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-[#16082b]/90 border border-[#8b5cf6]/30 space-y-2 text-left">
                 {/* Round 1 MCQ */}
                 {currentSlideObj.type === 'r1_mcq' && (
                   <>
@@ -664,7 +666,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                               sendStageNetworkSync({ mcqOptionStep: 4 })
                               sound.tap()
                             }}
-                            className="text-[10px] text-[#00d2ff] hover:underline font-black cursor-pointer"
+                            className="text-[10px] text-[#c084fc] hover:underline font-black cursor-pointer"
                           >
                             Reveal All 4 Options
                           </button>
@@ -684,17 +686,17 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                                 isCorrect && isRevealed
                                   ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-black'
                                   : isOptRevealed
-                                  ? 'bg-[#0e2e4e] border-[#00d2ff]/40 text-slate-200'
-                                  : 'bg-[#081a2e]/60 border-dashed border-slate-700 text-slate-500'
+                                  ? 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
+                                  : 'bg-[#16082b]/60 border-dashed border-slate-700 text-slate-500'
                               }`}
                             >
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span
                                   className={`w-5 h-5 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 ${
                                     isCorrect && isRevealed
-                                      ? 'bg-emerald-500 text-[#081a2e]'
+                                      ? 'bg-emerald-500 text-[#1e0e38]'
                                       : isOptRevealed
-                                      ? 'bg-[#00d2ff]/20 text-[#00d2ff]'
+                                      ? 'bg-[#7c3aed]/20 text-[#c084fc]'
                                       : 'bg-slate-800 text-slate-500'
                                   }`}
                                 >
@@ -760,13 +762,13 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     <p className="text-sm font-black text-white leading-snug">{currentSlideObj.data.question}</p>
 
                     {/* Stage Audio Remote Trigger */}
-                    <div className="p-2.5 sm:p-3 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/40 flex items-center justify-between gap-2 shadow-inner">
+                    <div className="p-2.5 sm:p-3 rounded-xl bg-[#1e0e38] border-2 border-[#8b5cf6]/40 flex items-center justify-between gap-2 shadow-inner">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div
                           className={`w-8 h-8 rounded-lg flex items-center justify-center font-black shrink-0 transition-all ${
                             playingAudioId === currentSlideObj.data.id
-                              ? 'bg-emerald-500 text-[#081a2e] animate-pulse'
-                              : 'bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40'
+                              ? 'bg-emerald-500 text-[#1e0e38] animate-pulse'
+                              : 'bg-[#7c3aed]/20 text-[#c084fc] border border-[#8b5cf6]/40'
                           }`}
                         >
                           <Volume2 className="w-4 h-4" />
@@ -785,10 +787,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
                       <button
                         onClick={() => toggleStageAudio(currentSlideObj.data.audioUrl, currentSlideObj.data.id)}
-                        className={`px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                        className={`px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214] transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
                           playingAudioId === currentSlideObj.data.id
                             ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
-                            : 'bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e]'
+                            : 'bg-[#7c3aed] hover:bg-[#8b5cf6] text-white'
                         }`}
                       >
                         {playingAudioId === currentSlideObj.data.id ? (
@@ -832,8 +834,8 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                             rapidSeconds <= 10
                               ? 'bg-rose-600 text-white animate-pulse border-rose-400'
                               : timerRunning
-                              ? 'bg-[#fbbf24] text-[#081a2e] border-[#fbbf24]'
-                              : 'bg-[#0e2e4e] text-[#00d2ff] border-[#00d2ff]/40'
+                              ? 'bg-[#fbbf24] text-[#1e0e38] border-[#fbbf24]'
+                              : 'bg-[#1e0e38] text-[#c084fc] border-[#8b5cf6]/40'
                           }`}
                         >
                           {rapidSeconds}s
@@ -848,7 +850,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                         </button>
                         <button
                           onClick={resetTimer}
-                          className="p-1 rounded-lg bg-[#0e2e4e] text-slate-300 border border-[#00d2ff]/40 hover:text-white"
+                          className="p-1 rounded-lg bg-[#1e0e38] text-slate-300 border border-[#8b5cf6]/40 hover:text-white"
                           title="Reset Timer"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
@@ -857,7 +859,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     </div>
 
                     {/* Step selector pills: Q1, Q2, Q3, Q4, Q5 */}
-                    <div className="flex items-center gap-1.5 bg-[#081a2e] p-1.5 rounded-xl border border-[#00d2ff]/30">
+                    <div className="flex items-center gap-1.5 bg-[#16082b] p-1.5 rounded-xl border border-[#8b5cf6]/30">
                       <span className="text-[10px] font-black uppercase text-[#7dd3fc] mr-1">Stage Q:</span>
                       {currentSlideObj.data.questions.map((_: any, i: number) => {
                         const isCurrent = rapidQuestionIdx === i && !isRevealed
@@ -867,10 +869,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                             onClick={() => jumpToRapidQuestion(i)}
                             className={`flex-1 py-1 rounded-lg font-mono font-black text-xs transition border ${
                               isCurrent
-                                ? 'bg-[#fbbf24] text-[#081a2e] border-[#fbbf24] shadow-sm font-black'
+                                ? 'bg-[#fbbf24] text-[#1e0e38] border-[#fbbf24] shadow-sm font-black'
                                 : i < rapidQuestionIdx || isRevealed
-                                ? 'bg-[#0e2e4e] text-[#00d2ff] border-[#00d2ff]/40'
-                                : 'bg-[#0e2e4e]/50 text-slate-400 border-transparent hover:text-white'
+                                ? 'bg-[#1e0e38] text-[#c084fc] border-[#8b5cf6]/40'
+                                : 'bg-[#1e0e38]/50 text-slate-400 border-transparent hover:text-white'
                             }`}
                           >
                             Q{i + 1}
@@ -882,7 +884,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                         className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition ${
                           isRevealed
                             ? 'bg-emerald-600 text-white border-emerald-400'
-                            : 'bg-[#0e2e4e] text-slate-300 border-[#00d2ff]/40'
+                            : 'bg-[#1e0e38] text-slate-300 border-[#8b5cf6]/40'
                         }`}
                       >
                         {isRevealed ? 'All Revealed' : 'Reveal'}
@@ -898,16 +900,16 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                             onClick={() => jumpToRapidQuestion(i)}
                             className={`p-2 rounded-xl border transition text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1 cursor-pointer ${
                               isLiveOnStage
-                                ? 'bg-[#0e2e4e] border-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.2)]'
+                                ? 'bg-[#1e0e38] border-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.2)]'
                                 : isRevealed
-                                ? 'bg-[#081a2e] border-emerald-500/40'
-                                : 'bg-[#081a2e]/80 border-[#00d2ff]/20 hover:border-[#00d2ff]/50'
+                                ? 'bg-[#16082b] border-emerald-500/40'
+                                : 'bg-[#16082b]/80 border-[#8b5cf6]/20 hover:border-[#8b5cf6]/50'
                             }`}
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span
                                 className={`w-5 h-5 rounded font-mono font-black text-[11px] flex items-center justify-center shrink-0 ${
-                                  isLiveOnStage ? 'bg-[#fbbf24] text-[#081a2e]' : 'bg-[#00d2ff]/20 text-[#00d2ff]'
+                                  isLiveOnStage ? 'bg-[#fbbf24] text-[#1e0e38]' : 'bg-[#7c3aed]/20 text-[#c084fc]'
                                 }`}
                               >
                                 {i + 1}
@@ -919,7 +921,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                                 {q.prompt}
                               </span>
                               {isLiveOnStage && (
-                                <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-[#fbbf24] text-[#081a2e] shrink-0">
+                                <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-[#fbbf24] text-[#1e0e38] shrink-0">
                                   Live on Stage
                                 </span>
                               )}
@@ -939,7 +941,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
               <button
                 onClick={handlePrev}
                 disabled={currentSlide === 0 && mcqOptionStep === 0 && rapidQuestionIdx === 0}
-                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 font-black text-xs sm:text-sm text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#04101d] active:scale-95 cursor-pointer"
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#1e0e38] border-2 border-[#8b5cf6]/50 font-black text-xs sm:text-sm text-[#c084fc] hover:bg-[#7c3aed] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 shadow-[2px_2px_0px_#090214] active:scale-95 cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Previous
               </button>
@@ -951,7 +953,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
                   (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
                 }
-                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-xs sm:text-sm border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-xs sm:text-sm border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
                 {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
                   <>
@@ -987,7 +989,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
               <select
                 value={currentSlide}
                 onChange={(e) => setSlide(Number(e.target.value))}
-                className="w-full bg-[#081a2e] border-2 border-[#00d2ff]/40 text-white font-bold rounded-xl p-2 sm:p-2.5 text-xs outline-none focus:border-[#00d2ff]"
+                className="w-full bg-[#16082b] border-2 border-[#8b5cf6]/40 text-white font-bold rounded-xl p-2 sm:p-2.5 text-xs outline-none focus:border-[#8b5cf6]"
               >
                 {slides.map((s) => (
                   <option key={s.index} value={s.index}>
@@ -1000,7 +1002,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
           {/* CARD 2: QUICK SCORE ASSIGNER (6 FINALISTS) */}
           <div className="notebook-card p-3 sm:p-6 space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-2 sm:pb-3 gap-2">
+            <div className="flex items-center justify-between border-b-2 border-[#8b5cf6]/30 pb-2 sm:pb-3 gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#fbbf24] shrink-0" />
                 <h3 className="font-black text-white text-sm sm:text-base truncate">Score Assigner</h3>
@@ -1015,7 +1017,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                 <button
                   onClick={handleImportQualifiers}
                   disabled={isImporting}
-                  className="px-2.5 sm:px-3 py-1 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black text-[11px] sm:text-xs border border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="px-2.5 sm:px-3 py-1 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-[11px] sm:text-xs border border-[#1e0e38] shadow-[2px_2px_0px_#090214] transition flex items-center gap-1 active:scale-95 disabled:opacity-50 cursor-pointer"
                   title="Import Top 6 ranked participants from the live audience round"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -1027,10 +1029,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             {/* Finalist Cards Grid (Always 2 cols — compact on phone) */}
             <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
               {finalists.map((f, i) => (
-                <div key={f.id} className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/40 space-y-2 sm:space-y-3 shadow-[2px_2px_0px_#04101d]">
+                <div key={f.id} className="p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#16082b] border-2 border-[#8b5cf6]/40 space-y-2 sm:space-y-3 shadow-[2px_2px_0px_#090214]">
                   <div className="flex items-center justify-between gap-1">
                     <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-                      <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-black text-[10px] sm:text-xs flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#7c3aed] text-white font-black text-[10px] sm:text-xs flex items-center justify-center shrink-0">
                         #{i + 1}
                       </span>
                       <span className="hidden sm:block"><ParticipantAvatar seed={f.avatarSeed} size="sm" /></span>
@@ -1038,11 +1040,11 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                         type="text"
                         defaultValue={f.name}
                         onBlur={(e) => handleRename(f.id, e.target.value)}
-                        className="bg-transparent font-black text-white text-xs sm:text-sm focus:bg-[#0e2e4e] rounded px-1 sm:px-1.5 py-0.5 border border-transparent focus:border-[#00d2ff] outline-none truncate max-w-[70px] sm:max-w-[140px]"
+                        className="bg-transparent font-black text-white text-xs sm:text-sm focus:bg-[#1e0e38] rounded px-1 sm:px-1.5 py-0.5 border border-transparent focus:border-[#8b5cf6] outline-none truncate max-w-[70px] sm:max-w-[140px]"
                         title="Click to rename"
                       />
                     </div>
-                    <span className="font-mono font-black text-sm sm:text-lg text-[#00d2ff] shrink-0">{f.score}</span>
+                    <span className="font-mono font-black text-sm sm:text-lg text-[#c084fc] shrink-0">{f.score}</span>
                   </div>
 
                   {/* Cohesive Point Awarding Buttons (3 Live Rounds: +10, +5, −5) */}
@@ -1074,13 +1076,13 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   <div className="hidden sm:flex items-center gap-2 text-xs font-bold pt-0.5">
                     <button
                       onClick={() => adjustScore(f.id, 1)}
-                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-slate-200 border border-[#00d2ff]/40 hover:bg-[#00d2ff] hover:text-[#081a2e] transition active:scale-95"
+                      className="flex-1 py-1 rounded-lg bg-[#1e0e38] text-slate-200 border border-[#8b5cf6]/40 hover:bg-[#7c3aed] hover:text-white transition active:scale-95"
                     >
                       +1 Fine
                     </button>
                     <button
                       onClick={() => adjustScore(f.id, -1)}
-                      className="flex-1 py-1 rounded-lg bg-[#0e2e4e] text-rose-300 border border-rose-500/40 hover:bg-rose-600 hover:text-white transition active:scale-95"
+                      className="flex-1 py-1 rounded-lg bg-[#1e0e38] text-rose-300 border border-rose-500/40 hover:bg-rose-600 hover:text-white transition active:scale-95"
                     >
                       −1 Fine
                     </button>
@@ -1094,12 +1096,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
         {/* RIGHT 1 COLUMN: LIVE STAGE STANDINGS (Desktop only — scores visible in scorer above on mobile) */}
         <div className="hidden lg:block lg:col-span-1 space-y-5">
           <div className="notebook-card p-4 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between border-b-2 border-[#00d2ff]/30 pb-3">
+            <div className="flex items-center justify-between border-b-2 border-[#8b5cf6]/30 pb-3">
               <div className="flex items-center gap-2">
                 <Crown className="w-5 h-5 text-[#fbbf24]" />
                 <h3 className="font-black text-white text-base">Live Stage Standings</h3>
               </div>
-              <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] px-2 py-0.5 rounded-full">
                 2 Prizes
               </span>
             </div>
@@ -1110,10 +1112,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                   key={f.id}
                   className={`p-3 sm:p-3.5 rounded-2xl flex items-center justify-between border-2 transition ${
                     rank === 0
-                      ? 'bg-[#fbbf24]/10 border-[#fbbf24] shadow-[3px_3px_0px_#04101d]'
+                      ? 'bg-[#fbbf24]/10 border-[#fbbf24] shadow-[3px_3px_0px_#090214]'
                       : rank === 1
-                      ? 'bg-slate-800/60 border-slate-300 shadow-[2px_2px_0px_#04101d]'
-                      : 'bg-[#081a2e] border-[#00d2ff]/30'
+                      ? 'bg-slate-800/60 border-slate-300 shadow-[2px_2px_0px_#090214]'
+                      : 'bg-[#16082b] border-[#8b5cf6]/30'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -1133,12 +1135,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     </div>
                   </div>
 
-                  <span className="font-mono font-black text-base sm:text-lg text-[#00d2ff] shrink-0">{f.score} pts</span>
+                  <span className="font-mono font-black text-base sm:text-lg text-[#c084fc] shrink-0">{f.score} pts</span>
                 </div>
               ))}
             </div>
 
-            <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+            <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between">
               <button
                 onClick={handleResetScores}
                 className="text-xs text-[#f43f5e] hover:text-[#fb7185] flex items-center gap-1 font-black transition"
@@ -1151,21 +1153,21 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       </main>
 
       {/* 3. ERGONOMIC FLOATING THUMB CONTROLS ON PHONE (Solves the scroll issue!) */}
-      <div className="fixed bottom-2 left-2 right-2 z-40 lg:hidden flex items-center justify-between gap-2 p-2 rounded-2xl bg-[#081a2e]/95 backdrop-blur-md border-2 border-[#00d2ff]/60 shadow-[0_4px_16px_rgba(0,0,0,0.7)]">
+      <div className="fixed bottom-2 left-2 right-2 z-40 lg:hidden flex items-center justify-between gap-2 p-2 rounded-2xl bg-[#16082b]/95 backdrop-blur-md border-2 border-[#8b5cf6]/60 shadow-[0_4px_16px_rgba(0,0,0,0.7)]">
         <button
           onClick={handlePrev}
           disabled={currentSlide === 0 && mcqOptionStep === 0 && rapidQuestionIdx === 0}
-          className="px-3 py-2.5 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/50 text-[#00d2ff] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
+          className="px-3 py-2.5 rounded-xl bg-[#1e0e38] border border-[#8b5cf6]/50 text-[#c084fc] font-black text-xs disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
           <ChevronLeft className="w-4 h-4" /> Prev
         </button>
 
         <button
           onClick={toggleReveal}
-          className={`flex-1 py-2.5 px-2.5 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#081a2e] shadow-sm transition flex items-center justify-center gap-1 active:scale-95 text-center truncate ${
+          className={`flex-1 py-2.5 px-2.5 rounded-xl font-black text-xs uppercase tracking-wider border-2 border-[#1e0e38] shadow-sm transition flex items-center justify-center gap-1 active:scale-95 text-center truncate ${
             isRevealed
-              ? 'bg-[#0e2e4e] text-slate-200 border-[#00d2ff]/50'
-              : 'bg-[#fbbf24] text-[#081a2e]'
+              ? 'bg-[#1e0e38] text-slate-200 border-[#8b5cf6]/50'
+              : 'bg-[#fbbf24] text-[#1e0e38]'
           }`}
         >
           {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -1179,7 +1181,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
             (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
             (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
           }
-          className="px-3 py-2.5 rounded-xl bg-[#00d2ff] text-[#081a2e] font-black text-xs border border-[#081a2e] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
+          className="px-3 py-2.5 rounded-xl bg-[#7c3aed] text-white font-black text-xs border border-[#1e0e38] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
           {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
             <>

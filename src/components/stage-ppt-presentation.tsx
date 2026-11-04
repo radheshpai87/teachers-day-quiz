@@ -57,7 +57,6 @@ import {
   ArrowRight,
   ShieldCheck,
   FlameKindling,
-  ExternalLink,
 } from 'lucide-react'
 
 // The exact 4 Kahoot Answer Themes used across the actual quiz
@@ -131,7 +130,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   const [finalists, setFinalists] = useState<StageFinalist[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('ingenium_stage_finalists_v2')
+        const saved = localStorage.getItem('technova_stage_finalists_v1')
         if (saved) return JSON.parse(saved)
       } catch {}
     }
@@ -280,7 +279,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     }
 
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'ingenium_stage_finalists_v2' && e.newValue) {
+      if (e.key === 'technova_stage_finalists_v1' && e.newValue) {
         try {
           setFinalists(JSON.parse(e.newValue))
         } catch {}
@@ -370,7 +369,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             if (hasRealNames) {
               setFinalists(data.finalists)
               try {
-                localStorage.setItem('ingenium_stage_finalists_v2', JSON.stringify(data.finalists))
+                localStorage.setItem('technova_stage_finalists_v1', JSON.stringify(data.finalists))
               } catch {}
             }
           }
@@ -382,7 +381,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   // Save finalists to localStorage & broadcast
   useEffect(() => {
     try {
-      localStorage.setItem('ingenium_stage_finalists_v2', JSON.stringify(finalists))
+      localStorage.setItem('technova_stage_finalists_v1', JSON.stringify(finalists))
     } catch {}
   }, [finalists])
 
@@ -434,23 +433,25 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         totalInRound: stageData.round2.images.length,
       })
     })
-    // Audio questions (6)
-    stageData.round2.audios.forEach((audQ, idx) => {
-      list.push({
-        type: 'r2_audio',
-        title: `Round 2 — Audio ${idx + 1} of ${stageData.round2.audios.length}`,
-        roundNum: 2,
-        data: audQ,
-        qIndex: idx,
-        totalInRound: stageData.round2.audios.length,
+    // Audio questions (if any)
+    if (stageData.round2.audios && stageData.round2.audios.length > 0) {
+      stageData.round2.audios.forEach((audQ, idx) => {
+        list.push({
+          type: 'r2_audio',
+          title: `Round 2 — Audio ${idx + 1} of ${stageData.round2.audios.length}`,
+          roundNum: 2,
+          data: audQ,
+          qIndex: idx,
+          totalInRound: stageData.round2.audios.length,
+        })
       })
-    })
+    }
     // Leaderboard after Round 2
     list.push({
       type: 'round_leaderboard',
       title: 'Round 2 Complete — Cumulative Standings',
       roundNum: 2,
-      roundName: 'Round 2 (Audio & Image)',
+      roundName: 'Round 2 (Image Round)',
     })
 
     // Round 3: Rapid Fire (6 Sets for 6 Participants)
@@ -743,11 +744,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           <AlertTriangle className="w-16 h-16 text-[#fbbf24] mx-auto mb-4 animate-bounce" />
           <h1 className="text-2xl font-black mb-2 text-white">Stage Data Encrypted / Key Required</h1>
           <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-            Please make sure <code className="text-[#00d2ff] bg-[#081a2e] px-2 py-0.5 rounded">QUIZ_SEED_KEY</code> is configured in your environment.
+            Please make sure <code className="text-[#c084fc] bg-[#16082b] px-2 py-0.5 rounded">QUIZ_SEED_KEY</code> is configured in your environment.
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-2.5 rounded-full bg-[#00d2ff] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105"
+            className="inline-block px-6 py-2.5 rounded-full bg-[#7c3aed] text-white font-black border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105"
           >
             Return Home
           </Link>
@@ -762,7 +763,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       <NotebookBackgroundDecor minimal />
 
       {/* Clean Presentation Top Bar (Projector Ready) */}
-      <header className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-b-2 border-[#00d2ff]/40 bg-[#081a2e]/90 backdrop-blur-md shadow-[0_4px_0px_#04101d]">
+      <header className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-b-2 border-[#8b5cf6]/40 bg-[#16082b]/90 backdrop-blur-md shadow-[0_4px_0px_#090214]">
         <div className="flex items-center gap-3">
           <Image
             src="/yenepoya-school-engineering-and-technology.svg"
@@ -772,9 +773,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             className="h-7 sm:h-8 w-auto object-contain brightness-110"
             priority
           />
-          <div className="h-5 w-px bg-[#00d2ff]/40" />
+          <div className="h-5 w-px bg-[#7c3aed]/40" />
           <div className="flex items-center gap-2">
-            <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+            <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] shadow-[2px_2px_0px_#090214]">
               Live Stage Quiz
             </span>
             <span className="text-xs text-[#7dd3fc] font-bold hidden md:inline">
@@ -783,21 +784,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
           </div>
         </div>
 
-        {/* Clean Controls: Fullscreen & Link to Host Controls */}
+        {/* Clean Controls: Fullscreen Toggle */}
         <div className="flex items-center gap-2">
-          <Link
-            href="/stage/control"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0e2e4e] hover:bg-[#00d2ff] hover:text-[#081a2e] text-[#00d2ff] font-black text-xs border-2 border-[#00d2ff]/50 shadow-[2px_2px_0px_#04101d] transition"
-            title="Open Quizmaster Remote Controller in another tab/device"
-          >
-            <span>Host Controls</span> <ExternalLink className="w-3.5 h-3.5" />
-          </Link>
-
           <button
             onClick={toggleFullscreen}
-            className="p-1.5 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] hover:bg-[#00d2ff] hover:text-[#081a2e] transition"
+            className="p-1.5 rounded-xl bg-[#1e0e38] text-[#c084fc] border-2 border-[#8b5cf6]/60 shadow-[2px_2px_0px_#090214] hover:bg-[#7c3aed] hover:text-white transition"
             title="Toggle Fullscreen (Key: F)"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -823,9 +814,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.1 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-[#081a2e] mb-4 -rotate-1 shadow-[2px_2px_0px_#04101d]"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full sticky-note-yellow font-black text-xs uppercase tracking-wider text-[#1e0e38] mb-4 -rotate-1 shadow-[2px_2px_0px_#090214]"
                 >
-                  <PaperClip className="w-4 h-4 text-[#081a2e]" />
+                  <PaperClip className="w-4 h-4 text-[#1e0e38]" />
                   Yenepoya School of Engineering & Technology
                 </motion.div>
 
@@ -840,12 +831,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full max-w-4xl mb-8">
                   <div className="p-4 rounded-2xl notebook-card text-center">
                     <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 1</div>
-                    <div className="text-lg font-black text-[#00d2ff]">MCQ Arena</div>
+                    <div className="text-lg font-black text-[#c084fc]">MCQ Arena</div>
                     <div className="text-xs text-slate-300 font-semibold">+5 pts • No Negative</div>
                   </div>
                   <div className="p-4 rounded-2xl notebook-card text-center">
                     <div className="text-xs uppercase text-[#7dd3fc] font-black tracking-wider mb-1">Round 2</div>
-                    <div className="text-lg font-black text-[#38bdf8]">Audio & Image</div>
+                    <div className="text-lg font-black text-[#38bdf8]">Image Round</div>
                     <div className="text-xs text-slate-300 font-semibold">+10 / −5 • Pass +5</div>
                   </div>
                   <div className="p-4 rounded-2xl notebook-card text-center">
@@ -857,7 +848,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                 <button
                   onClick={nextSlide}
-                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] text-lg font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition-transform hover:scale-105 active:scale-95"
+                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-lg font-black border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] transition-transform hover:scale-105 active:scale-95"
                 >
                   Start Stage Quiz <ArrowRight className="w-5 h-5" />
                 </button>
@@ -868,11 +859,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             {slide.type === 'rules' && (
               <div className="flex flex-col h-full justify-center p-2 sm:p-4">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="p-3 rounded-2xl bg-[#00d2ff] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d]">
+                  <div className="p-3 rounded-2xl bg-[#7c3aed] text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214]">
                     <ShieldCheck className="w-7 h-7" />
                   </div>
                   <div>
-                    <span className="text-xs font-black uppercase tracking-wider text-[#00d2ff]">Quiz Regulations</span>
+                    <span className="text-xs font-black uppercase tracking-wider text-[#c084fc]">Quiz Regulations</span>
                     <h2 className="text-2xl md:text-4xl font-black text-white">Official Stage Rules</h2>
                   </div>
                 </div>
@@ -886,7 +877,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       transition={{ delay: idx * 0.03 }}
                       className="flex items-start gap-3 p-3.5 rounded-2xl notebook-card"
                     >
-                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e]">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#7c3aed] text-white font-mono font-black text-xs flex items-center justify-center border border-[#1e0e38]">
                         {idx + 1}
                       </div>
                       <p className="text-slate-100 text-xs md:text-sm font-bold leading-relaxed">{rule}</p>
@@ -894,11 +885,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t-2 border-[#00d2ff]/30">
+                <div className="flex items-center justify-between pt-3 border-t-2 border-[#8b5cf6]/30">
                   <span className="text-xs text-[#7dd3fc] font-bold">Press Space or Arrow Right to proceed</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] font-black text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105"
                   >
                     Meet Finalists <ArrowRight className="w-4 h-4" />
                   </button>
@@ -910,8 +901,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             {slide.type === 'finalists' && (
               <div className="flex flex-col h-full justify-center p-2 sm:p-4">
                 <div className="text-center mb-6">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] text-xs font-black uppercase tracking-wider mb-2 -rotate-1 shadow-[2px_2px_0px_#04101d]">
-                    <Crown className="w-4 h-4 text-[#081a2e]" /> Stage Qualifiers
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#1e0e38] text-xs font-black uppercase tracking-wider mb-2 -rotate-1 shadow-[2px_2px_0px_#090214]">
+                    <Crown className="w-4 h-4 text-[#1e0e38]" /> Stage Qualifiers
                   </div>
                   <h2 className="text-3xl md:text-5xl font-black text-white">Meet the Top 6 Finalists</h2>
                   <p className="text-[#7dd3fc] text-xs font-bold mt-1">6 Stage Competitors • 3 Live Rounds</p>
@@ -927,8 +918,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       className="flex flex-col items-center p-4 rounded-2xl notebook-card text-center group"
                     >
                       <div className="relative mb-2.5">
-                        <ParticipantAvatar seed={finalist.avatarSeed} size="lg" className="ring-2 ring-[#00d2ff]" />
-                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#fbbf24] text-[#081a2e] font-black text-xs flex items-center justify-center border border-[#081a2e]">
+                        <ParticipantAvatar seed={finalist.avatarSeed} size="lg" className="ring-2 ring-[#c084fc]" />
+                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#fbbf24] text-[#1e0e38] font-black text-xs flex items-center justify-center border border-[#1e0e38]">
                           #{idx + 1}
                         </div>
                       </div>
@@ -937,9 +928,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         {finalist.name}
                       </span>
 
-                      <div className="mt-2.5 w-full pt-2 border-t-2 border-[#00d2ff]/30 flex items-center justify-between text-xs">
+                      <div className="mt-2.5 w-full pt-2 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between text-xs">
                         <span className="text-[#7dd3fc] font-bold">Score</span>
-                        <span className="font-mono font-black text-[#00d2ff] text-sm">{finalist.score} pts</span>
+                        <span className="font-mono font-black text-[#c084fc] text-sm">{finalist.score} pts</span>
                       </div>
                     </motion.div>
                   ))}
@@ -948,7 +939,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 <div className="flex items-center justify-center">
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
+                    className="flex items-center gap-2 px-8 py-3 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] font-black text-white border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] transition hover:scale-105"
                   >
                     Enter Round 1 (MCQ) <ArrowRight className="w-4 h-4" />
                   </button>
@@ -959,13 +950,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             {/* SLIDE TYPE: Round Intro */}
             {slide.type === 'round_intro' && (
               <div className="text-center flex flex-col items-center justify-center py-8">
-                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#00d2ff]">
+                <div className="w-16 h-16 rounded-3xl notebook-card flex items-center justify-center mb-5 text-[#c084fc]">
                   {slide.roundNum === 1 && <HelpCircle className="w-8 h-8" />}
                   {slide.roundNum === 2 && <Radio className="w-8 h-8" />}
                   {slide.roundNum === 3 && <Flame className="w-8 h-8 text-[#fbbf24]" />}
                 </div>
 
-                <span className="text-xs font-black uppercase tracking-widest text-[#00d2ff] mb-1">
+                <span className="text-xs font-black uppercase tracking-widest text-[#c084fc] mb-1">
                   Round {slide.roundNum}
                 </span>
 
@@ -974,7 +965,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                 <button
                   onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] transition hover:scale-105"
                 >
                   Start Round {slide.roundNum} <ArrowRight className="w-5 h-5" />
                 </button>
@@ -987,17 +978,17 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 <div className="w-full flex flex-col items-center justify-center space-y-4 my-auto">
                   {/* Header bar: Round badge, Score pill */}
                   <div className="w-full flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d] shrink-0">
-                      <PaperClip className="w-4 h-4 text-[#081a2e]" />
+                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214] shrink-0">
+                      <PaperClip className="w-4 h-4 text-[#1e0e38]" />
                       <span>Round 1 • Question</span>
                       <span className="tnum font-black ml-0.5">
                         {slide.qIndex! + 1}/{slide.totalInRound}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl sticky-note-lavender border-2 border-[#081a2e] text-[#081a2e] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#04101d]">
-                      <Trophy className="w-4 h-4 text-[#081a2e]" />
-                      <span>+10 Points</span>
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl sticky-note-lavender border-2 border-[#1e0e38] text-[#1e0e38] font-black text-xs sm:text-sm shadow-[2px_2px_0px_#090214]">
+                      <Trophy className="w-4 h-4 text-[#1e0e38]" />
+                      <span>+{stageData?.round1?.points?.correct || 5} Points</span>
                     </div>
                   </div>
 
@@ -1021,7 +1012,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         if (isCorrect) {
                           buttonStyles = 'bg-[#10b981] text-white ring-4 ring-emerald-300 shadow-xl border-b-[#059669]'
                         } else {
-                          buttonStyles = 'bg-[#0a2239]/80 text-[#64748b] opacity-35 border-[#1e3a5f]'
+                          buttonStyles = 'bg-[#1e0e38]/80 text-[#64748b] opacity-35 border-[#3b0764]'
                         }
                       }
 
@@ -1081,12 +1072,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: 8, height: 0 }}
                         animate={{ opacity: 1, y: 0, height: 'auto' }}
                         exit={{ opacity: 0, y: 8, height: 0 }}
-                        className="w-full p-4 rounded-2xl sticky-note-yellow text-[#081a2e] text-xs sm:text-sm leading-relaxed shadow-[4px_4px_0px_#04101d] flex items-start gap-3"
+                        className="w-full p-4 rounded-2xl sticky-note-yellow text-[#1e0e38] text-xs sm:text-sm leading-relaxed shadow-[4px_4px_0px_#090214] flex items-start gap-3"
                       >
-                        <Lightbulb className="w-5 h-5 text-[#081a2e] flex-shrink-0 mt-0.5" />
+                        <Lightbulb className="w-5 h-5 text-[#1e0e38] flex-shrink-0 mt-0.5" />
                         <div>
-                          <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5 text-[#081a2e]">
-                            Engineering Backstory & Fact
+                          <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5 text-[#1e0e38]">
+                            Tech & AI Innovation Fact
                           </span>
                           <p className="font-bold">{slide.data.explanation}</p>
                         </div>
@@ -1101,8 +1092,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
             {slide.type === 'round_leaderboard' && (
               <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full">
                 <div className="text-center mb-3">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] text-xs font-black uppercase tracking-wider mb-2 -rotate-1 shadow-[2px_2px_0px_#04101d]">
-                    <Trophy className="w-4 h-4 text-[#081a2e]" /> {slide.roundName || 'Cumulative Standings'}
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#1e0e38] text-xs font-black uppercase tracking-wider mb-2 -rotate-1 shadow-[2px_2px_0px_#090214]">
+                    <Trophy className="w-4 h-4 text-[#1e0e38]" /> {slide.roundName || 'Cumulative Standings'}
                   </div>
                   <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white">{slide.title}</h2>
                   <p className="text-[#7dd3fc] text-xs sm:text-sm font-bold mt-1">Official Stage Leaderboard Standings</p>
@@ -1116,7 +1107,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-5 rounded-3xl bg-gradient-to-br from-[#1b3d63] to-[#0a1e33] border-2 border-[#fbbf24] shadow-[0_0_25px_rgba(251,191,36,0.35)] flex items-center justify-between gap-4"
+                        className="p-5 rounded-3xl bg-gradient-to-br from-[#3b0764] to-[#1e0838] border-2 border-[#fbbf24] shadow-[0_0_25px_rgba(251,191,36,0.35)] flex items-center justify-between gap-4"
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
                           <div className="relative shrink-0">
@@ -1124,7 +1115,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                             <Crown className="w-6 h-6 text-[#fbbf24] absolute -top-3 -right-2 rotate-12" />
                           </div>
                           <div className="min-w-0">
-                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fbbf24] text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
+                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fbbf24] text-[#1e0e38] text-[10px] font-black uppercase tracking-wider mb-1">
                               1st Place • Leader
                             </div>
                             <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[0].name}</h3>
@@ -1145,7 +1136,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.05 }}
-                        className="p-5 rounded-3xl bg-gradient-to-br from-[#173557] to-[#091b2e] border-2 border-slate-300 shadow-[0_0_20px_rgba(226,232,240,0.25)] flex items-center justify-between gap-4"
+                        className="p-5 rounded-3xl bg-gradient-to-br from-[#2e1065] to-[#16082b] border-2 border-slate-300 shadow-[0_0_20px_rgba(226,232,240,0.25)] flex items-center justify-between gap-4"
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
                           <div className="relative shrink-0">
@@ -1153,7 +1144,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                             <Medal className="w-6 h-6 text-slate-300 absolute -top-3 -right-2 rotate-12" />
                           </div>
                           <div className="min-w-0">
-                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-300 text-[#081a2e] text-[10px] font-black uppercase tracking-wider mb-1">
+                            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-300 text-[#1e0e38] text-[10px] font-black uppercase tracking-wider mb-1">
                               2nd Place • Runner-Up
                             </div>
                             <h3 className="text-lg sm:text-xl font-black text-white truncate">{rankedFinalists[1].name}</h3>
@@ -1177,16 +1168,16 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 + idx * 0.05 }}
-                        className="p-3.5 rounded-2xl notebook-card flex items-center justify-between gap-2 border-2 border-[#00d2ff]/30 shadow-[2px_2px_0px_#04101d]"
+                        className="p-3.5 rounded-2xl notebook-card flex items-center justify-between gap-2 border-2 border-[#8b5cf6]/30 shadow-[2px_2px_0px_#090214]"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-6 h-6 rounded-full bg-[#00d2ff]/20 text-[#00d2ff] font-mono font-black text-xs flex items-center justify-center border border-[#00d2ff]/40 shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-[#7c3aed]/20 text-[#c084fc] font-mono font-black text-xs flex items-center justify-center border border-[#8b5cf6]/40 shrink-0">
                             #{idx + 3}
                           </div>
                           <ParticipantAvatar seed={f.avatarSeed} size="sm" />
                           <span className="font-bold text-white text-xs sm:text-sm truncate">{f.name}</span>
                         </div>
-                        <span className="font-mono font-black text-base text-[#00d2ff] shrink-0">
+                        <span className="font-mono font-black text-base text-[#c084fc] shrink-0">
                           {f.score} <span className="text-[10px] font-sans font-normal text-[#7dd3fc]">pts</span>
                         </span>
                       </motion.div>
@@ -1194,11 +1185,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   </div>
                 </div>
 
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between w-full">
+                <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between w-full">
                   <span className="text-xs text-[#7dd3fc] font-bold">Scores update in real-time from Host Deck</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#00d2ff] hover:bg-[#38bdf8] font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] font-black text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105"
                   >
                     Proceed to Next Round <ArrowRight className="w-4 h-4" />
                   </button>
@@ -1211,7 +1202,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-4xl mx-auto w-full">
                 <div className="flex flex-col w-full">
                   <div className="w-full flex items-center justify-between mb-2">
-                    <span className="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider sticky-note-yellow border-2 border-[#081a2e] text-[#081a2e] shadow-[2px_2px_0px_#04101d]">
+                    <span className="px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider sticky-note-yellow border-2 border-[#1e0e38] text-[#1e0e38] shadow-[2px_2px_0px_#090214]">
                       Round 2 — Image {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
                     </span>
                     <span className="text-xs sm:text-sm text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
@@ -1222,7 +1213,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   </h2>
 
                   {/* Large Center Clue Image */}
-                  <div className="relative w-full h-[42vh] sm:h-[48vh] max-h-[440px] rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-3 mb-3 border-2 border-[#00d2ff]/40 shadow-[4px_4px_0px_#04101d]">
+                  <div className="relative w-full h-[42vh] sm:h-[48vh] max-h-[440px] rounded-2xl overflow-hidden notebook-card flex items-center justify-center p-3 mb-3 border-2 border-[#8b5cf6]/40 shadow-[4px_4px_0px_#090214]">
                     <Image
                       src={slide.data.imageUrl}
                       alt="Clue Image"
@@ -1239,7 +1230,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: 10, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="w-full p-4 sm:p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d] text-left border-2 border-[#081a2e]"
+                        className="w-full p-4 sm:p-5 rounded-2xl sticky-note-mint text-[#1e0e38] shadow-[4px_4px_0px_#090214] text-left border-2 border-[#1e0e38]"
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <CheckCircle2 className="w-5 h-5 text-emerald-800" />
@@ -1247,9 +1238,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                             Verified Answer
                           </span>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-[#081a2e] mb-1">{slide.data.answer}</h3>
+                        <h3 className="text-xl sm:text-2xl font-black text-[#1e0e38] mb-1">{slide.data.answer}</h3>
                         {slide.data.explanation && (
-                          <p className="text-xs sm:text-sm font-bold text-[#081a2e]/90 leading-relaxed">{slide.data.explanation}</p>
+                          <p className="text-xs sm:text-sm font-bold text-[#1e0e38]/90 leading-relaxed">{slide.data.explanation}</p>
                         )}
                       </motion.div>
                     )}
@@ -1257,11 +1248,11 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Clean Bottom Bar */}
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between w-full">
+                <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between w-full">
                   <button
                     onClick={toggleReveal}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition hover:scale-105 active:scale-95 ${
-                      isRevealed ? 'bg-[#0e2e4e] text-white' : 'bg-[#fbbf24] text-[#081a2e]'
+                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105 active:scale-95 ${
+                      isRevealed ? 'bg-[#1e0e38] text-white' : 'bg-[#fbbf24] text-[#1e0e38]'
                     }`}
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -1278,7 +1269,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               <div className="flex flex-col h-full justify-between p-2 sm:p-4">
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border-2 border-[#00d2ff]/50">
+                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#7c3aed]/20 text-[#c084fc] border-2 border-[#8b5cf6]/50">
                       Round 2 — Audio {slide.qIndex! + 1} of {slide.totalInRound} • NO OPTIONS
                     </span>
                     <span className="text-xs text-[#fbbf24] font-black">Direct +10 | Direct −5 | Pass +5</span>
@@ -1292,7 +1283,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <div className="p-5 md:p-6 rounded-3xl notebook-card mb-4 flex flex-col md:flex-row items-center gap-5">
                     <button
                       onClick={() => togglePlayAudio(slide.data.audioUrl, slide.data.id)}
-                      className="w-16 h-16 rounded-2xl bg-[#00d2ff] hover:bg-[#38bdf8] text-[#081a2e] flex items-center justify-center border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition-transform active:scale-95 flex-shrink-0"
+                      className="w-16 h-16 rounded-2xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white flex items-center justify-center border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition-transform active:scale-95 flex-shrink-0"
                     >
                       {playingAudioId === slide.data.id ? (
                         <Pause className="w-8 h-8" />
@@ -1310,7 +1301,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       </div>
 
                       {/* Animated Technical Waveform Bars */}
-                      <div className="flex items-center gap-1 h-10 w-full px-2 py-1 rounded-xl bg-[#081a2e] border-2 border-[#00d2ff]/40">
+                      <div className="flex items-center gap-1 h-10 w-full px-2 py-1 rounded-xl bg-[#16082b] border-2 border-[#8b5cf6]/40">
                         {Array.from({ length: 36 }).map((_, i) => (
                           <motion.div
                             key={i}
@@ -1321,7 +1312,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                             }
                             transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.025 }}
                             className={`flex-1 rounded-full ${
-                              playingAudioId === slide.data.id ? 'bg-[#00d2ff]' : 'bg-[#0f355c]'
+                              playingAudioId === slide.data.id ? 'bg-[#7c3aed]' : 'bg-[#28144b]'
                             }`}
                           />
                         ))}
@@ -1335,28 +1326,28 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       <motion.div
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-5 rounded-2xl sticky-note-mint text-[#081a2e] shadow-[4px_4px_0px_#04101d]"
+                        className="p-5 rounded-2xl sticky-note-mint text-[#1e0e38] shadow-[4px_4px_0px_#090214]"
                       >
                         <span className="text-[11px] font-black uppercase tracking-wider block mb-0.5">
                           ✓ Speaker Personality Identified
                         </span>
                         <h3 className="text-xl md:text-2xl font-black mb-1">{slide.data.answer}</h3>
                         {slide.data.quote && (
-                          <p className="text-xs md:text-sm font-black italic mb-1 text-[#081a2e]">
+                          <p className="text-xs md:text-sm font-black italic mb-1 text-[#1e0e38]">
                             "{slide.data.quote}"
                           </p>
                         )}
-                        <p className="text-xs font-bold text-[#081a2e]">{slide.data.explanation}</p>
+                        <p className="text-xs font-bold text-[#1e0e38]">{slide.data.explanation}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Clean Bottom Bar */}
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+                <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between">
                   <button
                     onClick={toggleReveal}
-                    className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition"
+                    className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-[#1e0e38] border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition"
                   >
                     {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     {isRevealed ? 'Hide Answer' : 'Reveal Answer'} (R)
@@ -1373,13 +1364,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#081a2e] flex items-center gap-1 shadow-[2px_2px_0px_#04101d]">
+                      <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] flex items-center gap-1 shadow-[2px_2px_0px_#090214]">
                         <FlameKindling className="w-3.5 h-3.5" /> Rapid Fire • {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel} (Set {slide.data.setNumber})
                       </span>
                     </div>
 
                     {/* Step progress pills */}
-                    <div className="flex items-center gap-1.5 bg-[#081a2e]/90 p-1.5 rounded-2xl border border-[#00d2ff]/30">
+                    <div className="flex items-center gap-1.5 bg-[#16082b]/90 p-1.5 rounded-2xl border border-[#8b5cf6]/30">
                       {slide.data.questions.map((_: any, qIdx: number) => {
                         const isCurrent = rapidQuestionIdx === qIdx && !isRevealed
                         const isPast = qIdx < rapidQuestionIdx || isRevealed
@@ -1389,10 +1380,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                             onClick={() => jumpToRapidQuestion(qIdx)}
                             className={`w-7 h-7 rounded-xl font-mono font-black text-xs transition flex items-center justify-center border-2 ${
                               isCurrent
-                                ? 'bg-[#fbbf24] text-[#081a2e] border-[#081a2e] shadow-[2px_2px_0px_#04101d] scale-110'
+                                ? 'bg-[#fbbf24] text-[#1e0e38] border-[#1e0e38] shadow-[2px_2px_0px_#090214] scale-110'
                                 : isPast
-                                ? 'bg-[#00d2ff]/30 text-[#00d2ff] border-[#00d2ff]/60'
-                                : 'bg-[#0e2e4e] text-slate-400 border-transparent'
+                                ? 'bg-[#7c3aed]/30 text-[#c084fc] border-[#8b5cf6]/60'
+                                : 'bg-[#1e0e38] text-slate-400 border-transparent'
                             }`}
                             title={`Jump to Question ${qIdx + 1}`}
                           >
@@ -1405,12 +1396,12 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     {/* 60s Acoustic Timer Pill */}
                     <div className="flex items-center gap-2.5">
                       <div
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] font-mono font-black text-base transition ${
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] font-mono font-black text-base transition ${
                           rapidSeconds <= 10
                             ? 'bg-[#f43f5e] text-white animate-pulse'
                             : timerRunning
-                            ? 'bg-[#fbbf24] text-[#081a2e]'
-                            : 'bg-[#00d2ff] text-[#081a2e]'
+                            ? 'bg-[#fbbf24] text-[#1e0e38]'
+                            : 'bg-[#7c3aed] text-white'
                         }`}
                       >
                         <TimerIcon className="w-4 h-4" />
@@ -1419,7 +1410,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                       <button
                         onClick={toggleRapidTimer}
-                        className={`p-2 rounded-xl font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] transition ${
+                        className={`p-2 rounded-xl font-black text-[#1e0e38] border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214] transition ${
                           timerRunning ? 'bg-[#fbbf24]' : 'bg-[#10b981]'
                         }`}
                         title="Start / Pause Timer (Space)"
@@ -1429,7 +1420,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                       <button
                         onClick={resetRapidTimer}
-                        className="p-2 rounded-xl bg-[#0e2e4e] text-[#00d2ff] border-2 border-[#00d2ff]/60 shadow-[2px_2px_0px_#04101d] transition"
+                        className="p-2 rounded-xl bg-[#1e0e38] text-[#c084fc] border-2 border-[#8b5cf6]/60 shadow-[2px_2px_0px_#090214] transition"
                         title="Reset 60s Timer"
                       >
                         <RotateCcw className="w-4 h-4" />
@@ -1443,13 +1434,13 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                       const currentQ = slide.data.questions[rapidQuestionIdx] || slide.data.questions[0]
                       return (
                         <div className="flex flex-col items-center justify-center py-6 sm:py-10 text-center">
-                          <div className="w-full max-w-4xl p-6 sm:p-10 rounded-3xl notebook-card relative overflow-hidden flex flex-col items-center justify-center min-h-[300px] border-2 border-[#fbbf24]/50 shadow-[6px_6px_0px_#04101d]">
+                          <div className="w-full max-w-4xl p-6 sm:p-10 rounded-3xl notebook-card relative overflow-hidden flex flex-col items-center justify-center min-h-[300px] border-2 border-[#fbbf24]/50 shadow-[6px_6px_0px_#090214]">
                             <div className="flex items-center gap-2.5 mb-4">
                               <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/50">
                                 Question {currentQ?.number || rapidQuestionIdx + 1} of {slide.data.questions.length}
                               </span>
                               {currentQ?.category && (
-                                <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/50">
+                                <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-[#7c3aed]/20 text-[#c084fc] border border-[#8b5cf6]/50">
                                   {currentQ.category}
                                 </span>
                               )}
@@ -1465,7 +1456,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                               {currentQ?.prompt}
                             </motion.h3>
 
-                            <div className="mt-8 flex items-center justify-between w-full pt-4 border-t border-[#00d2ff]/20 text-xs text-[#7dd3fc] font-bold">
+                            <div className="mt-8 flex items-center justify-between w-full pt-4 border-t border-[#8b5cf6]/20 text-xs text-[#7dd3fc] font-bold">
                               <span>Target Finalist: <strong className="text-white text-sm">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong></span>
                               <span>60 Seconds Total • +10 Pts per Correct</span>
                             </div>
@@ -1490,10 +1481,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                           className="p-3.5 rounded-2xl notebook-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-2 border-[#10b981]/40"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="w-6 h-6 rounded-lg bg-[#00d2ff] text-[#081a2e] font-mono font-black text-xs flex items-center justify-center border border-[#081a2e] shrink-0">
+                            <span className="w-6 h-6 rounded-lg bg-[#7c3aed] text-white font-mono font-black text-xs flex items-center justify-center border border-[#1e0e38] shrink-0">
                               {q.number}
                             </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#00d2ff]/20 text-[#00d2ff] shrink-0">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#7c3aed]/20 text-[#c084fc] shrink-0">
                               {q.category}
                             </span>
                             <span className="text-xs sm:text-sm font-bold text-white">{q.prompt}</span>
@@ -1508,10 +1499,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Bottom Bar: Mode Switcher */}
-                <div className="pt-3 border-t-2 border-[#00d2ff]/30 flex items-center justify-between">
+                <div className="pt-3 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between">
                   <button
                     onClick={toggleReveal}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] border-2 border-[#081a2e] shadow-[3px_3px_0px_#04101d] transition cursor-pointer"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#1e0e38] border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition cursor-pointer"
                   >
                     {isRevealed ? (
                       <>
@@ -1544,7 +1535,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </p>
                 <button
                   onClick={nextSlide}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#fbbf24] hover:bg-[#f59e0b] text-[#081a2e] font-black border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] transition hover:scale-105"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#fbbf24] hover:bg-[#f59e0b] text-[#1e0e38] font-black border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] transition hover:scale-105"
                 >
                   Reveal Grand Victory Podium (Top 2 Prizes) <Trophy className="w-5 h-5 ml-1" />
                 </button>
@@ -1559,9 +1550,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   <motion.div
                     initial={{ scale: 0.85, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-yellow text-[#081a2e] font-black text-xs uppercase tracking-widest mb-1 -rotate-1 shadow-[2px_2px_0px_#04101d]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full sticky-note-lavender text-white font-black text-xs uppercase tracking-widest mb-1 -rotate-1 shadow-[2px_2px_0px_#090214]"
                   >
-                    <Sparkles className="w-4 h-4 text-[#081a2e]" /> INGENIUM 2026 Champion Ceremony
+                    <Sparkles className="w-4 h-4 text-[#fbbf24]" /> TECHNOVA 2026 Champion Ceremony
                   </motion.div>
                   <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
                     Grand Victory Podium
@@ -1602,10 +1593,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </div>
 
                     {/* Gold Podium Pedestal */}
-                    <div className="w-full h-36 sm:h-44 rounded-3xl bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] border-2 border-[#081a2e] shadow-[5px_5px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
-                      <Trophy className="w-9 h-9 sm:w-11 sm:h-11 mb-1 text-[#081a2e]" />
+                    <div className="w-full h-36 sm:h-44 rounded-3xl bg-gradient-to-b from-[#fbbf24] to-[#f59e0b] border-2 border-[#1e0e38] shadow-[5px_5px_0px_#090214] flex flex-col items-center justify-center text-[#1e0e38] p-3">
+                      <Trophy className="w-9 h-9 sm:w-11 sm:h-11 mb-1 text-[#1e0e38]" />
                       <span className="font-black text-xl sm:text-2xl tracking-tight leading-none">1st Prize</span>
-                      <span className="text-[11px] sm:text-xs font-black uppercase tracking-widest text-[#081a2e] mt-1">
+                      <span className="text-[11px] sm:text-xs font-black uppercase tracking-widest text-[#1e0e38] mt-1">
                         GRAND CHAMPION
                       </span>
                     </div>
@@ -1637,8 +1628,8 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </div>
 
                     {/* Silver Podium Pedestal */}
-                    <div className="w-full h-28 sm:h-34 rounded-3xl bg-gradient-to-b from-slate-200 to-slate-300 border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] flex flex-col items-center justify-center text-[#081a2e] p-3">
-                      <Medal className="w-8 h-8 sm:w-9 sm:h-9 mb-1 text-[#081a2e]" />
+                    <div className="w-full h-28 sm:h-34 rounded-3xl bg-gradient-to-b from-slate-200 to-slate-300 border-2 border-[#1e0e38] shadow-[4px_4px_0px_#090214] flex flex-col items-center justify-center text-[#1e0e38] p-3">
+                      <Medal className="w-8 h-8 sm:w-9 sm:h-9 mb-1 text-[#1e0e38]" />
                       <span className="font-black text-lg sm:text-xl tracking-tight leading-none">2nd Prize</span>
                       <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 mt-0.5">
                         RUNNER-UP
@@ -1648,7 +1639,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 </div>
 
                 {/* Qualifiers #3 to #6 Full Visibility Showcase */}
-                <div className="w-full max-w-4xl bg-[#0e2e4e]/90 p-3 sm:p-4 rounded-3xl border-2 border-[#00d2ff]/40 shadow-[4px_4px_0px_#04101d] shrink-0 mt-1">
+                <div className="w-full max-w-4xl bg-[#1e0e38]/90 p-3 sm:p-4 rounded-3xl border-2 border-[#8b5cf6]/40 shadow-[4px_4px_0px_#090214] shrink-0 mt-1">
                   <div className="flex items-center justify-between mb-2 px-1">
                     <span className="text-xs font-black uppercase tracking-wider text-[#7dd3fc] flex items-center gap-1.5">
                       <Award className="w-4 h-4 text-[#fbbf24]" /> Stage Finalists & Honorable Mentions
@@ -1663,10 +1654,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.45 + i * 0.08 }}
-                        className="p-3 rounded-2xl bg-[#081a2e] border-2 border-[#00d2ff]/30 shadow-md flex flex-col items-center text-center relative hover:border-[#00d2ff] transition-all"
+                        className="p-3 rounded-2xl bg-[#16082b] border-2 border-[#8b5cf6]/30 shadow-md flex flex-col items-center text-center relative hover:border-[#8b5cf6] transition-all"
                       >
                         <div className="flex items-center justify-between w-full mb-1.5">
-                          <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-black bg-[#00d2ff]/20 text-[#00d2ff] border border-[#00d2ff]/40">
+                          <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-black bg-[#7c3aed]/20 text-[#c084fc] border border-[#8b5cf6]/40">
                             #{i + 3}
                           </span>
                           <span className="text-[10px] font-bold uppercase text-slate-400">Finalist</span>
@@ -1675,14 +1666,14 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                         <ParticipantAvatar
                           seed={f.avatarSeed || `f${i + 3}`}
                           size="md"
-                          className="ring-2 ring-[#00d2ff]/50 mb-1.5 shadow-md"
+                          className="ring-2 ring-[#c084fc]/50 mb-1.5 shadow-md"
                         />
 
                         <strong className="text-white text-xs sm:text-sm font-bold truncate w-full mb-1" title={f.name}>
                           {f.name}
                         </strong>
 
-                        <div className="w-full py-0.5 px-2 rounded-xl bg-[#0e2e4e] border border-[#00d2ff]/40 font-mono font-black text-[#00d2ff] text-xs sm:text-sm shadow-inner">
+                        <div className="w-full py-0.5 px-2 rounded-xl bg-[#1e0e38] border border-[#8b5cf6]/40 font-mono font-black text-[#c084fc] text-xs sm:text-sm shadow-inner">
                           {f.score} <span className="text-[10px] font-semibold text-[#7dd3fc]">pts</span>
                         </div>
                       </motion.div>
@@ -1696,19 +1687,19 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       </main>
 
       {/* Clean Presentation Footer Navigation */}
-      <footer className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-t-2 border-[#00d2ff]/40 bg-[#081a2e]/90 backdrop-blur-md shadow-[0_-4px_0px_#04101d]">
+      <footer className="relative z-20 flex items-center justify-between px-4 sm:px-6 py-2.5 border-t-2 border-[#8b5cf6]/40 bg-[#16082b]/90 backdrop-blur-md shadow-[0_-4px_0px_#090214]">
         <div className="flex items-center gap-2">
           <button
             onClick={prevSlide}
             disabled={currentSlide === 0}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff]/50 text-xs font-black text-[#00d2ff] hover:bg-[#00d2ff] hover:text-[#081a2e] disabled:opacity-30 disabled:pointer-events-none transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1e0e38] border-2 border-[#8b5cf6]/50 text-xs font-black text-[#c084fc] hover:bg-[#7c3aed] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition"
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
           <button
             onClick={nextSlide}
             disabled={currentSlide === slides.length - 1}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#00d2ff] hover:bg-[#38bdf8] text-xs font-black text-[#081a2e] border-2 border-[#081a2e] shadow-[2px_2px_0px_#04101d] disabled:opacity-30 disabled:pointer-events-none transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-xs font-black text-[#1e0e38] border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214] disabled:opacity-30 disabled:pointer-events-none transition"
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>
@@ -1725,7 +1716,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                 broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: i } })
               }}
               className={`h-1.5 rounded-full transition-all duration-200 ${
-                currentSlide === i ? 'w-6 bg-[#00d2ff]' : 'w-1.5 bg-[#0f355c] hover:bg-[#00d2ff]/60'
+                currentSlide === i ? 'w-6 bg-[#7c3aed]' : 'w-1.5 bg-[#28144b] hover:bg-[#7c3aed]/60'
               }`}
               title={`Jump to Slide ${i + 1}`}
             />

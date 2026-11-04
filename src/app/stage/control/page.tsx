@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "Quizmaster Control Deck — Live Stage Quiz",
-  description: "Live Quizmaster & Host Control Panel for INGENIUM 2026 Stage Quiz.",
+  description: "Live Quizmaster & Host Control Panel for TECHNOVA 2026 Stage Quiz.",
 }
 
 export default function StageControlPage() {
