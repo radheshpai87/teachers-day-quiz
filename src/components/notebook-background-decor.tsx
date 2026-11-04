@@ -1,213 +1,214 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
-  HardHat,
-  Gear,
-  GearsSet,
-  Blueprint,
-  Caliper,
   CircuitBoard,
-  Ruler,
-  Compass,
   PaperClip,
+  ThumbtackPin,
+  CrownDoodle,
+  SparkleRays,
+  AiChipIcon,
+  RobotHandIcon,
+  BrainNeuralIcon,
 } from '@/components/icons'
 
 export function NotebookBackgroundDecor({ minimal = false }: { minimal?: boolean } = {}) {
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none w-full h-full min-h-full">
-      {/* 1. Authentic Blueprint Cyan Radial Backdrop Gradient */}
+      {/* 1. Deep Cyber-Violet Backdrop Gradient */}
       <div 
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, #0b3860 0%, #06223d 70%, #031324 100%)',
+          background: 'radial-gradient(ellipse at 50% 30%, #260e4d 0%, #17072e 60%, #0d021a 100%)',
         }}
       />
 
-      {/* 2. Technical Blueprint Outer Border Frame & Corner L-brackets */}
-      <div className="absolute inset-2 sm:inset-4 border-2 border-[#00d2ff]/30 pointer-events-none">
-        <div className="absolute -top-1 -left-1 w-4 h-4 border-t-3 border-l-3 border-[#00d2ff]" />
-        <div className="absolute -top-1 -right-1 w-4 h-4 border-t-3 border-r-3 border-[#00d2ff]" />
-        <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-3 border-l-3 border-[#00d2ff]" />
-        <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-3 border-r-3 border-[#00d2ff]" />
+      {/* 2. Top-Left Purple Torn Paper Scrapbook Accent (matching poster) */}
+      <div 
+        className="absolute -top-12 -left-12 w-48 h-48 sm:w-64 sm:h-64 opacity-50 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, #7c3aed 0%, #581c87 70%, transparent 100%)',
+          clipPath: 'polygon(0% 0%, 100% 0%, 85% 60%, 70% 80%, 40% 100%, 0% 85%)',
+        }}
+      />
+
+      {/* 3. Outer Frame & Corner L-Brackets in Neon Violet */}
+      <div className="absolute inset-2 sm:inset-4 border-2 border-[#a855f7]/30 pointer-events-none">
+        <div className="absolute -top-1 -left-1 w-4 h-4 border-t-3 border-l-3 border-[#c084fc]" />
+        <div className="absolute -top-1 -right-1 w-4 h-4 border-t-3 border-r-3 border-[#c084fc]" />
+        <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-3 border-l-3 border-[#c084fc]" />
+        <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-3 border-r-3 border-[#c084fc]" />
       </div>
 
-      {/* 3. High-Density Architectural & Engineering Vector Schematics Layer */}
+      {/* 4. High-Density AI, Neural Network & Cyber Schematics Layer */}
       <svg
-        className="absolute inset-0 w-full h-full text-[#00d2ff]/30"
+        className="absolute inset-0 w-full h-full text-[#c084fc]/30"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
         <defs>
-          {/* 100px Blueprint Major Grid */}
-          <pattern id="blueprint-grid" width="100" height="100" patternUnits="userSpaceOnUse">
-            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(0, 210, 255, 0.22)" strokeWidth="1.2" />
-            <path d="M 20 0 L 20 100 M 40 0 L 40 100 M 60 0 L 60 100 M 80 0 L 80 100" fill="none" stroke="rgba(0, 210, 255, 0.07)" strokeWidth="0.8" />
-            <path d="M 0 20 L 100 20 M 0 40 L 100 40 M 0 60 L 100 60 M 0 80 L 100 80" fill="none" stroke="rgba(0, 210, 255, 0.07)" strokeWidth="0.8" />
+          {/* 100px Cyber-Purple Major Grid */}
+          <pattern id="cyber-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(168, 85, 247, 0.22)" strokeWidth="1.2" />
+            <path d="M 20 0 L 20 100 M 40 0 L 40 100 M 60 0 L 60 100 M 80 0 L 80 100" fill="none" stroke="rgba(168, 85, 247, 0.07)" strokeWidth="0.8" />
+            <path d="M 0 20 L 100 20 M 0 40 L 100 40 M 0 60 L 100 60 M 0 80 L 100 80" fill="none" stroke="rgba(168, 85, 247, 0.07)" strokeWidth="0.8" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#blueprint-grid)" />
+        <rect width="100%" height="100%" fill="url(#cyber-grid)" />
 
-        {/* Protractor Radial Degree Scale (Center Background) */}
-        <g stroke="currentColor" strokeWidth="1" fill="none" className="opacity-40">
-          <circle cx="20%" cy="42%" r="220" strokeDasharray="6 4" />
-          <circle cx="20%" cy="42%" r="160" strokeDasharray="3 3" />
-          <circle cx="20%" cy="42%" r="5" fill="currentColor" />
-          <line x1="20%" y1="20%" x2="20%" y2="64%" strokeDasharray="4 4" />
-          <line x1="2%" y1="42%" x2="38%" y2="42%" strokeDasharray="4 4" />
-          <text x="21%" y="39%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
-            R = 220.00 mm • θ = 45.0°
-          </text>
-        </g>
-
-        {/* Structural Skyscraper / Building Elevation Grid (Left Center) */}
-        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-35 hidden lg:block">
-          <path d="M 12% 15% L 28% 15% L 28% 85% L 12% 85% Z" strokeWidth="1.5" />
-          <path d="M 12% 25% H 28% M 12% 35% H 28% M 12% 45% H 28% M 12% 55% H 28% M 12% 65% H 28% M 12% 75% H 28%" />
-          <path d="M 17% 15% V 85% M 23% 15% V 85%" strokeDasharray="3 3" />
-          <text x="13%" y="13%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
-            CIVIL TOWER • H = 150.0m
-          </text>
-        </g>
-
-        {/* Structural Bridge Truss Blueprint (Top Right) */}
+        {/* Neural Network Architecture Grid (Left Center) */}
         <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-35 hidden md:block">
-          <path d="M 62% 10% L 96% 10% L 92% 26% L 66% 26% Z" strokeWidth="1.5" />
-          <path d="M 62% 10% L 72% 26% L 78% 10% L 84% 26% L 90% 10%" />
-          <line x1="62%" y1="10%" x2="96%" y2="10%" strokeDasharray="4 4" />
-          <text x="72%" y="8%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
-            STRUCTURAL TRUSS • LOAD CAP = 750 kN
+          {/* Input Layer */}
+          <circle cx="10%" cy="30%" r="6" fill="#06b6d4" fillOpacity={0.6} />
+          <circle cx="10%" cy="40%" r="6" fill="#06b6d4" fillOpacity={0.6} />
+          <circle cx="10%" cy="50%" r="6" fill="#06b6d4" fillOpacity={0.6} />
+          {/* Hidden Layer 1 */}
+          <circle cx="16%" cy="25%" r="7" fill="#8b5cf6" fillOpacity={0.7} />
+          <circle cx="16%" cy="35%" r="7" fill="#8b5cf6" fillOpacity={0.7} />
+          <circle cx="16%" cy="45%" r="7" fill="#8b5cf6" fillOpacity={0.7} />
+          <circle cx="16%" cy="55%" r="7" fill="#8b5cf6" fillOpacity={0.7} />
+          {/* Hidden Layer 2 */}
+          <circle cx="22%" cy="30%" r="7" fill="#a855f7" fillOpacity={0.8} />
+          <circle cx="22%" cy="40%" r="7" fill="#a855f7" fillOpacity={0.8} />
+          <circle cx="22%" cy="50%" r="7" fill="#a855f7" fillOpacity={0.8} />
+          {/* Synapses lines */}
+          <line x1="10%" y1="30%" x2="16%" y2="25%" strokeDasharray="3 2" />
+          <line x1="10%" y1="30%" x2="16%" y2="35%" />
+          <line x1="10%" y1="40%" x2="16%" y2="35%" />
+          <line x1="10%" y1="40%" x2="16%" y2="45%" />
+          <line x1="10%" y1="50%" x2="16%" y2="45%" />
+          <line x1="10%" y1="50%" x2="16%" y2="55%" />
+          <line x1="16%" y1="25%" x2="22%" y2="30%" />
+          <line x1="16%" y1="35%" x2="22%" y2="30%" />
+          <line x1="16%" y1="35%" x2="22%" y2="40%" />
+          <line x1="16%" y1="45%" x2="22%" y2="40%" />
+          <line x1="16%" y1="45%" x2="22%" y2="50%" />
+          <line x1="16%" y1="55%" x2="22%" y2="50%" />
+          <text x="10%" y="22%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
+            DEEP NEURAL NETWORK • SYNAPSE MATRIX
           </text>
         </g>
 
-        {/* Robotic Arm & Joint Mechanism Schematic (Mid Right) */}
-        <g stroke="currentColor" strokeWidth="1.4" fill="none" className="opacity-35 hidden md:block">
-          <circle cx="82%" cy="45%" r="16" strokeWidth="1.8" />
-          <line x1="82%" y1="45%" x2="92%" y2="35%" strokeWidth="2.2" />
-          <circle cx="92%" cy="35%" r="10" />
-          <line x1="92%" y1="35%" x2="96%" y2="48%" strokeWidth="2.2" />
-          <path d="M 94% 48% L 98% 46% M 94% 48% L 98% 50%" strokeWidth="2" />
-          <text x="78%" y="52%" fill="currentColor" fontSize="9" fontFamily="monospace" fontWeight="bold">
-            ROBOTIC ARM • 6-DOF
-          </text>
-        </g>
-
-        {/* Wind Turbine / Propulsion Fan Blades (Bottom Right Background) */}
-        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-35 hidden sm:block">
-          <circle cx="85%" cy="80%" r="65" strokeDasharray="4 4" />
-          <circle cx="85%" cy="80%" r="12" fill="currentColor" fillOpacity={0.2} />
-          <path d="M 85% 67% C 88% 72%, 88% 76%, 85% 80% C 82% 76%, 82% 72%, 85% 67%" fill="currentColor" fillOpacity={0.15} />
-          <path d="M 85% 80% C 89% 83%, 93% 83%, 98% 80% C 93% 77%, 89% 77%, 85% 80%" fill="currentColor" fillOpacity={0.15} />
-          <path d="M 85% 80% C 82% 85%, 82% 89%, 85% 93% C 88% 89%, 88% 85%, 85% 80%" fill="currentColor" fillOpacity={0.15} />
-          <text x="80%" y="94%" fill="currentColor" fontSize="9" fontFamily="monospace" fontWeight="bold">
-            TURBINE FAN • 3000 RPM
-          </text>
-        </g>
-
-        {/* Rocket Aerodynamic Airframe Blueprint (Center Right) */}
-        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-30 hidden lg:block">
-          <path d="M 52% 18% C 54% 24%, 54% 30%, 54% 45% L 50% 45% C 50% 30%, 50% 24%, 52% 18% Z" strokeWidth="1.5" />
-          <path d="M 50% 38% H 54% M 50% 42% H 54%" />
-          <path d="M 48% 45% L 50% 41% M 56% 45% L 54% 41%" strokeWidth="1.8" />
-          <text x="48%" y="16%" fill="currentColor" fontSize="9" fontFamily="monospace" fontWeight="bold">
-            AEROSPACE NOZZLE
-          </text>
-        </g>
-
-        {/* Electronic Microchip & Circuit Array (Bottom Left) */}
-        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-40 hidden sm:block">
-          <rect x="6%" y="70%" width="130" height="95" rx="5" strokeWidth="1.8" />
-          <path d="M 6% 75% H 2% M 6% 80% H 2% M 6% 85% H 2% M 6% 90% H 2%" />
-          <path d="M 19% 75% H 23% M 19% 80% H 23% M 19% 85% H 23% M 19% 90% H 23%" />
-          <text x="7%" y="82%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
-            SOC MCU-64 • VCC 3.3V
-          </text>
-        </g>
-
-        {/* Horizontal Technical Dimensioning Line (Top Center) */}
-        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-55 hidden sm:block">
-          <line x1="28%" y1="50" x2="72%" y2="50" strokeWidth="1.5" />
-          <line x1="28%" y1="40" x2="28%" y2="60" strokeWidth="1.5" />
-          <line x1="72%" y1="40" x2="72%" y2="60" strokeWidth="1.5" />
-          <path d="M 28% 50 L 30% 47 L 30% 53 Z" fill="currentColor" />
-          <path d="M 72% 50 L 70% 47 L 70% 53 Z" fill="currentColor" />
-          <text x="44%" y="44" fill="currentColor" fontSize="11" fontFamily="monospace" fontWeight="bold">
-            |&lt;--- 1450.00 mm ---&gt;|
-          </text>
-        </g>
-
-        {/* Engineering Formulas Blueprint Annotations */}
+        {/* AI Transformer Attention & Logic Formulas */}
         <g fill="currentColor" className="opacity-45 hidden md:block" fontFamily="monospace" fontWeight="bold" fontSize="12">
-          <text x="4%" y="10%">F = m · a</text>
-          <text x="4%" y="14%">V = I · R</text>
-          <text x="4%" y="18%">E = m · c²</text>
-          <text x="88%" y="65%">PV = nRT</text>
-          <text x="88%" y="69%">σ = F / A</text>
+          <text x="4%" y="10%">Attention(Q,K,V) = softmax(QKᵀ / √dₖ) V</text>
+          <text x="4%" y="14%">y = σ(W · x + b)</text>
+          <text x="4%" y="18%">∇L = ∂Loss / ∂W</text>
+          <text x="78%" y="65%">f(x) = max(0, x)</text>
+          <text x="78%" y="69%">H(p, q) = -Σ p(x) log q(x)</text>
+        </g>
+
+        {/* Cyber Visor Symbol Motif (Top Center) */}
+        <g stroke="#c084fc" strokeWidth="1.5" fill="none" className="opacity-40 hidden sm:block">
+          <rect x="42%" y="18" width="16%" height="24" rx="12" stroke="#a855f7" strokeWidth="1.5" />
+          <text x="47.5%" y="35" fill="#fdfbf7" fontSize="13" fontFamily="monospace" fontWeight="bold">
+            &lt; / &gt;
+          </text>
+        </g>
+
+        {/* Microprocessor AI Core (Bottom Left) */}
+        <g stroke="currentColor" strokeWidth="1.2" fill="none" className="opacity-40 hidden sm:block">
+          <rect x="6%" y="72%" width="130" height="95" rx="6" strokeWidth="1.8" />
+          <path d="M 6% 77% H 2% M 6% 82% H 2% M 6% 87% H 2% M 6% 92% H 2%" />
+          <path d="M 19% 77% H 23% M 19% 82% H 23% M 19% 87% H 23% M 19% 92% H 23%" />
+          <text x="7.5%" y="84%" fill="currentColor" fontSize="10" fontFamily="monospace" fontWeight="bold">
+            NEURAL NPU • 128 TFLOPS
+          </text>
+        </g>
+
+        {/* Creation of Adam: Pointing Vector Hand (Top Right) */}
+        <g stroke="#c084fc" strokeWidth="1.5" fill="none" className="opacity-35 hidden md:block">
+          <path d="M 88% 8% L 82% 16% L 77% 18% L 72% 23% L 74% 25% L 79% 20% L 84% 19% L 91% 10% Z" />
+          <circle cx="72%" cy="23%" r="3" fill="#06b6d4" />
+          <text x="70%" y="29%" fill="currentColor" fontSize="9" fontFamily="monospace" fontWeight="bold">
+            AI CREATION // ADAM
+          </text>
         </g>
       </svg>
 
-      {/* 4. Left Ruler Measurement Scale (Tablets & Desktop only to prevent mobile clutter) */}
+      {/* 5. Left Measurement Ruler Scale */}
       <div className="hidden sm:flex absolute top-0 bottom-0 left-1 sm:left-3 flex-col justify-around py-6 pointer-events-none opacity-60 z-0">
         {[...Array(12)].map((_, i) => (
           <div key={i} className="flex items-center gap-1.5">
-            <div className="w-3 h-0.5 sm:w-5 sm:h-0.5 bg-[#00d2ff]" />
-            <span className="hidden sm:inline text-[9px] font-mono font-black text-[#00d2ff]">
+            <div className="w-3 h-0.5 sm:w-5 sm:h-0.5 bg-[#a855f7]" />
+            <span className="hidden sm:inline text-[9px] font-mono font-black text-[#c084fc]">
               {i * 100}mm
             </span>
           </div>
         ))}
       </div>
 
+      {/* 6. Iconic Top-Left Yellow Crown Doodle (positioned above 0mm ruler tick mark) */}
+      <div className="absolute top-4 left-4 sm:top-5 sm:left-5 opacity-90 text-[#fbbf24] pointer-events-none z-0">
+        <CrownDoodle className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-sm" />
+      </div>
+
       {!minimal && (
         <>
-          {/* 5. Rotating Gears Animation */}
+          {/* 7. Rotating AI Neural Wheel Animation (Top Right) */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-            className="absolute top-3 right-3 sm:top-10 sm:right-12 opacity-30 sm:opacity-90 text-[#00d2ff] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
+            className="absolute top-3 right-3 sm:top-8 sm:right-10 opacity-30 sm:opacity-80 text-[#c084fc] pointer-events-none z-0 scale-75 sm:scale-100 transform origin-top-right"
           >
-            <Gear className="w-12 h-12 sm:w-20 sm:h-20 stroke-[2]" />
+            <CircuitBoard className="w-12 h-12 sm:w-20 sm:h-20 stroke-[1.8]" />
           </motion.div>
 
-          {/* 6. Mid-Page Interlocking Gear Train & Caliper */}
-          <div className="absolute top-[14%] left-8 opacity-15 sm:opacity-80 text-[#10b981] pointer-events-none z-0">
-            <GearsSet className="w-16 h-16 sm:w-28 sm:h-28 stroke-[1.8]" />
+          {/* 8. Cyan Sparkles (Mid Right) */}
+          <div className="absolute top-1/3 right-6 opacity-25 sm:opacity-80 text-[#06b6d4] pointer-events-none z-0">
+            <SparkleRays className="w-8 h-8 sm:w-12 sm:h-12 stroke-[2]" />
           </div>
 
-          <div className="absolute top-1/3 right-5 opacity-20 sm:opacity-80 text-[#00d2ff] pointer-events-none z-0">
-            <CircuitBoard className="w-12 h-12 sm:w-18 sm:h-18 stroke-[1.8]" />
-          </div>
-
-          {/* 7. Bottom-Left Drafting Compass & Caliper */}
+          {/* 8. Bottom-Left Scrapbook Brain Sticker (No cream background box, pure transparent PNG) */}
           <motion.div
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-4 left-6 sm:bottom-10 sm:left-12 opacity-25 sm:opacity-80 text-[#fbbf24] pointer-events-none flex items-center gap-2 sm:gap-3 z-0"
+            className="absolute bottom-6 left-6 opacity-30 sm:opacity-95 pointer-events-none z-0 hidden lg:flex items-center"
           >
-            <Compass className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2]" />
-            <Caliper className="w-7 h-7 sm:w-12 sm:h-12 stroke-[2] -rotate-12" />
+            <div className="relative w-36 h-36 -rotate-6 drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]">
+              <Image
+                src="/technova-brain-sticker.png"
+                alt="AI Brain Sticker"
+                fill
+                className="object-contain"
+              />
+            </div>
           </motion.div>
 
-          {/* 8. Bottom-Right Engineer Hard Hat */}
+          {/* 9. Bottom-Right Scrapbook AI Chip Sticker (No cream background box, pure transparent PNG) */}
           <motion.div
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 opacity-25 sm:opacity-80 text-[#38bdf8] pointer-events-none z-0"
+            className="absolute bottom-6 right-6 opacity-30 sm:opacity-95 pointer-events-none z-0 hidden lg:flex items-center"
           >
-            <HardHat className="w-8 h-8 sm:w-14 sm:h-14 stroke-[2.2]" />
+            <div className="relative w-36 h-36 rotate-6 drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]">
+              <Image
+                src="/technova-chip-sticker.png"
+                alt="AI Microchip Sticker"
+                fill
+                className="object-contain"
+              />
+            </div>
           </motion.div>
 
-          {/* 9. Side Blueprint Sticky Specs (Desktop Large Viewports Only) */}
-          <div className="absolute top-[42%] left-6 sticky-note-yellow p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] -rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
-            <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
-            <p className="text-xs font-black text-[#081a2e]">INGENIUM 2026</p>
-            <p className="text-[10px] font-bold text-[#081a2e]/80">Engineers' Day Live Quiz</p>
+          {/* 10. Side Specs (Desktop Viewports Only) */}
+          <div className="absolute top-[38%] left-6 bg-[#1e0e38]/95 p-3.5 rounded-xl border-2 border-[#8b5cf6] shadow-[4px_4px_0px_#090214] -rotate-6 hidden xl:block w-52 text-left pointer-events-none z-10">
+            <div className="flex items-center justify-between mb-1">
+              <PaperClip className="w-4 h-4 text-[#c084fc]" />
+              <span className="text-[9px] font-black uppercase tracking-wider text-[#a855f7]">NSS Units 1 & 2</span>
+            </div>
+            <p className="text-xs font-black text-white">TECHNOVA 2026</p>
+            <p className="text-[10px] font-bold text-[#c084fc]">AI and Innovation Convention</p>
           </div>
 
-          <div className="absolute top-1/2 right-6 sticky-note-lavender p-4 rounded-xl border-2 border-[#081a2e] shadow-[4px_4px_0px_#04101d] rotate-6 hidden xl:block w-48 text-left pointer-events-none z-10">
-            <PaperClip className="w-4 h-4 text-[#081a2e] mb-1" />
-            <p className="text-xs font-black text-[#081a2e]">Live Rankings</p>
-            <p className="text-[10px] font-bold text-[#081a2e]/80">Innovation Hall of Fame</p>
+          <div className="absolute top-[48%] right-6 bg-[#1e0e38]/95 p-3.5 rounded-xl border-2 border-[#c084fc] shadow-[4px_4px_0px_#090214] rotate-6 hidden xl:block w-52 text-left pointer-events-none z-10">
+            <div className="flex items-center justify-between mb-1">
+              <ThumbtackPin className="w-4 h-4 text-[#fbbf24]" />
+              <span className="text-[9px] font-black uppercase tracking-wider text-[#06b6d4]">NSS Convention</span>
+            </div>
+            <p className="text-xs font-black text-white">Test Your Tech IQ</p>
+            <p className="text-[10px] font-bold text-[#c084fc]">Yenepoya Balmatta Campus</p>
           </div>
         </>
       )}

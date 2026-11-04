@@ -418,3 +418,96 @@ export function ThumbtackPin(props: IconProps) {
     </Svg>
   )
 }
+
+export function CrownDoodle(props: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 36 28"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      {/* 3 round circular bobbles on top of the 3 crown peaks */}
+      <circle cx="6" cy="7" r="2.2" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="4" r="2.6" fill="currentColor" stroke="none" />
+      <circle cx="30" cy="7" r="2.2" fill="currentColor" stroke="none" />
+
+      {/* Hand-drawn crown doodle outline matching poster */}
+      <path d="M 5 23 L 6 8.5 L 12 17 L 18 5.5 L 24 17 L 30 8.5 L 31 23" />
+      {/* Curved base stroke */}
+      <path d="M 4 23 Q 18 24.5 32 23" />
+    </svg>
+  )
+}
+
+export function SparkleRays(props: IconProps) {
+  return (
+    <Svg strokeWidth={2} {...props}>
+      <path d="M12 2v5M4.93 4.93l3.54 3.54M2 12h5M4.93 19.07l3.54-3.54M12 17v5M19.07 19.07l-3.54-3.54M17 12h5M19.07 4.93l-3.54 3.54" />
+    </Svg>
+  )
+}
+
+export function RobotHandIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.8} {...props}>
+      <path d="M2 18l5-3 5 1 8-7-2-2-7 5-4-1-5 4z" />
+      <path d="M14 9l6-5 2 2-6 5" />
+      <circle cx="9" cy="15" r="1.5" fill="currentColor" />
+      <circle cx="14" cy="11" r="1.5" fill="currentColor" />
+      <path d="M18 6l3-3" strokeWidth={2.5} />
+    </Svg>
+  )
+}
+
+export function StatueCyberIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.8} {...props}>
+      {/* Bust silhouette */}
+      <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+      {/* Cyber Visor */}
+      <rect x="7" y="5" width="10" height="3" rx="1.5" fill="currentColor" />
+      <path d="M10 6.5l-1 .7 1 .7M14 6.5l1 .7-1 .7" stroke="#120726" strokeWidth={1} />
+    </Svg>
+  )
+}
+
+export function AiChipIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.8} {...props}>
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+      {/* AI text / core */}
+      <rect x="8" y="8" width="8" height="8" rx="1" fill="currentColor" fillOpacity={0.15} />
+      {/* Pins */}
+      <path d="M9 2v3M12 2v3M15 2v3" />
+      <path d="M9 19v3M12 19v3M15 19v3" />
+      <path d="M2 9h3M2 12h3M2 15h3" />
+      <path d="M19 9h3M19 12h3M19 15h3" />
+    </Svg>
+  )
+}
+
+export function BrainNeuralIcon(props: IconProps) {
+  return (
+    <Svg strokeWidth={1.8} {...props}>
+      <path d="M9.5 2A4.5 4.5 0 0 0 5 6.5c0 .4.06.78.16 1.15A4 4 0 0 0 3 11.5a4 4 0 0 0 2.5 3.7A4.5 4.5 0 0 0 10 19v3" />
+      <path d="M14.5 2A4.5 4.5 0 0 1 19 6.5c0 .4-.06.78-.16 1.15A4 4 0 0 1 21 11.5a4 4 0 0 1-2.5 3.7A4.5 4.5 0 0 1 14 19v3" />
+      <path d="M9 7c1 1 1 3 0 4M15 7c-1 1-1 3 0 4M8 13h2M14 13h2" />
+    </Svg>
+  )
+}
+
+export function SwirlLoop(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 120 40" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5 25c25-15 50-15 70-5s30 15 40 5" />
+      <path d="M15 32c20-10 45-8 65 0" strokeDasharray="3 3" />
+    </svg>
+  )
+}
+

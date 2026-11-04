@@ -17,14 +17,14 @@ const sans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "INGENIUM 2026 — Engineers' Day Live Quiz",
+  title: 'TECHNOVA 2026 — AI and Innovation Quiz Competition',
   description:
-    'INGENIUM 2026 — A live quiz celebrating innovation, engineering, and the minds shaping our future. Scan, join, and play together.',
+    'TECHNOVA 2026: Youth Convention for NSS Volunteers on AI and Innovation at Yenepoya School of Engineering & Technology. Test your Technology IQ.',
   robots: { index: false, follow: false },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#FFFBF5',
+  themeColor: '#120726',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

@@ -5,7 +5,7 @@ import Image from 'next/image'
 export function YentechBranding({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`inline-flex items-center justify-center gap-2.5 p-2 px-3 rounded-xl bg-[#0e2e4e] border-2 border-[#00d2ff] text-ink shadow-[2px_2px_0px_#04101d] ${className}`}
+      className={`inline-flex items-center justify-center gap-2.5 p-2 px-3 rounded-xl bg-[#1e0e38] border-2 border-[#8b5cf6] text-ink shadow-[2px_2px_0px_#090214] ${className}`}
     >
       <span className="text-xs font-black text-ink-soft tracking-wide uppercase">Powered by</span>
       <Image

@@ -1,45 +1,46 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   Engineering Blueprint Design System
-   An authentic technical blueprint theme: deep navy grid backdrop, major/minor
-   blueprint grid lines, cyan & gold accent cards, and 3D drafting shadows.
-   NO EMOJIS -- 100% SVG technical schematics and precision typography.
+   TECHNOVA: Youth Convention for NSS Volunteers on AI and Innovation
+   Cyber-Renaissance & Scrapbook Design System
+   Rich cyber-violet palette, neon visor glows, kraft paper tape,
+   and precision AI neural schematics.
+   NO EMOJIS -- 100% SVG technical schematics & crafted artwork.
 --------------------------------------------------------------------------- */
 
 @theme {
-  --color-paper-light: #0f355c;
-  --color-paper-warm: #0b2847;
-  --color-paper-cream: #082038;
+  --color-paper-light: #240d47;
+  --color-paper-warm: #1a0836;
+  --color-paper-cream: #120524;
 
-  --color-ink: #f8fafc;
-  --color-ink-soft: #7dd3fc;
-  --color-ink-faint: #94a3b8;
+  --color-ink: #fdfbf7;
+  --color-ink-soft: #c084fc;
+  --color-ink-faint: #a78bfa;
 
-  --color-notebook-rule: rgba(0, 210, 255, 0.2);
-  --color-notebook-margin: #00d2ff;
+  --color-notebook-rule: rgba(168, 85, 247, 0.2);
+  --color-notebook-margin: #a855f7;
 
-  /* Engineering Blueprint Accent Colors */
-  --color-yenepoya-cyan: #00d2ff;
-  --color-yenepoya-blue: #0284c7;
+  /* TECHNOVA Cyber-Renaissance Accent Colors */
+  --color-yenepoya-cyan: #06b6d4;
+  --color-yenepoya-blue: #7c3aed;
   --color-yenepoya-lime: #10b981;
   --color-yenepoya-green: #059669;
-  --color-yenepoya-ink: #081a2e;
+  --color-yenepoya-ink: #120726;
 
-  /* Solid Engineering Accent Colors */
-  --color-pen-red: #ef4444;
-  --color-pen-blue: #00d2ff;
-  --color-pen-cyan: #38bdf8;
-  --color-pen-yellow: #fbbf24;
+  /* Solid Pen Accent Colors */
+  --color-pen-red: #f43f5e;
+  --color-pen-blue: #8b5cf6;
+  --color-pen-cyan: #06b6d4;
+  --color-pen-yellow: #f59e0b;
   --color-pen-green: #10b981;
-  --color-pen-purple: #818cf8;
+  --color-pen-purple: #c084fc;
 
-  /* Technical Blueprint Spec Cards */
-  --color-note-yellow: #fbbf24;    /* Hard Hat Gold */
+  /* Technical Spec Cards & Sticky Notes */
+  --color-note-yellow: #e8d5b5;    /* Kraft Paper Tan */
   --color-note-mint: #10b981;      /* Circuit Green */
-  --color-note-lavender: #00d2ff;  /* Blueprint Neon Cyan */
-  --color-note-peach: #38bdf8;     /* Technical Sky Blue */
-  --color-note-rose: #f43f5e;      /* Safety Alert Rose */
+  --color-note-lavender: #7c3aed;  /* Cyber Neon Violet */
+  --color-note-peach: #c084fc;     /* Electric Lilac */
+  --color-note-rose: #f43f5e;      /* Innovation Rose */
 
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -47,9 +48,9 @@
   --radius-card: 1.25rem;
   --radius-pill: 999px;
 
-  --shadow-paper: 4px 4px 0px #04101d;
-  --shadow-paper-lg: 6px 6px 0px #04101d;
-  --shadow-paper-sm: 2px 2px 0px #04101d;
+  --shadow-paper: 4px 4px 0px #090214;
+  --shadow-paper-lg: 6px 6px 0px #090214;
+  --shadow-paper-sm: 2px 2px 0px #090214;
 
   --animate-float-slow: float-slow 10s ease-in-out infinite;
   --animate-float-mid: float-mid 7s ease-in-out infinite;
@@ -80,7 +81,7 @@
 
 @layer base {
   * {
-    border-color: #00d2ff;
+    border-color: #8b5cf6;
   }
 
   html {
@@ -89,19 +90,19 @@
   }
 
   body {
-    background-color: #081a2e;
-    color: #f8fafc;
+    background-color: #120726;
+    color: #fdfbf7;
     font-family: var(--font-sans);
     overflow-x: hidden;
   }
 
   ::selection {
-    background: #00d2ff;
-    color: #081a2e;
+    background: #8b5cf6;
+    color: #ffffff;
   }
 
   :focus-visible {
-    outline: 3px solid #00d2ff;
+    outline: 3px solid #c084fc;
     outline-offset: 2px;
     border-radius: 8px;
   }
@@ -118,14 +119,14 @@
 }
 
 @layer utilities {
-  /* Technical Blueprint Grid Background with Major & Minor Grid Lines */
+  /* TECHNOVA Cyber Grid Background with Major & Minor Grid Lines */
   .notebook-paper {
-    background-color: #0a2239;
+    background-color: #120726;
     background-image: 
-      linear-gradient(90deg, rgba(0, 210, 255, 0.25) 1.5px, transparent 1.5px),
-      linear-gradient(0deg, rgba(0, 210, 255, 0.25) 1.5px, transparent 1.5px),
-      linear-gradient(90deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(0, 210, 255, 0.08) 1px, transparent 1px);
+      linear-gradient(90deg, rgba(168, 85, 247, 0.22) 1.5px, transparent 1.5px),
+      linear-gradient(0deg, rgba(168, 85, 247, 0.22) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(168, 85, 247, 0.07) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(168, 85, 247, 0.07) 1px, transparent 1px);
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
   }
@@ -143,25 +144,27 @@
     min-height: 100dvh;
   }
 
-  /* Blueprint Card: Deep Navy Fill, Neon Cyan Border, 3D Drafting Shadow */
+  /* TECHNOVA Card: Cosmic Plum Fill, Cyber Violet Border, 3D Shadow */
   .notebook-card {
-    background-color: #0e2e4e;
-    border: 2.5px solid #00d2ff;
+    background-color: #1e0e38;
+    border: 2.5px solid #8b5cf6;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-paper);
-    color: #f8fafc;
+    color: #fdfbf7;
   }
 
   .notebook-card-interactive {
-    background-color: #0e2e4e;
-    border: 2.5px solid #00d2ff;
+    background-color: #1e0e38;
+    border: 2.5px solid #8b5cf6;
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-paper);
-    color: #f8fafc;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    color: #fdfbf7;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
   }
 
   .notebook-card-interactive:hover {
+    background-color: #271249;
+    border-color: #c084fc;
     transform: translateY(-3px);
     box-shadow: var(--shadow-paper-lg);
   }
@@ -171,54 +174,63 @@
     box-shadow: var(--shadow-paper-sm);
   }
 
-  /* Technical Spec Cards & Sticky Notes */
-  .sticky-note-yellow {
-    background-color: #fbbf24;
-    color: #081a2e !important;
-    border: 2px solid #081a2e;
-    box-shadow: 3px 3px 0px #04101d;
+  /* Kraft Paper Tape & Scrapbook Spec Cards */
+  .sticky-note-yellow,
+  .sticky-note-kraft {
+    background-color: #e8d5b5;
+    color: #120726 !important;
+    border: 2px solid #120726;
+    box-shadow: 3px 3px 0px #090214;
   }
 
   .sticky-note-mint {
     background-color: #10b981;
-    color: #081a2e !important;
-    border: 2px solid #081a2e;
-    box-shadow: 3px 3px 0px #04101d;
+    color: #120726 !important;
+    border: 2px solid #120726;
+    box-shadow: 3px 3px 0px #090214;
   }
 
   .sticky-note-lavender {
-    background-color: #00d2ff;
-    color: #081a2e !important;
-    border: 2px solid #081a2e;
-    box-shadow: 3px 3px 0px #04101d;
+    background-color: #7c3aed;
+    color: #ffffff !important;
+    border: 2px solid #c084fc;
+    box-shadow: 3px 3px 0px #090214;
   }
 
   .sticky-note-peach {
-    background-color: #38bdf8;
-    color: #081a2e !important;
-    border: 2px solid #081a2e;
-    box-shadow: 3px 3px 0px #04101d;
+    background-color: #c084fc;
+    color: #120726 !important;
+    border: 2px solid #120726;
+    box-shadow: 3px 3px 0px #090214;
   }
 
   .sticky-note-blue {
-    background-color: #0e2e4e;
-    color: #f8fafc !important;
-    border: 2px solid #00d2ff;
-    box-shadow: 3px 3px 0px #04101d;
+    background-color: #220d49;
+    color: #fdfbf7 !important;
+    border: 2px solid #8b5cf6;
+    box-shadow: 3px 3px 0px #090214;
   }
 
   .sticky-note-rose {
     background-color: #f43f5e;
     color: #ffffff !important;
-    border: 2px solid #081a2e;
-    box-shadow: 3px 3px 0px #04101d;
+    border: 2px solid #120726;
+    box-shadow: 3px 3px 0px #090214;
+  }
+
+  .tape-strip {
+    background-color: #faedcd;
+    color: #120726;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    border-left: 2px dashed #d4a373;
+    border-right: 2px dashed #d4a373;
   }
 
   /* Technical Control Surface */
   .chalkboard-solid {
-    background-color: #07172b;
-    color: #f8fafc;
-    border: 3px solid #00d2ff;
+    background-color: #16082b;
+    color: #fdfbf7;
+    border: 3px solid #8b5cf6;
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -229,4 +241,3 @@
     scrollbar-width: none;
   }
 }
-
