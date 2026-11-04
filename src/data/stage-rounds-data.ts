@@ -33,6 +33,17 @@ export interface StageAudioQuestion {
   explanation: string
 }
 
+export interface WhoAmIQuestion {
+  id: string
+  number: number
+  participantIndex: number
+  participantLabel: string
+  imageUrl: string
+  hints: string[]
+  answer: string
+  explanation?: string
+}
+
 export interface RapidFireQuestionItem {
   number: number
   category: string
@@ -66,10 +77,20 @@ export interface StageData {
   }
   round3: {
     name: string
-    points: { correct: number; wrong: number }
+    type?: 'who_am_i' | 'rapid_fire'
+    points: {
+      hint1?: number
+      hint2?: number
+      hint3?: number
+      hint4?: number
+      correct?: number
+      wrong?: number
+    }
     ruleText: string
-    timerSeconds: number
-    sets: RapidFireSet[]
+    hintTimerSeconds?: number
+    timerSeconds?: number
+    questions?: WhoAmIQuestion[]
+    sets?: RapidFireSet[]
   }
   round4?: {
     name: string

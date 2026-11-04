@@ -104,7 +104,7 @@ export function updateStageState(patch: Partial<StageServerState>): StageServerS
   if (patch.slideIndex !== undefined && patch.slideIndex !== previousSlide) {
     stopServerTimer()
     global.__stageState.timerRunning = false
-    global.__stageState.rapidSeconds = 60
+    global.__stageState.rapidSeconds = patch.rapidSeconds !== undefined ? patch.rapidSeconds : 15
     global.__stageState.audioState = {
       playing: false,
       audioId: null,

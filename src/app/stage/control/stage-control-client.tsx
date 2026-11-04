@@ -33,6 +33,7 @@ import {
   Timer as TimerIcon,
   Zap,
   Sparkles,
+  UserCheck,
 } from 'lucide-react'
 
 export function StageControlClient({ stageData }: { stageData: StageData | null }) {
@@ -237,20 +238,41 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     }
     list.push({ index: idx++, title: 'Round 2 Standings & Leaderboard', round: 'R2', type: 'round_leaderboard', data: { roundName: 'Round 2 (Image Round)' } })
 
-    // Round 3
-    list.push({ index: idx++, title: 'Round 3: Rapid Fire Intro', round: 'R3', type: 'round_intro', data: stageData.round3 })
-    stageData.round3.sets.forEach((set, sIdx) => {
-      list.push({
-        index: idx++,
-        title: `R3 Set ${sIdx + 1}: ${set.participantLabel}`,
-        round: 'R3',
-        type: 'r3_rapid',
-        data: set,
-        qIndex: sIdx,
-        totalInRound: stageData.round3.sets.length,
+    // Round 3: Who Am I? or Rapid Fire
+    list.push({ index: idx++, title: 'Round 3: Who Am I? Intro', round: 'R3', type: 'round_intro', data: stageData.round3 })
+    if (stageData.round3.questions && stageData.round3.questions.length > 0) {
+      stageData.round3.questions.forEach((q: any, qIdx: number) => {
+        list.push({
+          index: idx++,
+          title: `R3 Q${qIdx + 1}: ${q.participantLabel} (${q.answer})`,
+          round: 'R3',
+          type: 'r3_who_am_i',
+          data: q,
+          qIndex: qIdx,
+          totalInRound: stageData.round3.questions?.length || 6,
+        })
       })
+    } else if (stageData.round3.sets) {
+      const sets = stageData.round3.sets
+      sets.forEach((set: any, sIdx: number) => {
+        list.push({
+          index: idx++,
+          title: `R3 Set ${sIdx + 1}: ${set.participantLabel}`,
+          round: 'R3',
+          type: 'r3_rapid',
+          data: set,
+          qIndex: sIdx,
+          totalInRound: sets.length,
+        })
+      })
+    }
+    list.push({
+      index: idx++,
+      title: 'Round 3 Standings & Leaderboard',
+      round: 'R3',
+      type: 'round_leaderboard',
+      data: { roundName: stageData.round3.questions?.length ? 'Round 3 (Who Am I?)' : 'Round 3 (Rapid Fire)' },
     })
-    list.push({ index: idx++, title: 'Round 3 Standings & Leaderboard', round: 'R3', type: 'round_leaderboard', data: { roundName: 'Round 3 (Rapid Fire)' } })
 
     // Tie breaker & Podium
     list.push({ index: idx++, title: 'Tie-Breaker Arena', type: 'tie_breaker' })
@@ -263,27 +285,29 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   const setSlide = useCallback(
     (slideIdx: number) => {
       const clamped = Math.max(0, Math.min(slides.length - 1, slideIdx))
+      const isR3WhoAmI = slides[clamped]?.type === 'r3_who_am_i'
+      const initTimerSecs = isR3WhoAmI ? 15 : 60
       setCurrentSlide(clamped)
       setIsRevealed(false)
       setPlayingAudioId(null)
       setTimerRunning(false)
-      setRapidSeconds(60)
+      setRapidSeconds(initTimerSecs)
       setMcqOptionStep(0)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: clamped, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
-      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: initTimerSecs } })
       sendStageNetworkSync({
         slideIndex: clamped,
         isRevealed: false,
         mcqOptionStep: 0,
         rapidQuestionIdx: 0,
         timerRunning: false,
-        rapidSeconds: 60,
+        rapidSeconds: initTimerSecs,
         audioState: { playing: false, audioId: null, timestamp: Date.now() },
       })
       sound.tap()
     },
-    [broadcast, slides.length],
+    [broadcast, slides],
   )
 
   // Direct rapid question jump helper
@@ -308,6 +332,31 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       sendStageNetworkSync({ mcqOptionStep: nextStep })
       sound.tap()
       return
+    }
+
+    if (currentSlideObj?.type === 'r3_who_am_i') {
+      const hintCount = currentSlideObj.data?.hints?.length || 4
+      if (!isRevealed) {
+        if (rapidQuestionIdx < hintCount - 1) {
+          const nextHint = rapidQuestionIdx + 1
+          setRapidQuestionIdx(nextHint)
+          setRapidSeconds(15)
+          setTimerRunning(false)
+          broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: nextHint } })
+          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 15 } })
+          sendStageNetworkSync({ rapidQuestionIdx: nextHint, rapidSeconds: 15, timerRunning: false })
+          sound.tap()
+          return
+        } else {
+          setIsRevealed(true)
+          setTimerRunning(false)
+          broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: true } })
+          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 0 } })
+          sendStageNetworkSync({ isRevealed: true, timerRunning: false })
+          sound.correct()
+          return
+        }
+      }
     }
 
     if (currentSlideObj?.type === 'r3_rapid') {
@@ -344,6 +393,26 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
       sendStageNetworkSync({ mcqOptionStep: prevStep })
       sound.tap()
       return
+    }
+
+    if (currentSlideObj?.type === 'r3_who_am_i') {
+      if (isRevealed) {
+        setIsRevealed(false)
+        broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: false } })
+        sendStageNetworkSync({ isRevealed: false })
+        sound.tap()
+        return
+      } else if (rapidQuestionIdx > 0) {
+        const prevHint = rapidQuestionIdx - 1
+        setRapidQuestionIdx(prevHint)
+        setRapidSeconds(15)
+        setTimerRunning(false)
+        broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: prevHint } })
+        broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 15 } })
+        sendStageNetworkSync({ rapidQuestionIdx: prevHint, rapidSeconds: 15, timerRunning: false })
+        sound.tap()
+        return
+      }
     }
 
     if (currentSlideObj?.type === 'r3_rapid') {
@@ -431,22 +500,26 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     })
   }, [broadcast, mcqOptionStep])
 
-  // Timer controls for Rapid Fire
+  // Timer controls for Rapid Fire & Who Am I?
   const toggleTimer = useCallback(() => {
+    const isR3WhoAmI = slides[currentSlide]?.type === 'r3_who_am_i'
+    const defaultSecs = isR3WhoAmI ? 15 : 60
     const nextRunning = !timerRunning
-    const secs = rapidSeconds <= 0 ? 60 : rapidSeconds
+    const secs = rapidSeconds <= 0 ? defaultSecs : rapidSeconds
     setTimerRunning(nextRunning)
     setRapidSeconds(secs)
     broadcast({ type: 'TIMER_ACTION', payload: { running: nextRunning, seconds: secs } })
     sendStageNetworkSync({ timerRunning: nextRunning, rapidSeconds: secs })
-  }, [timerRunning, rapidSeconds, broadcast])
+  }, [timerRunning, rapidSeconds, broadcast, currentSlide, slides])
 
   const resetTimer = useCallback(() => {
+    const isR3WhoAmI = slides[currentSlide]?.type === 'r3_who_am_i'
+    const defaultSecs = isR3WhoAmI ? 15 : 60
     setTimerRunning(false)
-    setRapidSeconds(60)
-    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60 })
-  }, [broadcast])
+    setRapidSeconds(defaultSecs)
+    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: defaultSecs } })
+    sendStageNetworkSync({ timerRunning: false, rapidSeconds: defaultSecs })
+  }, [broadcast, currentSlide, slides])
 
   // Score adjustment helper
   const adjustScore = (finalistId: string, delta: number, roundKey?: 'r1' | 'r2' | 'r3' | 'r4') => {
@@ -820,6 +893,195 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                     </div>
                   </>
                 )}
+
+                {/* Round 3 Who Am I? */}
+                {currentSlideObj.type === 'r3_who_am_i' && (() => {
+                  const q = currentSlideObj.data
+                  const targetFinalist = finalists[q.participantIndex] || { id: `f${q.participantIndex + 1}`, name: q.participantLabel, score: 0 }
+                  return (
+                    <div className="space-y-3">
+                      {/* Top status bar: Finalist + Timer */}
+                      <div className="flex items-center justify-between text-xs text-[#fbbf24] font-black">
+                        <span className="truncate flex items-center gap-1.5">
+                          <UserCheck className="w-4 h-4 text-[#fbbf24]" />
+                          Who Am I? • {targetFinalist.name} (Q{q.number} of {currentSlideObj.totalInRound})
+                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <div
+                            className={`px-2.5 py-1 rounded-lg font-mono font-black text-xs border ${
+                              rapidSeconds <= 5
+                                ? 'bg-rose-600 text-white animate-pulse border-rose-400'
+                                : timerRunning
+                                ? 'bg-[#fbbf24] text-[#1e0e38] border-[#fbbf24]'
+                                : 'bg-[#1e0e38] text-[#c084fc] border-[#8b5cf6]/40'
+                            }`}
+                          >
+                            {rapidSeconds}s
+                          </div>
+                          <button
+                            onClick={toggleTimer}
+                            className={`px-3 py-1 rounded-lg text-xs font-black shadow-sm transition active:scale-95 ${
+                              timerRunning ? 'bg-rose-600 hover:bg-rose-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                            }`}
+                          >
+                            {timerRunning ? 'Pause' : 'Start 15s'}
+                          </button>
+                          <button
+                            onClick={resetTimer}
+                            className="p-1 rounded-lg bg-[#1e0e38] text-slate-300 border border-[#8b5cf6]/40 hover:text-white"
+                            title="Reset 15s Timer"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Clue Selector Pills + Reveal Button */}
+                      <div className="flex items-center gap-1.5 bg-[#16082b] p-1.5 rounded-xl border border-[#8b5cf6]/30">
+                        <span className="text-[10px] font-black uppercase text-[#7dd3fc] mr-1">Stage Clue:</span>
+                        {[
+                          { label: 'Hint 1', pts: '+20' },
+                          { label: 'Hint 2', pts: '+15' },
+                          { label: 'Hint 3', pts: '+10' },
+                          { label: 'Hint 4', pts: '+5' },
+                        ].map((h, i) => {
+                          const isCurrent = rapidQuestionIdx === i && !isRevealed
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => jumpToRapidQuestion(i)}
+                              className={`flex-1 py-1 rounded-lg font-mono font-black text-xs transition border ${
+                                isCurrent
+                                  ? 'bg-[#fbbf24] text-[#1e0e38] border-[#fbbf24] shadow-sm font-black'
+                                  : i < rapidQuestionIdx || isRevealed
+                                  ? 'bg-[#1e0e38] text-[#c084fc] border-[#8b5cf6]/40'
+                                  : 'bg-[#1e0e38]/50 text-slate-500 border-transparent hover:text-white'
+                              }`}
+                            >
+                              {h.label} <span className="text-[10px] opacity-75">{h.pts}</span>
+                            </button>
+                          )
+                        })}
+                        <button
+                          onClick={toggleReveal}
+                          className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border transition ${
+                            isRevealed
+                              ? 'bg-emerald-600 text-white border-emerald-400'
+                              : 'bg-[#1e0e38] text-slate-300 border-[#8b5cf6]/40 hover:border-emerald-500'
+                          }`}
+                        >
+                          {isRevealed ? 'Revealed' : 'Reveal (R)'}
+                        </button>
+                      </div>
+
+                      {/* Expected Answer & Portrait Preview */}
+                      <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-emerald-500/50 shrink-0 bg-black">
+                            <Image src={q.imageUrl} alt={q.answer} fill className="object-cover" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase font-black tracking-wider text-emerald-400">Target Persona Answer:</span>
+                            <div className="text-white font-black text-base">{q.answer}</div>
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              Projector: {isRevealed ? '✓ Unblurred (Sharp)' : '🔒 Blurred (Reveals on Answer)'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 1-Click Score Awarding for this finalist */}
+                        <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                          <span className="text-[10px] font-bold text-slate-300 w-full text-right mb-0.5">Award Points:</span>
+                          <button
+                            onClick={() => adjustScore(targetFinalist.id, 20, 'r3')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-black bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400 active:scale-95"
+                            title="Award +20 (Solved on Hint 1)"
+                          >
+                            +20 (H1)
+                          </button>
+                          <button
+                            onClick={() => adjustScore(targetFinalist.id, 15, 'r3')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-black bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500 active:scale-95"
+                            title="Award +15 (Solved on Hint 2)"
+                          >
+                            +15 (H2)
+                          </button>
+                          <button
+                            onClick={() => adjustScore(targetFinalist.id, 10, 'r3')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-black bg-teal-700 hover:bg-teal-600 text-white border border-teal-500 active:scale-95"
+                            title="Award +10 (Solved on Hint 3)"
+                          >
+                            +10 (H3)
+                          </button>
+                          <button
+                            onClick={() => adjustScore(targetFinalist.id, 5, 'r3')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-black bg-cyan-700 hover:bg-cyan-600 text-white border border-cyan-500 active:scale-95"
+                            title="Award +5 (Solved on Hint 4)"
+                          >
+                            +5 (H4)
+                          </button>
+                          <button
+                            onClick={() => adjustScore(targetFinalist.id, 0, 'r3')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-bold bg-[#1e0e38] text-slate-400 border border-[#8b5cf6]/40 hover:text-white"
+                            title="0 Points (Wrong / Passed)"
+                          >
+                            0 pts
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 4 Hints List for Quizmaster review */}
+                      <div className="grid grid-cols-1 gap-1.5 max-h-56 overflow-y-auto pr-0.5">
+                        {q.hints.map((hintText: string, i: number) => {
+                          const isLiveOnStage = rapidQuestionIdx === i && !isRevealed
+                          const isPastOrRevealed = i < rapidQuestionIdx || isRevealed
+                          const ptsVal = [20, 15, 10, 5][i] || 5
+                          return (
+                            <div
+                              key={i}
+                              onClick={() => jumpToRapidQuestion(i)}
+                              className={`p-2 rounded-xl border transition text-xs flex items-center justify-between gap-2 cursor-pointer ${
+                                isLiveOnStage
+                                  ? 'bg-[#1e0e38] border-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.2)]'
+                                  : isPastOrRevealed
+                                  ? 'bg-[#16082b] border-emerald-500/40'
+                                  : 'bg-[#16082b]/80 border-[#8b5cf6]/20 hover:border-[#8b5cf6]/50 opacity-70'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span
+                                  className={`w-5 h-5 rounded font-mono font-black text-[11px] flex items-center justify-center shrink-0 ${
+                                    isLiveOnStage ? 'bg-[#fbbf24] text-[#1e0e38]' : 'bg-[#7c3aed]/20 text-[#c084fc]'
+                                  }`}
+                                >
+                                  {i + 1}
+                                </span>
+                                <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-white/10 text-slate-300 shrink-0">
+                                  +{ptsVal} pts
+                                </span>
+                                <span className="text-slate-200 font-bold truncate">
+                                  {hintText}
+                                </span>
+                              </div>
+                              {isLiveOnStage && (
+                                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#fbbf24] text-[#1e0e38] shrink-0">
+                                  Active Clue
+                                </span>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+
+                      {q.explanation && (
+                        <div className="p-2 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 text-[11px] text-slate-300">
+                          <strong className="text-[#fbbf24]">Backstory / Historical Note: </strong>
+                          {q.explanation}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
 
                 {/* Round 3 Rapid Fire */}
                 {currentSlideObj.type === 'r3_rapid' && (

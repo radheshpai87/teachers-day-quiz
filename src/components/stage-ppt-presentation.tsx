@@ -57,6 +57,8 @@ import {
   ArrowRight,
   ShieldCheck,
   FlameKindling,
+  Lock,
+  UserCheck,
 } from 'lucide-react'
 
 // The exact 4 Kahoot Answer Themes used across the actual quiz
@@ -94,6 +96,7 @@ interface SlideItem {
     | 'round_leaderboard'
     | 'r2_image'
     | 'r2_audio'
+    | 'r3_who_am_i'
     | 'r3_rapid'
     | 'r4_intro'
     | 'r4_buzzer'
@@ -454,24 +457,38 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       roundName: 'Round 2 (Image Round)',
     })
 
-    // Round 3: Rapid Fire (6 Sets for 6 Participants)
+    // Round 3: Who Am I? or Rapid Fire
     list.push({ type: 'round_intro', title: stageData.round3.name, roundNum: 3, data: stageData.round3 })
-    stageData.round3.sets.forEach((set, idx) => {
-      list.push({
-        type: 'r3_rapid',
-        title: `Round 3 — Rapid Fire: ${set.participantLabel} (Set ${set.setNumber})`,
-        roundNum: 3,
-        data: set,
-        qIndex: idx,
-        totalInRound: stageData.round3.sets.length,
+    if (stageData.round3.questions && stageData.round3.questions.length > 0) {
+      stageData.round3.questions.forEach((q, idx) => {
+        list.push({
+          type: 'r3_who_am_i',
+          title: `Round 3 — Who Am I? ${q.participantLabel} (Q${q.number})`,
+          roundNum: 3,
+          data: q,
+          qIndex: idx,
+          totalInRound: stageData.round3.questions?.length || 6,
+        })
       })
-    })
+    } else if (stageData.round3.sets) {
+      const sets = stageData.round3.sets
+      sets.forEach((set, idx) => {
+        list.push({
+          type: 'r3_rapid',
+          title: `Round 3 — Rapid Fire: ${set.participantLabel} (Set ${set.setNumber})`,
+          roundNum: 3,
+          data: set,
+          qIndex: idx,
+          totalInRound: sets.length,
+        })
+      })
+    }
     // Leaderboard after Round 3
     list.push({
       type: 'round_leaderboard',
       title: 'Round 3 Complete — Pre-Finals Sprint Standings',
       roundNum: 3,
-      roundName: 'Round 3 (Rapid Fire)',
+      roundName: stageData.round3.questions?.length ? 'Round 3 (Who Am I?)' : 'Round 3 (Rapid Fire)',
     })
 
     // Tie Breaker & Podium
@@ -493,23 +510,27 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     setAudioProgress(0)
   }, [currentSlide])
 
-  // Rapid Fire Timer toggle / reset actions
+  // Rapid Fire & Who Am I? Timer toggle / reset actions
   const toggleRapidTimer = useCallback(() => {
+    const isR3WhoAmI = slides[currentSlide]?.type === 'r3_who_am_i'
+    const defaultSecs = isR3WhoAmI ? 15 : 60
     const nextRunning = !timerRunning
-    const secs = rapidSeconds <= 0 ? 60 : rapidSeconds
+    const secs = rapidSeconds <= 0 ? defaultSecs : rapidSeconds
     setTimerRunning(nextRunning)
     setRapidSeconds(secs)
     broadcast({ type: 'TIMER_ACTION', payload: { running: nextRunning, seconds: secs } })
     sendStageNetworkSync({ timerRunning: nextRunning, rapidSeconds: secs })
-  }, [timerRunning, rapidSeconds, broadcast])
+  }, [timerRunning, rapidSeconds, broadcast, currentSlide, slides])
 
   const resetRapidTimer = useCallback(() => {
+    const isR3WhoAmI = slides[currentSlide]?.type === 'r3_who_am_i'
+    const defaultSecs = isR3WhoAmI ? 15 : 60
     setTimerRunning(false)
-    setRapidSeconds(60)
+    setRapidSeconds(defaultSecs)
     setRapidQuestionIdx(0)
-    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-    sendStageNetworkSync({ timerRunning: false, rapidSeconds: 60, rapidQuestionIdx: 0 })
-  }, [broadcast])
+    broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: defaultSecs } })
+    sendStageNetworkSync({ timerRunning: false, rapidSeconds: defaultSecs, rapidQuestionIdx: 0 })
+  }, [broadcast, currentSlide, slides])
 
   // Sound FX cues for timer countdown
   const prevRapidSecs = useRef(rapidSeconds)
@@ -574,6 +595,32 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       }
     }
 
+    // Step-by-step progressive clues for Round 3 Who Am I?
+    if (currentSlideObj?.type === 'r3_who_am_i') {
+      const hintCount = currentSlideObj.data?.hints?.length || 4
+      if (!isRevealed) {
+        if (rapidQuestionIdx < hintCount - 1) {
+          const nextHint = rapidQuestionIdx + 1
+          setRapidQuestionIdx(nextHint)
+          setRapidSeconds(15)
+          setTimerRunning(false)
+          broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: nextHint } })
+          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 15 } })
+          sendStageNetworkSync({ rapidQuestionIdx: nextHint, rapidSeconds: 15, timerRunning: false })
+          sound.tap()
+          return
+        } else {
+          setIsRevealed(true)
+          setTimerRunning(false)
+          broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: true } })
+          broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 0 } })
+          sendStageNetworkSync({ isRevealed: true, timerRunning: false })
+          sound.correct()
+          return
+        }
+      }
+    }
+
     // Step-by-step questions for Round 3 Rapid Fire (advance through Q1->Q2->Q3 without revealing answer)
     if (currentSlideObj?.type === 'r3_rapid') {
       const qCount = currentSlideObj.data?.questions?.length || 5
@@ -597,15 +644,17 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
     if (currentSlide < slides.length - 1) {
       const nextIdx = currentSlide + 1
+      const isNextR3 = slides[nextIdx]?.type === 'r3_who_am_i'
+      const initSecs = isNextR3 ? 15 : 60
       setCurrentSlide(nextIdx)
       setIsRevealed(false)
       setTimerRunning(false)
-      setRapidSeconds(60)
+      setRapidSeconds(initSecs)
       setMcqOptionStep(0)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: nextIdx, mcqOptionStep: 0, rapidQuestionIdx: 0 } })
-      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: 60 })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: initSecs } })
+      sendStageNetworkSync({ slideIndex: nextIdx, isRevealed: false, mcqOptionStep: 0, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: initSecs })
       sound.tap()
     }
   }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
@@ -619,6 +668,26 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
       sendStageNetworkSync({ mcqOptionStep: prevStep })
       sound.tap()
       return
+    }
+
+    if (currentSlideObj?.type === 'r3_who_am_i') {
+      if (isRevealed) {
+        setIsRevealed(false)
+        broadcast({ type: 'TOGGLE_REVEAL', payload: { isRevealed: false } })
+        sendStageNetworkSync({ isRevealed: false })
+        sound.tap()
+        return
+      } else if (rapidQuestionIdx > 0) {
+        const prevHint = rapidQuestionIdx - 1
+        setRapidQuestionIdx(prevHint)
+        setRapidSeconds(15)
+        setTimerRunning(false)
+        broadcast({ type: 'RAPID_QUESTION_STEP', payload: { rapidQuestionIdx: prevHint } })
+        broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 15 } })
+        sendStageNetworkSync({ rapidQuestionIdx: prevHint, rapidSeconds: 15, timerRunning: false })
+        sound.tap()
+        return
+      }
     }
 
     if (currentSlideObj?.type === 'r3_rapid') {
@@ -641,16 +710,18 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
     if (currentSlide > 0) {
       const prevIdx = currentSlide - 1
       const prevSlideObj = slides[prevIdx]
+      const isPrevR3 = prevSlideObj?.type === 'r3_who_am_i'
+      const initSecs = isPrevR3 ? 15 : 60
       const targetStep = prevSlideObj?.type === 'r1_mcq' ? 4 : 0
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
       setTimerRunning(false)
-      setRapidSeconds(60)
+      setRapidSeconds(initSecs)
       setMcqOptionStep(targetStep)
       setRapidQuestionIdx(0)
       broadcast({ type: 'CHANGE_SLIDE', payload: { slideIndex: prevIdx, mcqOptionStep: targetStep, rapidQuestionIdx: 0 } })
-      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: 60 } })
-      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: 60 })
+      broadcast({ type: 'TIMER_ACTION', payload: { running: false, seconds: initSecs } })
+      sendStageNetworkSync({ slideIndex: prevIdx, isRevealed: false, mcqOptionStep: targetStep, rapidQuestionIdx: 0, timerRunning: false, rapidSeconds: initSecs })
       sound.tap()
     }
   }, [currentSlide, slides, mcqOptionStep, rapidQuestionIdx, isRevealed, broadcast])
@@ -719,7 +790,7 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
         toggleReveal()
       } else if (e.key === ' ') {
         e.preventDefault()
-        if (slide.type === 'r3_rapid') {
+        if (slide.type === 'r3_rapid' || slide.type === 'r3_who_am_i') {
           toggleRapidTimer()
         } else {
           nextSlide()
@@ -1354,6 +1425,257 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                   </button>
 
                   <span className="text-xs text-[#7dd3fc] font-bold">Direct / Pass score awarded from Host Deck</span>
+                </div>
+              </div>
+            )}
+
+            {/* SLIDE TYPE: Round 3 Who Am I? */}
+            {slide.type === 'r3_who_am_i' && (
+              <div className="flex flex-col h-full justify-between p-1 sm:p-3 max-w-5xl mx-auto w-full">
+                <div>
+                  {/* Top Bar */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] flex items-center gap-1.5 shadow-[2px_2px_0px_#090214]">
+                        <UserCheck className="w-3.5 h-3.5" /> Who Am I? • {finalists[slide.data.participantIndex]?.name || slide.data.participantLabel} (Q{slide.data.number} of {slide.totalInRound})
+                      </span>
+                      <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#7c3aed]/20 text-[#c084fc] border border-[#8b5cf6]/40">
+                        Clue {Math.min(rapidQuestionIdx + 1, 4)} of 4
+                      </span>
+                    </div>
+
+                    {/* Step progress pills */}
+                    <div className="flex items-center gap-1.5 bg-[#16082b]/90 p-1.5 rounded-2xl border border-[#8b5cf6]/30">
+                      {[
+                        { label: 'H1', pts: '+20' },
+                        { label: 'H2', pts: '+15' },
+                        { label: 'H3', pts: '+10' },
+                        { label: 'H4', pts: '+5' },
+                      ].map((h, hIdx) => {
+                        const isCurrent = rapidQuestionIdx === hIdx && !isRevealed
+                        const isPast = hIdx < rapidQuestionIdx || isRevealed
+                        return (
+                          <button
+                            key={hIdx}
+                            onClick={() => jumpToRapidQuestion(hIdx)}
+                            className={`px-2.5 py-1 rounded-xl font-mono font-black text-xs transition flex items-center gap-1 border-2 ${
+                              isCurrent
+                                ? 'bg-[#fbbf24] text-[#1e0e38] border-[#1e0e38] shadow-[2px_2px_0px_#090214] scale-105'
+                                : isPast
+                                ? 'bg-[#7c3aed]/30 text-[#c084fc] border-[#8b5cf6]/60'
+                                : 'bg-[#1e0e38] text-slate-500 border-transparent'
+                            }`}
+                            title={`Jump to Hint ${hIdx + 1} (${h.pts} Pts)`}
+                          >
+                            <span>{h.label}</span>
+                            <span className="text-[10px] opacity-80">{h.pts}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {/* 15s Acoustic Timer Pill */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`flex items-center gap-2 px-3.5 py-1 rounded-full border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214] font-mono font-black text-sm transition ${
+                          rapidSeconds <= 5
+                            ? 'bg-[#f43f5e] text-white animate-pulse'
+                            : timerRunning
+                            ? 'bg-[#fbbf24] text-[#1e0e38]'
+                            : 'bg-[#7c3aed] text-white'
+                        }`}
+                      >
+                        <TimerIcon className="w-3.5 h-3.5" />
+                        <span>{rapidSeconds}s</span>
+                      </div>
+
+                      <button
+                        onClick={toggleRapidTimer}
+                        className={`p-1.5 rounded-xl font-black text-[#1e0e38] border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214] transition ${
+                          timerRunning ? 'bg-[#fbbf24]' : 'bg-[#10b981]'
+                        }`}
+                        title="Start / Pause 15s Timer (Space)"
+                      >
+                        {timerRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      </button>
+
+                      <button
+                        onClick={resetRapidTimer}
+                        className="p-1.5 rounded-xl bg-[#1e0e38] text-[#c084fc] border-2 border-[#8b5cf6]/60 shadow-[2px_2px_0px_#090214] transition"
+                        title="Reset 15s Timer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Main Grid: Left Portrait + Right Clues */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                    {/* Left: Mystery Portrait with Blur Transition */}
+                    <div className="md:col-span-5 flex flex-col justify-center">
+                      <div className="relative w-full h-[270px] sm:h-[330px] md:h-[380px] rounded-3xl notebook-card border-2 border-[#8b5cf6]/50 shadow-[6px_6px_0px_#090214] overflow-hidden flex items-center justify-center p-3 bg-[#0d041a]">
+                        <div className="absolute inset-0 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none" />
+
+                        <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                          <Image
+                            src={slide.data.imageUrl}
+                            alt={isRevealed ? slide.data.answer : 'Mystery Persona'}
+                            fill
+                            className={`object-contain rounded-2xl transition-all duration-700 ease-out select-none ${
+                              isRevealed
+                                ? 'filter-none scale-100 brightness-105'
+                                : 'blur-2xl brightness-90 contrast-125 scale-110'
+                            }`}
+                            priority
+                          />
+
+                          {/* Unrevealed Label */}
+                          {!isRevealed && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-between p-3 pointer-events-none">
+                              <span className="px-3 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-[#16082b]/90 text-[#fbbf24] border border-[#fbbf24]/40 shadow-md">
+                                Visual Clue
+                              </span>
+                              <div className="px-3 py-1.5 rounded-xl bg-[#090214]/85 border border-[#8b5cf6]/50 backdrop-blur-md text-center shadow-lg">
+                                <div className="flex items-center justify-center gap-1.5 text-xs font-mono font-bold text-[#c084fc]">
+                                  <EyeOff className="w-3.5 h-3.5" />
+                                  <span>Blurred Until Answer</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Answer Revealed Card */}
+                          <AnimatePresence>
+                            {isRevealed && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                                className="absolute bottom-2 inset-x-2 p-2.5 sm:p-3 rounded-2xl bg-[#090214]/95 border-2 border-[#10b981] backdrop-blur-md shadow-[0_4px_20px_rgba(16,185,129,0.4)] text-center"
+                              >
+                                <div className="flex items-center justify-center gap-1 text-[10px] font-mono font-black uppercase tracking-widest text-emerald-400">
+                                  <CheckCircle2 className="w-3 h-3" /> Identity Revealed
+                                </div>
+                                <h3 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight">
+                                  {slide.data.answer}
+                                </h3>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Progressive Hints */}
+                    <div className="md:col-span-7 flex flex-col justify-between space-y-2">
+                      <div className="space-y-2 flex-1 flex flex-col justify-around">
+                        {slide.data.hints.map((hintText: string, hIdx: number) => {
+                          const isUnlocked = isRevealed || hIdx <= rapidQuestionIdx
+                          const isCurrent = !isRevealed && hIdx === rapidQuestionIdx
+                          const pointsVal = [20, 15, 10, 5][hIdx] || 5
+
+                          return (
+                            <motion.div
+                              key={hIdx}
+                              initial={{ opacity: 0, x: 12 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.2, delay: hIdx * 0.04 }}
+                              className={`relative p-2.5 sm:p-3 rounded-2xl border-2 transition-all ${
+                                isCurrent
+                                  ? 'notebook-card border-[#fbbf24] shadow-[4px_4px_0px_#090214] scale-[1.01]'
+                                  : isUnlocked
+                                  ? 'bg-[#16082b]/85 border-[#8b5cf6]/40 shadow-sm'
+                                  : 'bg-[#16082b]/30 border-dashed border-[#8b5cf6]/20 opacity-60'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-lg font-mono font-black text-[11px] ${
+                                      isCurrent
+                                        ? 'bg-[#fbbf24] text-[#1e0e38]'
+                                        : isUnlocked
+                                        ? 'bg-[#7c3aed] text-white'
+                                        : 'bg-white/10 text-slate-400'
+                                    }`}
+                                  >
+                                    Hint {hIdx + 1}
+                                  </span>
+                                  <span
+                                    className={`text-xs font-mono font-bold ${
+                                      isCurrent ? 'text-[#fbbf24]' : isUnlocked ? 'text-[#c084fc]' : 'text-slate-500'
+                                    }`}
+                                  >
+                                    +{pointsVal} Pts
+                                  </span>
+                                </div>
+
+                                {isCurrent && (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40 animate-pulse">
+                                    Active Hint
+                                  </span>
+                                )}
+                                {isUnlocked && !isCurrent && (
+                                  <span className="text-emerald-400">
+                                    <Check className="w-3.5 h-3.5" />
+                                  </span>
+                                )}
+                                {!isUnlocked && (
+                                  <span className="text-slate-500">
+                                    <Lock className="w-3.5 h-3.5" />
+                                  </span>
+                                )}
+                              </div>
+
+                              {isUnlocked ? (
+                                <p className="text-xs sm:text-sm md:text-base font-bold text-slate-100 leading-snug">
+                                  {hintText}
+                                </p>
+                              ) : (
+                                <p className="text-xs font-mono text-slate-500 italic">
+                                  Unlocks after 15 seconds if unanswered (+{pointsVal} pts)
+                                </p>
+                              )}
+                            </motion.div>
+                          )
+                        })}
+                      </div>
+
+                      {/* Bottom Info / Backstory Box */}
+                      {isRevealed && slide.data.explanation && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="p-2.5 rounded-2xl bg-[#1e0e38]/90 border border-[#8b5cf6]/40 text-xs text-slate-200 leading-relaxed shadow-md"
+                        >
+                          <strong className="text-[#fbbf24] font-black uppercase tracking-wider mr-1.5">Context:</strong>
+                          {slide.data.explanation}
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Bar: Reveal / Blur Mode Switcher */}
+                <div className="pt-2 border-t-2 border-[#8b5cf6]/30 flex items-center justify-between mt-2">
+                  <button
+                    onClick={toggleReveal}
+                    className="flex items-center gap-2 px-5 py-2 rounded-full font-black text-xs uppercase tracking-wider bg-[#fbbf24] hover:bg-[#f59e0b] text-[#1e0e38] border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition cursor-pointer"
+                  >
+                    {isRevealed ? (
+                      <>
+                        <RotateCcw className="w-4 h-4" /> Blur Image & Hide Answer (R)
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4" /> Unblur Portrait & Reveal Answer (R)
+                      </>
+                    )}
+                  </button>
+
+                  <div className="text-xs text-[#7dd3fc] font-bold">
+                    Target Finalist: <strong className="text-white">{finalists[slide.data.participantIndex]?.name || slide.data.participantLabel}</strong>
+                  </div>
                 </div>
               </div>
             )}

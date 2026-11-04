@@ -54,4 +54,5 @@ scripts/update-stage-questions.mjs
 scripts/generate-quizmaster-pdf.mjs
 scripts/quizmaster_key.html
 scripts/extracted_images/
+scripts/round3_images/
 
