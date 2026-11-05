@@ -112,22 +112,24 @@ interface SlideItem {
 
 export function StagePptPresentation({ stageData }: { stageData: StageData | null }) {
   // Slide Management
-  const [currentSlide, setCurrentSlide] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const params = new URLSearchParams(window.location.search)
-        const s = params.get('slide')
-        if (s) {
-          const parsed = parseInt(s, 10)
-          if (!isNaN(parsed) && parsed >= 0) return parsed
-        }
-      } catch {}
-    }
-    return 0
-  })
+  const [currentSlide, setCurrentSlide] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isRevealed, setIsRevealed] = useState(false)
   const [mcqOptionStep, setMcqOptionStep] = useState(0)
+
+  // Sync initial slide from URL query parameter (?slide=1)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const s = params.get('slide')
+      if (s) {
+        const parsed = parseInt(s, 10)
+        if (!isNaN(parsed) && parsed >= 0) {
+          setCurrentSlide(parsed)
+        }
+      }
+    } catch {}
+  }, [])
 
   // Rapid Fire State
   const [rapidQuestionIdx, setRapidQuestionIdx] = useState(0)
