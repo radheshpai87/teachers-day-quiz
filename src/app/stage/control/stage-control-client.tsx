@@ -325,7 +325,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
   // Step-by-step navigation helper (Reveals MCQ options / Rapid questions one-by-one or advances slide)
   const handleNext = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed) {
+    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed) {
       const nextStep = mcqOptionStep + 1
       setMcqOptionStep(nextStep)
       broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
@@ -386,7 +386,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
   const handlePrev = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if (currentSlideObj?.type === 'r1_mcq' && mcqOptionStep > 0 && !isRevealed) {
+    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep > 0 && !isRevealed) {
       const prevStep = mcqOptionStep - 1
       setMcqOptionStep(prevStep)
       broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: prevStep } })
@@ -435,7 +435,7 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     if (currentSlide > 0) {
       const prevIdx = currentSlide - 1
       const prevSlideObj = slides[prevIdx]
-      const targetStep = prevSlideObj?.type === 'r1_mcq' ? 4 : 0
+      const targetStep = (prevSlideObj?.type === 'r1_mcq' || prevSlideObj?.type === 'r2_image') ? 4 : 0
       setCurrentSlide(prevIdx)
       setIsRevealed(false)
       setPlayingAudioId(null)
@@ -1343,12 +1343,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                 onClick={handleNext}
                 disabled={
                   currentSlide === slides.length - 1 &&
-                  (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
+                  ((currentSlideObj?.type !== 'r1_mcq' && currentSlideObj?.type !== 'r2_image') || mcqOptionStep >= 4) &&
                   (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
                 }
                 className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-xs sm:text-sm border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
+                {(currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed ? (
                   <>
                     <span>Reveal Option {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4)</span>
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -1571,12 +1571,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
           onClick={handleNext}
           disabled={
             currentSlide === slides.length - 1 &&
-            (currentSlideObj?.type !== 'r1_mcq' || mcqOptionStep >= 4) &&
+            ((currentSlideObj?.type !== 'r1_mcq' && currentSlideObj?.type !== 'r2_image') || mcqOptionStep >= 4) &&
             (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
           }
           className="px-3 py-2.5 rounded-xl bg-[#7c3aed] text-white font-black text-xs border border-[#1e0e38] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
-          {currentSlideObj?.type === 'r1_mcq' && mcqOptionStep < 4 && !isRevealed ? (
+          {(currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed ? (
             <>
               Opt {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4) <ChevronRight className="w-4 h-4" />
             </>
