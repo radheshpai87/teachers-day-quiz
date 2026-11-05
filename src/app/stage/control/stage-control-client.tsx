@@ -322,17 +322,9 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
     [broadcast],
   )
 
-  // Step-by-step navigation helper (Reveals MCQ options / Rapid questions one-by-one or advances slide)
+  // Step-by-step navigation helper (Reveals Rapid / Who Am I hints one-by-one or advances slide)
   const handleNext = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed) {
-      const nextStep = mcqOptionStep + 1
-      setMcqOptionStep(nextStep)
-      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
-      sendStageNetworkSync({ mcqOptionStep: nextStep })
-      sound.tap()
-      return
-    }
 
     if (currentSlideObj?.type === 'r3_who_am_i') {
       const hintCount = currentSlideObj.data?.hints?.length || 4
@@ -386,14 +378,6 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
   const handlePrev = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep > 0 && !isRevealed) {
-      const prevStep = mcqOptionStep - 1
-      setMcqOptionStep(prevStep)
-      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: prevStep } })
-      sendStageNetworkSync({ mcqOptionStep: prevStep })
-      sound.tap()
-      return
-    }
 
     if (currentSlideObj?.type === 'r3_who_am_i') {
       if (isRevealed) {
@@ -755,30 +739,16 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                       )
                     })()}
 
-                    {/* Options Step-by-Step Status & Grid */}
+                    {/* Options Grid */}
                     <div className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between text-[11px] text-[#7dd3fc] font-bold">
                         <span>
-                          Options on Stage: <strong className="text-white">{isRevealed ? 4 : mcqOptionStep}/4</strong>
+                          4 Options on Stage • {isRevealed ? <strong className="text-emerald-400">Answer Revealed</strong> : <strong className="text-[#fbbf24]">Awaiting Answer</strong>}
                         </span>
-                        {mcqOptionStep < 4 && !isRevealed && (
-                          <button
-                            onClick={() => {
-                              setMcqOptionStep(4)
-                              broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: 4 } })
-                              sendStageNetworkSync({ mcqOptionStep: 4 })
-                              sound.tap()
-                            }}
-                            className="text-[10px] text-[#c084fc] hover:underline font-black cursor-pointer"
-                          >
-                            Reveal All 4 Options
-                          </button>
-                        )}
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                         {currentSlideObj.data.options.map((opt: string, optIdx: number) => {
-                          const isOptRevealed = optIdx < mcqOptionStep || isRevealed
                           const isCorrect = optIdx === currentSlideObj.data.correctIndex
                           const optLetter = ['A', 'B', 'C', 'D'][optIdx]
 
@@ -786,21 +756,17 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                             <div
                               key={optIdx}
                               className={`p-2 rounded-xl border text-xs flex items-center justify-between gap-1.5 transition ${
-                                isCorrect && isRevealed
+                                isCorrect
                                   ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-black'
-                                  : isOptRevealed
-                                  ? 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
-                                  : 'bg-[#16082b]/60 border-dashed border-slate-700 text-slate-500'
+                                  : 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
                               }`}
                             >
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span
                                   className={`w-5 h-5 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 ${
-                                    isCorrect && isRevealed
+                                    isCorrect
                                       ? 'bg-emerald-500 text-[#1e0e38]'
-                                      : isOptRevealed
-                                      ? 'bg-[#7c3aed]/20 text-[#c084fc]'
-                                      : 'bg-slate-800 text-slate-500'
+                                      : 'bg-[#7c3aed]/20 text-[#c084fc]'
                                   }`}
                                 >
                                   {optLetter}
@@ -809,12 +775,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                               </div>
 
                               <span className="text-[10px] shrink-0 font-bold">
-                                {isCorrect && isRevealed ? (
+                                {isCorrect ? (
                                   <strong className="text-emerald-400">✓ Correct</strong>
-                                ) : isOptRevealed ? (
-                                  <span className="text-[#7dd3fc]">Shown</span>
                                 ) : (
-                                  <span className="text-slate-600">Hidden</span>
+                                  <span className="text-slate-500">Option</span>
                                 )}
                               </span>
                             </div>
@@ -878,26 +842,12 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                       <div className="space-y-1.5 pt-1">
                         <div className="flex items-center justify-between text-[11px] text-[#7dd3fc] font-bold">
                           <span>
-                            Options on Stage: <strong className="text-white">{isRevealed ? 4 : mcqOptionStep}/4</strong>
+                            4 Options on Stage • {isRevealed ? <strong className="text-emerald-400">Answer Revealed</strong> : <strong className="text-[#fbbf24]">Awaiting Answer</strong>}
                           </span>
-                          {mcqOptionStep < 4 && !isRevealed && (
-                            <button
-                              onClick={() => {
-                                setMcqOptionStep(4)
-                                broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: 4 } })
-                                sendStageNetworkSync({ mcqOptionStep: 4 })
-                                sound.tap()
-                              }}
-                              className="text-[10px] text-[#c084fc] hover:underline font-black cursor-pointer"
-                            >
-                              Reveal All 4 Options
-                            </button>
-                          )}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                           {currentSlideObj.data.options.map((opt: string, optIdx: number) => {
-                            const isOptRevealed = optIdx < mcqOptionStep || isRevealed
                             const isCorrect = optIdx === currentSlideObj.data.correctIndex
                             const optLetter = ['A', 'B', 'C', 'D'][optIdx]
 
@@ -905,21 +855,17 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                               <div
                                 key={optIdx}
                                 className={`p-2 rounded-xl border text-xs flex items-center justify-between gap-1.5 transition ${
-                                  isCorrect && isRevealed
+                                  isCorrect
                                     ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-black'
-                                    : isOptRevealed
-                                    ? 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
-                                    : 'bg-[#16082b]/60 border-dashed border-slate-700 text-slate-500'
+                                    : 'bg-[#1e0e38] border-[#8b5cf6]/40 text-slate-200'
                                 }`}
                               >
                                 <div className="flex items-center gap-1.5 min-w-0">
                                   <span
                                     className={`w-5 h-5 rounded-md flex items-center justify-center font-black text-[10px] shrink-0 ${
-                                      isCorrect && isRevealed
+                                      isCorrect
                                         ? 'bg-emerald-500 text-[#1e0e38]'
-                                        : isOptRevealed
-                                        ? 'bg-[#7c3aed]/20 text-[#c084fc]'
-                                        : 'bg-slate-800 text-slate-500'
+                                        : 'bg-[#7c3aed]/20 text-[#c084fc]'
                                     }`}
                                   >
                                     {optLetter}
@@ -928,12 +874,10 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
                                 </div>
 
                                 <span className="text-[10px] shrink-0 font-bold">
-                                  {isCorrect && isRevealed ? (
+                                  {isCorrect ? (
                                     <strong className="text-emerald-400">✓ Correct</strong>
-                                  ) : isOptRevealed ? (
-                                    <span className="text-[#7dd3fc]">Shown</span>
                                   ) : (
-                                    <span className="text-slate-600">Hidden</span>
+                                    <span className="text-slate-500">Option</span>
                                   )}
                                 </span>
                               </div>
@@ -1341,30 +1285,14 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
               <button
                 onClick={handleNext}
-                disabled={
-                  currentSlide === slides.length - 1 &&
-                  ((currentSlideObj?.type !== 'r1_mcq' && currentSlideObj?.type !== 'r2_image') || mcqOptionStep >= 4) &&
-                  (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
-                }
+                disabled={currentSlide === slides.length - 1}
                 className="flex-1 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#7c3aed] hover:bg-[#8b5cf6] text-white font-black text-xs sm:text-sm border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] disabled:opacity-30 disabled:pointer-events-none transition flex items-center justify-center gap-1 hover:scale-[1.02] active:scale-95 cursor-pointer"
               >
-                {(currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed ? (
+                {currentSlideObj?.type === 'r3_who_am_i' && !isRevealed && rapidQuestionIdx < (currentSlideObj.data?.hints?.length || 4) - 1 ? (
                   <>
-                    <span>Reveal Option {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4)</span>
+                    <span>Next Hint ({rapidQuestionIdx + 2}/{currentSlideObj.data?.hints?.length || 4})</span>
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </>
-                ) : currentSlideObj?.type === 'r3_rapid' && !isRevealed ? (
-                  rapidQuestionIdx < (currentSlideObj.data?.questions?.length || 5) - 1 ? (
-                    <>
-                      <span>Next Question ({rapidQuestionIdx + 2}/{currentSlideObj.data?.questions?.length || 5})</span>
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Reveal All Answers</span>
-                      <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </>
-                  )
                 ) : (
                   <>
                     <span>Next Slide</span>
@@ -1569,27 +1497,13 @@ export function StageControlClient({ stageData }: { stageData: StageData | null 
 
         <button
           onClick={handleNext}
-          disabled={
-            currentSlide === slides.length - 1 &&
-            ((currentSlideObj?.type !== 'r1_mcq' && currentSlideObj?.type !== 'r2_image') || mcqOptionStep >= 4) &&
-            (currentSlideObj?.type !== 'r3_rapid' || isRevealed)
-          }
+          disabled={currentSlide === slides.length - 1}
           className="px-3 py-2.5 rounded-xl bg-[#7c3aed] text-white font-black text-xs border border-[#1e0e38] disabled:opacity-30 active:scale-95 flex items-center gap-1 shadow-sm shrink-0"
         >
-          {(currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep < 4 && !isRevealed ? (
+          {currentSlideObj?.type === 'r3_who_am_i' && !isRevealed && rapidQuestionIdx < (currentSlideObj.data?.hints?.length || 4) - 1 ? (
             <>
-              Opt {['A', 'B', 'C', 'D'][mcqOptionStep]} ({mcqOptionStep + 1}/4) <ChevronRight className="w-4 h-4" />
+              Next Hint ({rapidQuestionIdx + 2}/4) <ChevronRight className="w-4 h-4" />
             </>
-          ) : currentSlideObj?.type === 'r3_rapid' && !isRevealed ? (
-            rapidQuestionIdx < (currentSlideObj.data?.questions?.length || 5) - 1 ? (
-              <>
-                Next Q ({rapidQuestionIdx + 2}/5) <ChevronRight className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                Reveal All <Eye className="w-4 h-4" />
-              </>
-            )
           ) : (
             <>
               Next <ChevronRight className="w-4 h-4" />

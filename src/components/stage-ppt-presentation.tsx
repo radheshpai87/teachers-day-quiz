@@ -597,18 +597,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
   const nextSlide = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
 
-    // Multi-step reveals for Round 1 MCQ & Round 2 Image MCQ (Step through options 1, 2, 3, 4 one-by-one)
-    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && !isRevealed) {
-      if (mcqOptionStep < 4) {
-        const nextStep = mcqOptionStep + 1
-        setMcqOptionStep(nextStep)
-        broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: nextStep } })
-        sendStageNetworkSync({ mcqOptionStep: nextStep })
-        sound.tap()
-        return
-      }
-    }
-
     // Step-by-step progressive clues for Round 3 Who Am I?
     if (currentSlideObj?.type === 'r3_who_am_i') {
       const hintCount = currentSlideObj.data?.hints?.length || 4
@@ -675,14 +663,6 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
   const prevSlide = useCallback(() => {
     const currentSlideObj = slides[currentSlide]
-    if ((currentSlideObj?.type === 'r1_mcq' || currentSlideObj?.type === 'r2_image') && mcqOptionStep > 0 && !isRevealed) {
-      const prevStep = mcqOptionStep - 1
-      setMcqOptionStep(prevStep)
-      broadcast({ type: 'MCQ_OPTION_STEP', payload: { step: prevStep } })
-      sendStageNetworkSync({ mcqOptionStep: prevStep })
-      sound.tap()
-      return
-    }
 
     if (currentSlideObj?.type === 'r3_who_am_i') {
       if (isRevealed) {
@@ -1219,10 +1199,9 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     </h2>
                   </div>
 
-                  {/* 4 Kahoot-Style Vibrant Options Grid (Smooth Drop-In Reveal One by One) */}
+                  {/* 4 Kahoot-Style Vibrant Options Grid (Loads Sequentially One by One) */}
                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {slide.data.options.map((opt: string, idx: number) => {
-                      const isOptionRevealed = idx < mcqOptionStep || isRevealed
                       const isCorrect = idx === slide.data.correctIndex
                       const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
                       const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
@@ -1238,48 +1217,43 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                       return (
                         <div key={idx} className="relative w-full min-h-[4.5rem]">
-                          {/* Fall-Into-Place Smooth Option Card (Invisible until revealed) */}
-                          <AnimatePresence mode="wait">
-                            {isOptionRevealed && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -30, scale: 0.98 }}
-                                animate={{
-                                  opacity: isRevealed && !isCorrect ? 0.35 : 1,
-                                  scale: isRevealed && isCorrect ? 1.02 : 1,
-                                  y: 0,
-                                }}
-                                exit={{ opacity: 0, y: 15 }}
-                                transition={{
-                                  duration: 0.38,
-                                  ease: [0.16, 1, 0.3, 1], // Deceleration curve (smooth touchdown with zero jerk)
-                                }}
-                                style={{ willChange: 'transform, opacity' }}
-                                className={`relative w-full h-full min-h-[4.5rem] p-4 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
-                              >
-                                <div className="flex items-center gap-3.5 pr-2 min-w-0">
-                                  <div className="shrink-0 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
-                                    <Shape className="w-5 h-5 fill-current" />
-                                  </div>
-                                  <span className="font-bold text-base sm:text-lg leading-snug">
-                                    {opt}
-                                  </span>
-                                </div>
+                          <motion.div
+                            initial={{ opacity: 0, y: -30, scale: 0.98 }}
+                            animate={{
+                              opacity: isRevealed && !isCorrect ? 0.35 : 1,
+                              scale: isRevealed && isCorrect ? 1.02 : 1,
+                              y: 0,
+                            }}
+                            transition={{
+                              delay: 0.12 + idx * 0.22,
+                              duration: 0.38,
+                              ease: [0.16, 1, 0.3, 1], // Deceleration curve (smooth touchdown with zero jerk)
+                            }}
+                            style={{ willChange: 'transform, opacity' }}
+                            className={`relative w-full h-full min-h-[4.5rem] p-4 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
+                          >
+                            <div className="flex items-center gap-3.5 pr-2 min-w-0">
+                              <div className="shrink-0 w-9 h-9 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-lg">
+                                <Shape className="w-5 h-5 fill-current" />
+                              </div>
+                              <span className="font-bold text-base sm:text-lg leading-snug">
+                                {opt}
+                              </span>
+                            </div>
 
-                                <div className="shrink-0 ml-2">
-                                  {isRevealed && isCorrect && (
-                                    <motion.span
-                                      initial={{ opacity: 0, scale: 0.6 }}
-                                      animate={{ opacity: 1, scale: 1 }}
-                                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                                      className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
-                                    >
-                                      <Check className="w-4 h-4 stroke-[3]" />
-                                    </motion.span>
-                                  )}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                            <div className="shrink-0 ml-2">
+                              {isRevealed && isCorrect && (
+                                <motion.span
+                                  initial={{ opacity: 0, scale: 0.6 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                                  className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
+                                >
+                                  <Check className="w-4 h-4 stroke-[3]" />
+                                </motion.span>
+                              )}
+                            </div>
+                          </motion.div>
                         </div>
                       )
                     })}
@@ -1456,11 +1430,10 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
                     />
                   </div>
 
-                  {/* 4 Kahoot-Style Options Grid (Loads one by one, identical to Round 1) */}
+                  {/* 4 Kahoot-Style Options Grid (Loads Sequentially One by One) */}
                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
                     {slide.data.options && slide.data.options.length > 0 ? (
                       slide.data.options.map((opt: string, idx: number) => {
-                        const isOptionRevealed = idx < mcqOptionStep || isRevealed
                         const isCorrect = idx === slide.data.correctIndex
                         const theme = ANSWER_THEMES[idx % ANSWER_THEMES.length]
                         const Shape = ANSWER_SHAPES[idx % ANSWER_SHAPES.length]
@@ -1476,47 +1449,43 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
 
                         return (
                           <div key={idx} className="relative w-full min-h-[3.6rem]">
-                            <AnimatePresence mode="wait">
-                              {isOptionRevealed && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: -25, scale: 0.98 }}
-                                  animate={{
-                                    opacity: isRevealed && !isCorrect ? 0.35 : 1,
-                                    scale: isRevealed && isCorrect ? 1.02 : 1,
-                                    y: 0,
-                                  }}
-                                  exit={{ opacity: 0, y: 15 }}
-                                  transition={{
-                                    duration: 0.38,
-                                    ease: [0.16, 1, 0.3, 1],
-                                  }}
-                                  style={{ willChange: 'transform, opacity' }}
-                                  className={`relative w-full h-full min-h-[3.6rem] px-4 py-2 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
-                                >
-                                  <div className="flex items-center gap-3 pr-2 min-w-0">
-                                    <div className="shrink-0 w-8 h-8 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-base">
-                                      <Shape className="w-4 h-4 fill-current" />
-                                    </div>
-                                    <span className="font-bold text-sm sm:text-base md:text-lg leading-snug">
-                                      {opt}
-                                    </span>
-                                  </div>
+                            <motion.div
+                              initial={{ opacity: 0, y: -25, scale: 0.98 }}
+                              animate={{
+                                opacity: isRevealed && !isCorrect ? 0.35 : 1,
+                                scale: isRevealed && isCorrect ? 1.02 : 1,
+                                y: 0,
+                              }}
+                              transition={{
+                                delay: 0.15 + idx * 0.22,
+                                duration: 0.38,
+                                ease: [0.16, 1, 0.3, 1],
+                              }}
+                              style={{ willChange: 'transform, opacity' }}
+                              className={`relative w-full h-full min-h-[3.6rem] px-4 py-2 rounded-2xl border-b-4 flex items-center justify-between select-none text-left cursor-default ${buttonStyles}`}
+                            >
+                              <div className="flex items-center gap-3 pr-2 min-w-0">
+                                <div className="shrink-0 w-8 h-8 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-base">
+                                  <Shape className="w-4 h-4 fill-current" />
+                                </div>
+                                <span className="font-bold text-sm sm:text-base md:text-lg leading-snug">
+                                  {opt}
+                                </span>
+                              </div>
 
-                                  <div className="shrink-0 ml-2">
-                                    {isRevealed && isCorrect && (
-                                      <motion.span
-                                        initial={{ opacity: 0, scale: 0.6 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ duration: 0.25, ease: 'easeOut' }}
-                                        className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
-                                      >
-                                        <Check className="w-4 h-4 stroke-[3]" />
-                                      </motion.span>
-                                    )}
-                                  </div>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                              <div className="shrink-0 ml-2">
+                                {isRevealed && isCorrect && (
+                                  <motion.span
+                                    initial={{ opacity: 0, scale: 0.6 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                                    className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold text-sm shadow-md"
+                                  >
+                                    <Check className="w-4 h-4 stroke-[3]" />
+                                  </motion.span>
+                                )}
+                              </div>
+                            </motion.div>
                           </div>
                         )
                       })
