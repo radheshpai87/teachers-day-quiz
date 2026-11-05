@@ -920,176 +920,253 @@ export function StagePptPresentation({ stageData }: { stageData: StageData | nul
               </div>
             )}
 
-            {/* SLIDE TYPE: Rules (Clean, Balanced & High-Impact Layout) */}
+            {/* SLIDE TYPE: Rules (Clean, Balanced & High-Impact Layout with Divided Points) */}
             {slide.type === 'rules' && (
-              <div className="flex flex-col h-full justify-between p-2 sm:p-4 max-w-5xl mx-auto w-full select-none">
+              <div className="flex flex-col h-full justify-between p-3 sm:p-6 max-w-6xl mx-auto w-full select-none">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 sm:p-2.5 rounded-2xl bg-[#7c3aed] text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214]">
-                      <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <div className="flex items-center gap-3.5">
+                    <div className="p-2.5 sm:p-3 rounded-2xl bg-[#7c3aed] text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214]">
+                      <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
                     <div>
-                      <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#c084fc]">
+                      <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-[#c084fc]">
                         Quiz Regulations & Guidelines
                       </span>
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
                         Official Stage Rules
                       </h2>
                     </div>
                   </div>
 
-                  <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] border-2 border-[#1e0e38] shadow-[2px_2px_0px_#090214]">
-                    3 Finale Rounds • Top 6 Qualifiers
+                  <span className="hidden sm:inline-flex px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider sticky-note-yellow text-[#1e0e38] border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214]">
+                    3 Distinct Rounds • Top 6 Qualifiers
                   </span>
                 </div>
 
-                {/* Main 3-Column Round Cards (High Contrast, Beautiful Hierarchy) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-auto">
+                {/* Main 3-Column Round Cards (Divided Points & Clear Visual Hierarchy) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 my-auto">
                   {/* ROUND 1 */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 }}
-                    className="p-3.5 sm:p-4 rounded-2xl notebook-card border-2 border-[#8b5cf6]/40 flex flex-col justify-between space-y-3 shadow-[3px_3px_0px_#090214]"
+                    className="p-5 sm:p-6 rounded-3xl notebook-card border-2 border-[#8b5cf6]/50 flex flex-col justify-between space-y-4 shadow-[4px_4px_0px_#090214]"
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#7c3aed]/30 text-[#c084fc] border border-[#8b5cf6]/50">
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-[#7c3aed]/30 text-[#c084fc] border border-[#8b5cf6]/50">
                           Round 1
                         </span>
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                          +10 Correct • 0 Wrong
+                        <span className="text-xs font-bold text-[#7dd3fc]">
+                          2 Questions / Finalist
                         </span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-black text-white mb-2 flex items-center gap-1.5">
-                        <HelpCircle className="w-4 h-4 text-[#c084fc]" /> MCQ Arena
-                      </h3>
-                      <ul className="text-xs text-slate-200 font-semibold space-y-1.5 pl-1">
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#c084fc] font-black">•</span>
-                          <span><strong>2 Questions</strong> per finalist (12 total)</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#c084fc] font-black">•</span>
-                          <span><strong>4 Options</strong> (A, B, C, D) on screen</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#c084fc] font-black">•</span>
-                          <span><strong>No negative points</strong> for wrong answers</span>
-                        </li>
-                      </ul>
+
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                          <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#c084fc]" /> MCQ Arena
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
+                          12 MCQs total • 4 Options (A, B, C, D)
+                        </p>
+                      </div>
+
+                      {/* DIVIDED POINTS SECTION */}
+                      <div className="p-3.5 rounded-2xl bg-[#1e0e38]/90 border border-[#8b5cf6]/40 space-y-2.5">
+                        <span className="text-[11px] uppercase font-black tracking-wider text-[#c084fc] block">
+                          Points Division
+                        </span>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div className="py-2.5 px-2 rounded-xl bg-emerald-950/80 border border-emerald-500/60 flex flex-col items-center justify-center text-center">
+                            <span className="text-2xl sm:text-3xl font-black text-emerald-300 leading-none mb-1">
+                              +10
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] font-black text-emerald-200 uppercase tracking-tight">
+                              Correct Answer
+                            </span>
+                          </div>
+                          <div className="py-2.5 px-2 rounded-xl bg-slate-900/80 border border-slate-700/70 flex flex-col items-center justify-center text-center">
+                            <span className="text-2xl sm:text-3xl font-black text-slate-300 leading-none mb-1">
+                              0
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 uppercase tracking-tight">
+                              No Negative
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-[#1e0e38]/70 border border-[#8b5cf6]/30 text-[11px] font-bold text-slate-300">
-                      💡 Tech & AI fact revealed after each answer
+
+                    <div className="p-2.5 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 text-xs font-bold text-slate-300 flex items-center gap-2.5">
+                      <span className="text-lg shrink-0">💡</span>
+                      <span>Verified Tech & AI fact revealed after each answer</span>
                     </div>
                   </motion.div>
 
                   {/* ROUND 2 */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="p-3.5 sm:p-4 rounded-2xl notebook-card border-2 border-[#38bdf8]/40 flex flex-col justify-between space-y-3 shadow-[3px_3px_0px_#090214]"
+                    className="p-5 sm:p-6 rounded-3xl notebook-card border-2 border-[#38bdf8]/50 flex flex-col justify-between space-y-4 shadow-[4px_4px_0px_#090214]"
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40">
                           Round 2
                         </span>
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                          +10 Correct • −5 Wrong
+                        <span className="text-xs font-bold text-sky-300">
+                          1 Question / Finalist
                         </span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-black text-white mb-2 flex items-center gap-1.5">
-                        <ImageIcon className="w-4 h-4 text-sky-400" /> Image Round
-                      </h3>
-                      <ul className="text-xs text-slate-200 font-semibold space-y-1.5 pl-1">
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-sky-400 font-black">•</span>
-                          <span><strong>1 Visual Clue</strong> per finalist (6 total)</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-sky-400 font-black">•</span>
-                          <span><strong>4 Options</strong> displayed on projector</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-sky-400 font-black">•</span>
-                          <span><strong>−5 Penalty</strong> for incorrect answer</span>
-                        </li>
-                      </ul>
+
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                          <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 text-sky-400" /> Image Round
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
+                          6 Visual Clues total • 4 Options on Screen
+                        </p>
+                      </div>
+
+                      {/* DIVIDED POINTS SECTION */}
+                      <div className="p-3.5 rounded-2xl bg-[#081a2e]/90 border border-sky-500/40 space-y-2.5">
+                        <span className="text-[11px] uppercase font-black tracking-wider text-sky-300 block">
+                          Points Division
+                        </span>
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div className="py-2.5 px-2 rounded-xl bg-emerald-950/80 border border-emerald-500/60 flex flex-col items-center justify-center text-center">
+                            <span className="text-2xl sm:text-3xl font-black text-emerald-300 leading-none mb-1">
+                              +10
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] font-black text-emerald-200 uppercase tracking-tight">
+                              Correct Answer
+                            </span>
+                          </div>
+                          <div className="py-2.5 px-2 rounded-xl bg-rose-950/80 border border-rose-500/60 flex flex-col items-center justify-center text-center">
+                            <span className="text-2xl sm:text-3xl font-black text-rose-300 leading-none mb-1">
+                              −5
+                            </span>
+                            <span className="text-[10px] sm:text-[11px] font-black text-rose-200 uppercase tracking-tight">
+                              Wrong Penalty
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-[#081a2e]/70 border border-sky-500/30 text-[11px] font-bold text-sky-200">
-                      🎯 Identify robots, inventions & historic hardware
+
+                    <div className="p-2.5 rounded-xl bg-[#081a2e] border border-sky-500/30 text-xs font-bold text-sky-200 flex items-center gap-2.5">
+                      <span className="text-lg shrink-0">🎯</span>
+                      <span>Identify iconic robots, inventions & historical hardware</span>
                     </div>
                   </motion.div>
 
                   {/* ROUND 3 */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
-                    className="p-3.5 sm:p-4 rounded-2xl notebook-card border-2 border-[#fbbf24]/40 flex flex-col justify-between space-y-3 shadow-[3px_3px_0px_#090214]"
+                    className="p-5 sm:p-6 rounded-3xl notebook-card border-2 border-[#fbbf24]/50 flex flex-col justify-between space-y-4 shadow-[4px_4px_0px_#090214]"
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
                           Round 3
                         </span>
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                          +20 / +15 / +10 / +5 pts
+                        <span className="text-xs font-bold text-amber-300">
+                          1 Question / Finalist
                         </span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-black text-white mb-2 flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4 text-[#fbbf24]" /> Who Am I?
-                      </h3>
-                      <ul className="text-xs text-slate-200 font-semibold space-y-1.5 pl-1">
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#fbbf24] font-black">•</span>
-                          <span><strong>4 Progressive Clues</strong> (15s timer each)</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#fbbf24] font-black">•</span>
-                          <span><strong>No options</strong> • Image starts blurred</span>
-                        </li>
-                        <li className="flex items-start gap-1.5">
-                          <span className="text-[#fbbf24] font-black">•</span>
-                          <span>Portrait unblurs on answer reveal</span>
-                        </li>
-                      </ul>
+
+                      <div>
+                        <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-[#fbbf24]" /> Who Am I?
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
+                          4 Progressive Clues • Blurred Portrait
+                        </p>
+                      </div>
+
+                      {/* DIVIDED POINTS SECTION (Progressive Clues Tier) */}
+                      <div className="p-3.5 rounded-2xl bg-[#2e1d05]/90 border border-amber-500/40 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] uppercase font-black tracking-wider text-amber-300">
+                            Progressive Points Matrix
+                          </span>
+                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-[#1e0e38]">
+                            ⏱️ 15s / Clue
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          <div className="p-2 rounded-xl bg-amber-400 text-[#1e0e38] flex flex-col items-center justify-center text-center shadow-sm">
+                            <span className="text-base sm:text-lg font-black leading-none mb-0.5">+20</span>
+                            <span className="text-[10px] font-black uppercase">Hint 1</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-amber-500/80 text-white flex flex-col items-center justify-center text-center">
+                            <span className="text-base sm:text-lg font-black leading-none mb-0.5">+15</span>
+                            <span className="text-[10px] font-bold uppercase">Hint 2</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-amber-600/70 text-white flex flex-col items-center justify-center text-center">
+                            <span className="text-base sm:text-lg font-black leading-none mb-0.5">+10</span>
+                            <span className="text-[10px] font-bold uppercase">Hint 3</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-amber-700/60 text-white flex flex-col items-center justify-center text-center">
+                            <span className="text-base sm:text-lg font-black leading-none mb-0.5">+5</span>
+                            <span className="text-[10px] font-bold uppercase">Hint 4</span>
+                          </div>
+                        </div>
+                        <div className="text-[11px] text-center text-amber-200/90 font-bold">
+                          No negative markings • Portrait unblurs on answer
+                        </div>
+                      </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-[#2e1d05]/70 border border-amber-500/30 text-[11px] font-bold text-amber-200">
-                      ⚡ 1st Hint: +20 | 2nd: +15 | 3rd: +10 | 4th: +5
+
+                    <div className="p-2.5 rounded-xl bg-[#2e1d05] border border-amber-500/30 text-xs font-bold text-amber-200 flex items-center gap-2.5">
+                      <span className="text-lg shrink-0">⚡</span>
+                      <span>No options • Points decrease as more clues are revealed</span>
                     </div>
                   </motion.div>
                 </div>
 
                 {/* Tournament Regulations & Fair Play Grid (4 sleek cards) */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 my-2.5">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 flex items-center gap-2">
-                    <UserCheck className="w-3.5 h-3.5 text-[#c084fc] shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-200 leading-tight">6 Finalists compete individually</span>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 my-2">
+                  <div className="p-3 rounded-2xl bg-[#16082b] border border-[#8b5cf6]/40 flex items-center gap-3 shadow-sm">
+                    <UserCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#c084fc] shrink-0" />
+                    <div>
+                      <span className="text-[10px] uppercase font-black text-[#c084fc] block leading-none">Format</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-200">6 Finalists compete individually</span>
+                    </div>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 flex items-center gap-2">
-                    <Lock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-200 leading-tight">No phones or external assistance</span>
+                  <div className="p-3 rounded-2xl bg-[#16082b] border border-[#8b5cf6]/40 flex items-center gap-3 shadow-sm">
+                    <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 shrink-0" />
+                    <div>
+                      <span className="text-[10px] uppercase font-black text-rose-400 block leading-none">Fair Play</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-200">No phones or external assistance</span>
+                    </div>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-200 leading-tight">Quizmaster decision is final</span>
+                  <div className="p-3 rounded-2xl bg-[#16082b] border border-[#8b5cf6]/40 flex items-center gap-3 shadow-sm">
+                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <span className="text-[10px] uppercase font-black text-emerald-400 block leading-none">Integrity</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-200">Quizmaster decision is final</span>
+                    </div>
                   </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#16082b] border border-[#8b5cf6]/30 flex items-center gap-2">
-                    <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-200 leading-tight">Tie-breaker question on deadlock</span>
+                  <div className="p-3 rounded-2xl bg-[#16082b] border border-[#8b5cf6]/40 flex items-center gap-3 shadow-sm">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <span className="text-[10px] uppercase font-black text-amber-400 block leading-none">Tie-Breaker</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-200">Sudden-death question on deadlock</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Clean Bottom Navigation Bar */}
-                <div className="flex items-center justify-between pt-2.5 border-t-2 border-[#8b5cf6]/30">
+                <div className="flex items-center justify-between pt-3 border-t-2 border-[#8b5cf6]/30">
                   <span className="text-xs text-[#7dd3fc] font-bold">Press Space or Arrow Right to proceed</span>
                   <button
                     onClick={nextSlide}
-                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] font-black text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105 active:scale-95 cursor-pointer text-xs sm:text-sm"
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#7c3aed] hover:bg-[#8b5cf6] font-black text-white border-2 border-[#1e0e38] shadow-[3px_3px_0px_#090214] transition hover:scale-105 active:scale-95 cursor-pointer text-xs sm:text-sm"
                   >
                     Meet Finalists <ArrowRight className="w-4 h-4" />
                   </button>
